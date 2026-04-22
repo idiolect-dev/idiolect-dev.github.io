@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>idiolect — mutual intelligibility for schema idiolects</title>
+<meta name="description" content="Mutual intelligibility for schema idiolects." />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta property="og:title" content="idiolect" />
+<meta property="og:description" content="Mutual intelligibility for schema idiolects." />
+<meta property="og:url" content="https://idiolect.dev" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<style>
+  :root {
+    --fg: #1a1a1a;
+    --muted: #666;
+    --bg: #fafaf7;
+    --rule: #dcdcd4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fg: #eae7df;
+      --muted: #8a8880;
+      --bg: #111110;
+      --rule: #2a2926;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 15px;
+    line-height: 1.55;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+  }
+  main {
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+  }
+  .wordmark {
+    width: min(460px, 100%);
+    height: auto;
+    margin-bottom: 1.25rem;
+  }
+  .wordmark-dark { display: none; }
+  @media (prefers-color-scheme: dark) {
+    .wordmark-light { display: none; }
+    .wordmark-dark { display: inline; }
+  }
+  .tagline {
+    font-size: 1.05rem;
+    margin: 0 0 2.5rem;
+    color: var(--fg);
+  }
+  nav {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color .1s, border-color .1s;
+  }
+  nav a:hover {
+    color: var(--fg);
+    border-bottom-color: var(--fg);
+  }
+  footer {
+    margin-top: 3rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+<main>
+  <img class="wordmark wordmark-light" src="/wordmark.svg" alt="idiolect" />
+  <img class="wordmark wordmark-dark"  src="/wordmark-dark.svg" alt="idiolect" />
+  <p class="tagline">Mutual intelligibility for schema idiolects.</p>
+  <nav>
+    <a href="https://github.com/idiolect-dev/idiolect">github</a>
+    <a href="https://crates.io/crates/idiolect-records">crates.io</a>
+    <a href="https://www.npmjs.com/package/@idiolect-dev/schema">npm</a>
+  </nav>
+  <footer>MIT</footer>
+</main>
+</body>
+</html>
