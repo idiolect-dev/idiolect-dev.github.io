@@ -45,15 +45,23 @@
     width: 100%;
     text-align: center;
   }
+  .logo {
+    width: 140px;
+    height: auto;
+    margin-bottom: 1.5rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
   .wordmark {
     width: min(460px, 100%);
     height: auto;
     margin-bottom: 1.25rem;
   }
-  .wordmark-dark { display: none; }
+  .logo-dark, .wordmark-dark { display: none; }
   @media (prefers-color-scheme: dark) {
-    .wordmark-light { display: none; }
-    .wordmark-dark { display: inline; }
+    .logo-light, .wordmark-light { display: none; }
+    .logo-dark, .wordmark-dark { display: inline; }
   }
   .tagline {
     font-size: 1.05rem;
@@ -87,6 +95,8 @@
 </head>
 <body>
 <main>
+  <img class="logo logo-light" src="/logo.svg" alt="" aria-hidden="true" />
+  <img class="logo logo-dark"  src="/logo-dark.svg" alt="" aria-hidden="true" />
   <img class="wordmark wordmark-light" src="/wordmark.svg" alt="idiolect" />
   <img class="wordmark wordmark-dark"  src="/wordmark-dark.svg" alt="idiolect" />
   <p class="tagline">Mutual intelligibility for schema idiolects.</p>
