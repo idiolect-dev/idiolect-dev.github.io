@@ -1,0 +1,384 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Author a community vocabulary - idiolect</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Mutual intelligibility for schema idiolects on ATProto.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/custom.css">
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Tutorial</li><li class="chapter-item expanded "><a href="../tutorial/index.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="../tutorial/01-install.html"><strong aria-hidden="true">2.</strong> Install and resolve a record</a></li><li class="chapter-item expanded "><a href="../tutorial/02-validate.html"><strong aria-hidden="true">3.</strong> Validate against the lexicon</a></li><li class="chapter-item expanded "><a href="../tutorial/03-apply-lens.html"><strong aria-hidden="true">4.</strong> Apply a lens</a></li><li class="chapter-item expanded "><a href="../tutorial/04-verify.html"><strong aria-hidden="true">5.</strong> Run a verification</a></li><li class="chapter-item expanded "><a href="../tutorial/05-publish.html"><strong aria-hidden="true">6.</strong> Publish a recommendation</a></li><li class="chapter-item expanded affix "><li class="part-title">Guides</li><li class="chapter-item expanded "><a href="../guide/index.html"><strong aria-hidden="true">7.</strong> Overview</a></li><li class="chapter-item expanded "><a href="../guide/index-firehose.html"><strong aria-hidden="true">8.</strong> Index a firehose</a></li><li class="chapter-item expanded "><a href="../guide/orchestrator.html"><strong aria-hidden="true">9.</strong> Run the orchestrator HTTP API</a></li><li class="chapter-item expanded "><a href="../guide/observer.html"><strong aria-hidden="true">10.</strong> Run the observer daemon</a></li><li class="chapter-item expanded "><a href="../guide/verify.html"><strong aria-hidden="true">11.</strong> Author a verification runner</a></li><li class="chapter-item expanded "><a href="../guide/publish-lens.html"><strong aria-hidden="true">12.</strong> Publish and resolve a lens</a></li><li class="chapter-item expanded "><a href="../guide/migrate.html"><strong aria-hidden="true">13.</strong> Migrate records across a revision</a></li><li class="chapter-item expanded "><a href="../guide/oauth.html"><strong aria-hidden="true">14.</strong> Configure OAuth sessions</a></li><li class="chapter-item expanded "><a href="../guide/codegen.html"><strong aria-hidden="true">15.</strong> Run codegen</a></li><li class="chapter-item expanded "><a href="../guide/vocabulary.html" class="active"><strong aria-hidden="true">16.</strong> Author a community vocabulary</a></li><li class="chapter-item expanded "><a href="../guide/dialect.html"><strong aria-hidden="true">17.</strong> Bundle records into a dialect</a></li><li class="chapter-item expanded affix "><li class="part-title">Concepts</li><li class="chapter-item expanded "><a href="../concepts/index.html"><strong aria-hidden="true">18.</strong> Overview</a></li><li class="chapter-item expanded "><a href="../concepts/idiolect-dialect-language.html"><strong aria-hidden="true">19.</strong> Idiolect, dialect, language</a></li><li class="chapter-item expanded "><a href="../concepts/lexicon-family.html"><strong aria-hidden="true">20.</strong> The dev.idiolect.* lexicon family</a></li><li class="chapter-item expanded "><a href="../concepts/atproto-records.html"><strong aria-hidden="true">21.</strong> Records as content-addressed signed data</a></li><li class="chapter-item expanded "><a href="../concepts/lens-laws.html"><strong aria-hidden="true">22.</strong> Lens semantics and laws</a></li><li class="chapter-item expanded "><a href="../concepts/open-enums.html"><strong aria-hidden="true">23.</strong> Open enums and vocabularies</a></li><li class="chapter-item expanded "><a href="../concepts/vocab-graph.html"><strong aria-hidden="true">24.</strong> The vocabulary knowledge graph</a></li><li class="chapter-item expanded "><a href="../concepts/deliberation.html"><strong aria-hidden="true">25.</strong> Deliberation</a></li><li class="chapter-item expanded "><a href="../concepts/observer.html"><strong aria-hidden="true">26.</strong> Observer protocol</a></li><li class="chapter-item expanded "><a href="../concepts/lexicon-evolution.html"><strong aria-hidden="true">27.</strong> Lexicon evolution policy</a></li><li class="chapter-item expanded affix "><li class="part-title">Reference</li><li class="chapter-item expanded "><a href="../reference/index.html"><strong aria-hidden="true">28.</strong> Overview</a></li><li class="chapter-item expanded "><a href="../reference/crates/index.html"><strong aria-hidden="true">29.</strong> Crates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../reference/crates/idiolect-records.html"><strong aria-hidden="true">29.1.</strong> idiolect-records</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-codegen.html"><strong aria-hidden="true">29.2.</strong> idiolect-codegen</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-lens.html"><strong aria-hidden="true">29.3.</strong> idiolect-lens</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-identity.html"><strong aria-hidden="true">29.4.</strong> idiolect-identity</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-indexer.html"><strong aria-hidden="true">29.5.</strong> idiolect-indexer</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-oauth.html"><strong aria-hidden="true">29.6.</strong> idiolect-oauth</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-observer.html"><strong aria-hidden="true">29.7.</strong> idiolect-observer</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-orchestrator.html"><strong aria-hidden="true">29.8.</strong> idiolect-orchestrator</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-verify.html"><strong aria-hidden="true">29.9.</strong> idiolect-verify</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-migrate.html"><strong aria-hidden="true">29.10.</strong> idiolect-migrate</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-cli.html"><strong aria-hidden="true">29.11.</strong> idiolect-cli</a></li></ol></li><li class="chapter-item expanded "><a href="../reference/lexicons/index.html"><strong aria-hidden="true">30.</strong> Lexicons</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../reference/lexicons/adapter.html"><strong aria-hidden="true">30.1.</strong> adapter</a></li><li class="chapter-item "><a href="../reference/lexicons/belief.html"><strong aria-hidden="true">30.2.</strong> belief</a></li><li class="chapter-item "><a href="../reference/lexicons/bounty.html"><strong aria-hidden="true">30.3.</strong> bounty</a></li><li class="chapter-item "><a href="../reference/lexicons/community.html"><strong aria-hidden="true">30.4.</strong> community</a></li><li class="chapter-item "><a href="../reference/lexicons/correction.html"><strong aria-hidden="true">30.5.</strong> correction</a></li><li class="chapter-item "><a href="../reference/lexicons/defs.html"><strong aria-hidden="true">30.6.</strong> defs</a></li><li class="chapter-item "><a href="../reference/lexicons/deliberation.html"><strong aria-hidden="true">30.7.</strong> deliberation</a></li><li class="chapter-item "><a href="../reference/lexicons/deliberationStatement.html"><strong aria-hidden="true">30.8.</strong> deliberationStatement</a></li><li class="chapter-item "><a href="../reference/lexicons/deliberationVote.html"><strong aria-hidden="true">30.9.</strong> deliberationVote</a></li><li class="chapter-item "><a href="../reference/lexicons/deliberationOutcome.html"><strong aria-hidden="true">30.10.</strong> deliberationOutcome</a></li><li class="chapter-item "><a href="../reference/lexicons/dialect.html"><strong aria-hidden="true">30.11.</strong> dialect</a></li><li class="chapter-item "><a href="../reference/lexicons/encounter.html"><strong aria-hidden="true">30.12.</strong> encounter</a></li><li class="chapter-item "><a href="../reference/lexicons/observation.html"><strong aria-hidden="true">30.13.</strong> observation</a></li><li class="chapter-item "><a href="../reference/lexicons/recommendation.html"><strong aria-hidden="true">30.14.</strong> recommendation</a></li><li class="chapter-item "><a href="../reference/lexicons/retrospection.html"><strong aria-hidden="true">30.15.</strong> retrospection</a></li><li class="chapter-item "><a href="../reference/lexicons/verification.html"><strong aria-hidden="true">30.16.</strong> verification</a></li><li class="chapter-item "><a href="../reference/lexicons/vocab.html"><strong aria-hidden="true">30.17.</strong> vocab</a></li></ol></li><li class="chapter-item expanded "><a href="../reference/cli.html"><strong aria-hidden="true">31.</strong> CLI</a></li><li class="chapter-item expanded "><a href="../reference/http-api.html"><strong aria-hidden="true">32.</strong> HTTP query API</a></li><li class="chapter-item expanded "><a href="../reference/stability.html"><strong aria-hidden="true">33.</strong> Stability and versioning</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">idiolect</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/idiolect-dev/idiolect" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/idiolect-dev/idiolect/edit/main/docs/book/src/guide/vocabulary.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="author-a-community-vocabulary"><a class="header" href="#author-a-community-vocabulary">Author a community vocabulary</a></h1>
+<p>Open-enum slugs across the idiolect lexicons resolve through a
+<code>dev.idiolect.vocab</code> record. That record carries a typed
+multi-relation knowledge graph: nodes (concept, relation, instance,
+type, collection) and edges with a relation slug, plus full OWL
+Lite property characteristics and SKOS Core annotations.</p>
+<p>This guide covers the authoring side: writing the JSON, declaring
+relation properties, and publishing the record.</p>
+<h2 id="minimum-vocabulary"><a class="header" href="#minimum-vocabulary">Minimum vocabulary</a></h2>
+<p>Every vocabulary needs a name, a description, and at least one
+node:</p>
+<pre><code class="language-json">{
+  "$type": "dev.idiolect.vocab",
+  "name": "vote-stances",
+  "description": "Default deliberation vote stances.",
+  "world": "open",
+  "nodes": [
+    { "id": "agree",    "kind": "concept", "label": "Agree" },
+    { "id": "disagree", "kind": "concept", "label": "Disagree" },
+    { "id": "pass",     "kind": "concept", "label": "Pass" }
+  ],
+  "edges": [],
+  "occurredAt": "2026-05-01T00:00:00.000Z"
+}
+</code></pre>
+<p><code>world</code> controls whether unknown values are accepted as
+extensions:</p>
+<ul>
+<li><code>open</code> — unknown values are first-class extensions.</li>
+<li><code>closed-with-default</code> — unknown values fall back to a designated
+default.</li>
+<li><code>hierarchy-closed</code> — unknown values are rejected.</li>
+</ul>
+<p>Per-relation overrides live on the relation node's metadata.</p>
+<h2 id="add-typed-relations"><a class="header" href="#add-typed-relations">Add typed relations</a></h2>
+<p>A relation is itself a node, with its algebraic properties
+declared as metadata:</p>
+<pre><code class="language-json">{
+  "id": "polar_opposite_of",
+  "kind": "relation",
+  "label": "Polar opposite of",
+  "metadata": {
+    "symmetric": true,
+    "transitive": false,
+    "reflexive": false,
+    "irreflexive": true
+  }
+}
+</code></pre>
+<p>The shipped properties cover the OWL Lite set: <code>symmetric</code>,
+<code>asymmetric</code>, <code>transitive</code>, <code>reflexive</code>, <code>irreflexive</code>,
+<code>functional</code>, <code>inverseFunctional</code>, plus <code>inverseOf</code> and a per-
+relation <code>world</code> override. The runtime walks the asserted edges
+and validates them against these properties; contradictions
+(<code>symmetric+asymmetric</code>, <code>reflexive+irreflexive</code>) produce a
+<code>PropertyContradiction</code> violation at publish time.</p>
+<h2 id="add-edges"><a class="header" href="#add-edges">Add edges</a></h2>
+<p>Now express the relations on top of the nodes:</p>
+<pre><code class="language-json">{
+  "edges": [
+    { "source": "agree",    "target": "disagree", "relationSlug": "polar_opposite_of" },
+    { "source": "disagree", "target": "agree",    "relationSlug": "polar_opposite_of" }
+  ]
+}
+</code></pre>
+<p>If the relation is symmetric the runtime walks both directions, so
+you can author either direction (or both, redundantly).</p>
+<h2 id="annotate-with-skos-core"><a class="header" href="#annotate-with-skos-core">Annotate with SKOS Core</a></h2>
+<p>Every concept node accepts SKOS-style annotations:</p>
+<pre><code class="language-json">{
+  "id": "agree",
+  "kind": "concept",
+  "label": "Agree",
+  "alternateLabels": ["yes", "+1"],
+  "hiddenLabels": ["agreed", "agrees"],
+  "scopeNote": "Use when the voter affirms the statement as written.",
+  "example": "I agree with the proposal as drafted.",
+  "notation": "1",
+  "externalIds": [
+    { "system": "wikidata", "id": "Q4116214", "match": "exact" }
+  ]
+}
+</code></pre>
+<p>The full annotation set is <code>label</code>, <code>alternateLabels</code>,
+<code>hiddenLabels</code>, <code>description</code> (definition), <code>scopeNote</code>, <code>example</code>,
+<code>historyNote</code>, <code>editorialNote</code>, <code>changeNote</code>, <code>notation</code>, and
+<code>externalIds</code>. The match types on <code>externalIds</code> carry SKOS
+semantics (<code>exact</code>, <code>close</code>, <code>broader</code>, <code>narrower</code>, <code>related</code>).</p>
+<p>A <code>kind: "collection"</code> plus <code>member_of</code> edges expresses a SKOS
+Collection.</p>
+<h2 id="validate"><a class="header" href="#validate">Validate</a></h2>
+<pre><code class="language-bash">schema check vocab.json
+</code></pre>
+<p>The check runs panproto's structural validation plus the OWL Lite
+consistency walker. Violations are listed with the offending edge
+or property.</p>
+<p>For programmatic validation, construct a <code>Vocab</code> value and call
+<code>VocabGraph::from_vocab(&amp;vocab).validate()</code>; violations are
+returned as a <code>Vec&lt;VocabViolation&gt;</code> listing each offending edge
+or property.</p>
+<h2 id="publish"><a class="header" href="#publish">Publish</a></h2>
+<p>Same path as any other record. Construct a writer, wrap it in
+<code>RecordPublisher</code>, and call <code>create</code>:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use idiolect_lens::{
+    P256DpopProver, RecordPublisher, ReqwestPdsClient, SigningPdsWriter,
+};
+use idiolect_records::Vocab;
+
+let vocab: Vocab = serde_json::from_slice(&amp;std::fs::read("vote-stances.json")?)?;
+
+let client = ReqwestPdsClient::with_service_url(&amp;session.pds_url);
+let prover = P256DpopProver::from_pkcs8_pem(&amp;pkcs8_pem)?;
+let writer = SigningPdsWriter::new(
+    client,
+    session.access_jwt.clone(),
+    prover,
+    session.dpop_nonce.clone(),
+);
+let publisher = RecordPublisher::new(writer, session.did.clone());
+
+let resp = publisher.create(&amp;vocab).await?;
+<span class="boring">}</span></code></pre></pre>
+<p><code>pkcs8_pem</code> is converted from the session's
+<code>dpop_private_key_jwk</code> via an external JWK-to-PKCS8 helper. The
+PDS validates the record against the lexicon before commit;
+malformed values surface as commit errors. Driving the OAuth
+dance and persisting the session is the caller's job; see
+<a href="./oauth.html">Configure OAuth sessions</a>.</p>
+<h2 id="use-the-published-vocab"><a class="header" href="#use-the-published-vocab">Use the published vocab</a></h2>
+<p>Once the vocab is on the network, any open-enum field whose
+sibling <code>*Vocab</code> points at your at-uri resolves slugs through your
+nodes. Consumers reading the record see one of three things:</p>
+<ul>
+<li>A known slug (matches a node id).</li>
+<li>An <code>Other(String)</code> value (the slug exists in your vocab but the
+reading consumer is on an older codegen run).</li>
+<li>An unknown value (the slug does not appear in your vocab and
+<code>world</code> is permissive enough to accept it).</li>
+</ul>
+<p>The <code>is_subsumed_by</code>, <code>satisfies</code>, and <code>translate_to</code> helpers
+emitted on every open-enum type use the vocab to answer
+slug-relation questions without the consumer manually walking the
+edges. See
+<a href="../concepts/vocab-graph.html">The vocabulary knowledge graph</a> for
+the semantics.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../guide/codegen.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../guide/dialect.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../guide/codegen.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../guide/dialect.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

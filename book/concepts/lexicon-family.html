@@ -1,0 +1,332 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>The dev.idiolect.* lexicon family - idiolect</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Mutual intelligibility for schema idiolects on ATProto.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/custom.css">
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Tutorial</li><li class="chapter-item expanded "><a href="../tutorial/index.html"><strong aria-hidden="true">1.</strong> Overview</a></li><li class="chapter-item expanded "><a href="../tutorial/01-install.html"><strong aria-hidden="true">2.</strong> Install and resolve a record</a></li><li class="chapter-item expanded "><a href="../tutorial/02-validate.html"><strong aria-hidden="true">3.</strong> Validate against the lexicon</a></li><li class="chapter-item expanded "><a href="../tutorial/03-apply-lens.html"><strong aria-hidden="true">4.</strong> Apply a lens</a></li><li class="chapter-item expanded "><a href="../tutorial/04-verify.html"><strong aria-hidden="true">5.</strong> Run a verification</a></li><li class="chapter-item expanded "><a href="../tutorial/05-publish.html"><strong aria-hidden="true">6.</strong> Publish a recommendation</a></li><li class="chapter-item expanded affix "><li class="part-title">Guides</li><li class="chapter-item expanded "><a href="../guide/index.html"><strong aria-hidden="true">7.</strong> Overview</a></li><li class="chapter-item expanded "><a href="../guide/index-firehose.html"><strong aria-hidden="true">8.</strong> Index a firehose</a></li><li class="chapter-item expanded "><a href="../guide/orchestrator.html"><strong aria-hidden="true">9.</strong> Run the orchestrator HTTP API</a></li><li class="chapter-item expanded "><a href="../guide/observer.html"><strong aria-hidden="true">10.</strong> Run the observer daemon</a></li><li class="chapter-item expanded "><a href="../guide/verify.html"><strong aria-hidden="true">11.</strong> Author a verification runner</a></li><li class="chapter-item expanded "><a href="../guide/publish-lens.html"><strong aria-hidden="true">12.</strong> Publish and resolve a lens</a></li><li class="chapter-item expanded "><a href="../guide/migrate.html"><strong aria-hidden="true">13.</strong> Migrate records across a revision</a></li><li class="chapter-item expanded "><a href="../guide/oauth.html"><strong aria-hidden="true">14.</strong> Configure OAuth sessions</a></li><li class="chapter-item expanded "><a href="../guide/codegen.html"><strong aria-hidden="true">15.</strong> Run codegen</a></li><li class="chapter-item expanded "><a href="../guide/vocabulary.html"><strong aria-hidden="true">16.</strong> Author a community vocabulary</a></li><li class="chapter-item expanded "><a href="../guide/dialect.html"><strong aria-hidden="true">17.</strong> Bundle records into a dialect</a></li><li class="chapter-item expanded affix "><li class="part-title">Concepts</li><li class="chapter-item expanded "><a href="../concepts/index.html"><strong aria-hidden="true">18.</strong> Overview</a></li><li class="chapter-item expanded "><a href="../concepts/idiolect-dialect-language.html"><strong aria-hidden="true">19.</strong> Idiolect, dialect, language</a></li><li class="chapter-item expanded "><a href="../concepts/lexicon-family.html" class="active"><strong aria-hidden="true">20.</strong> The dev.idiolect.* lexicon family</a></li><li class="chapter-item expanded "><a href="../concepts/atproto-records.html"><strong aria-hidden="true">21.</strong> Records as content-addressed signed data</a></li><li class="chapter-item expanded "><a href="../concepts/lens-laws.html"><strong aria-hidden="true">22.</strong> Lens semantics and laws</a></li><li class="chapter-item expanded "><a href="../concepts/open-enums.html"><strong aria-hidden="true">23.</strong> Open enums and vocabularies</a></li><li class="chapter-item expanded "><a href="../concepts/vocab-graph.html"><strong aria-hidden="true">24.</strong> The vocabulary knowledge graph</a></li><li class="chapter-item expanded "><a href="../concepts/deliberation.html"><strong aria-hidden="true">25.</strong> Deliberation</a></li><li class="chapter-item expanded "><a href="../concepts/observer.html"><strong aria-hidden="true">26.</strong> Observer protocol</a></li><li class="chapter-item expanded "><a href="../concepts/lexicon-evolution.html"><strong aria-hidden="true">27.</strong> Lexicon evolution policy</a></li><li class="chapter-item expanded affix "><li class="part-title">Reference</li><li class="chapter-item expanded "><a href="../reference/index.html"><strong aria-hidden="true">28.</strong> Overview</a></li><li class="chapter-item expanded "><a href="../reference/crates/index.html"><strong aria-hidden="true">29.</strong> Crates</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../reference/crates/idiolect-records.html"><strong aria-hidden="true">29.1.</strong> idiolect-records</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-codegen.html"><strong aria-hidden="true">29.2.</strong> idiolect-codegen</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-lens.html"><strong aria-hidden="true">29.3.</strong> idiolect-lens</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-identity.html"><strong aria-hidden="true">29.4.</strong> idiolect-identity</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-indexer.html"><strong aria-hidden="true">29.5.</strong> idiolect-indexer</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-oauth.html"><strong aria-hidden="true">29.6.</strong> idiolect-oauth</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-observer.html"><strong aria-hidden="true">29.7.</strong> idiolect-observer</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-orchestrator.html"><strong aria-hidden="true">29.8.</strong> idiolect-orchestrator</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-verify.html"><strong aria-hidden="true">29.9.</strong> idiolect-verify</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-migrate.html"><strong aria-hidden="true">29.10.</strong> idiolect-migrate</a></li><li class="chapter-item "><a href="../reference/crates/idiolect-cli.html"><strong aria-hidden="true">29.11.</strong> idiolect-cli</a></li></ol></li><li class="chapter-item expanded "><a href="../reference/lexicons/index.html"><strong aria-hidden="true">30.</strong> Lexicons</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../reference/lexicons/adapter.html"><strong aria-hidden="true">30.1.</strong> adapter</a></li><li class="chapter-item "><a href="../reference/lexicons/belief.html"><strong aria-hidden="true">30.2.</strong> belief</a></li><li class="chapter-item "><a href="../reference/lexicons/bounty.html"><strong aria-hidden="true">30.3.</strong> bounty</a></li><li class="chapter-item "><a href="../reference/lexicons/community.html"><strong aria-hidden="true">30.4.</strong> community</a></li><li class="chapter-item "><a href="../reference/lexicons/correction.html"><strong aria-hidden="true">30.5.</strong> correction</a></li><li class="chapter-item "><a href="../reference/lexicons/defs.html"><strong aria-hidden="true">30.6.</strong> defs</a></li><li class="chapter-item "><a href="../reference/lexicons/deliberation.html"><strong aria-hidden="true">30.7.</strong> deliberation</a></li><li class="chapter-item "><a href="../reference/lexicons/deliberationStatement.html"><strong aria-hidden="true">30.8.</strong> deliberationStatement</a></li><li class="chapter-item "><a href="../reference/lexicons/deliberationVote.html"><strong aria-hidden="true">30.9.</strong> deliberationVote</a></li><li class="chapter-item "><a href="../reference/lexicons/deliberationOutcome.html"><strong aria-hidden="true">30.10.</strong> deliberationOutcome</a></li><li class="chapter-item "><a href="../reference/lexicons/dialect.html"><strong aria-hidden="true">30.11.</strong> dialect</a></li><li class="chapter-item "><a href="../reference/lexicons/encounter.html"><strong aria-hidden="true">30.12.</strong> encounter</a></li><li class="chapter-item "><a href="../reference/lexicons/observation.html"><strong aria-hidden="true">30.13.</strong> observation</a></li><li class="chapter-item "><a href="../reference/lexicons/recommendation.html"><strong aria-hidden="true">30.14.</strong> recommendation</a></li><li class="chapter-item "><a href="../reference/lexicons/retrospection.html"><strong aria-hidden="true">30.15.</strong> retrospection</a></li><li class="chapter-item "><a href="../reference/lexicons/verification.html"><strong aria-hidden="true">30.16.</strong> verification</a></li><li class="chapter-item "><a href="../reference/lexicons/vocab.html"><strong aria-hidden="true">30.17.</strong> vocab</a></li></ol></li><li class="chapter-item expanded "><a href="../reference/cli.html"><strong aria-hidden="true">31.</strong> CLI</a></li><li class="chapter-item expanded "><a href="../reference/http-api.html"><strong aria-hidden="true">32.</strong> HTTP query API</a></li><li class="chapter-item expanded "><a href="../reference/stability.html"><strong aria-hidden="true">33.</strong> Stability and versioning</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">idiolect</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/idiolect-dev/idiolect" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/idiolect-dev/idiolect/edit/main/docs/book/src/concepts/lexicon-family.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="the-devidiolect-lexicon-family"><a class="header" href="#the-devidiolect-lexicon-family">The dev.idiolect.* lexicon family</a></h1>
+<p>idiolect ships sixteen record-kind lexicons plus one shared-defs
+lexicon (<code>dev.idiolect.defs</code>) under the <code>dev.idiolect.*</code>
+namespace. The record kinds are organized by what they describe.</p>
+<pre class="mermaid">flowchart TB
+    subgraph publishing[&quot;Publishing layer&quot;]
+        REC[recommendation]
+        BEL[belief]
+        DIA[dialect]
+        BOU[bounty]
+    end
+    subgraph events[&quot;Events&quot;]
+        ENC[encounter]
+        COR[correction]
+    end
+    subgraph aggregate[&quot;Aggregate&quot;]
+        OBS[observation]
+        VER[verification]
+        RET[retrospection]
+    end
+    subgraph deliberation[&quot;Deliberation&quot;]
+        DEL[deliberation]
+        DST[deliberationStatement]
+        DVO[deliberationVote]
+        DOU[deliberationOutcome]
+    end
+    subgraph infrastructure[&quot;Infrastructure&quot;]
+        VOC[vocab]
+        ADA[adapter]
+        COM[community]
+    end
+
+    ENC --&gt;|folds into| OBS
+    DVO --&gt;|tallied as| DOU
+    REC -.points at.-&gt; VER
+    BOU -.requires.-&gt; VER
+    BEL -.cites.-&gt; ENC
+    BEL -.cites.-&gt; OBS
+    COR -.corrects.-&gt; ENC
+    DIA -.bundles.-&gt; REC
+    DIA -.bundles.-&gt; VOC
+</pre>
+<p>The arrows are by-reference relationships; the records themselves
+are independent.</p>
+<h2 id="lexicon-by-lexicon"><a class="header" href="#lexicon-by-lexicon">Lexicon-by-lexicon</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Lexicon</th><th>What it names</th></tr></thead><tbody>
+<tr><td><code>dev.idiolect.encounter</code></td><td>One invocation of a lens. Carries the lens, the source schema, the action / material / purpose / actor (<code>use</code>), and the outcome.</td></tr>
+<tr><td><code>dev.idiolect.observation</code></td><td>Aggregate over encounters folded by an observer. Per-outcome counts plus optional weighted aggregates over a window.</td></tr>
+<tr><td><code>dev.idiolect.correction</code></td><td>A claim that a specific encounter's outcome was wrong, plus the corrected output.</td></tr>
+<tr><td><code>dev.idiolect.belief</code></td><td>A community's standing claim about a lens or schema, citing encounters / observations as evidence.</td></tr>
+<tr><td><code>dev.idiolect.recommendation</code></td><td>A community-published opinionated path: lens chain plus structured applicability conditions, preconditions, caveats, and required verifications.</td></tr>
+<tr><td><code>dev.idiolect.bounty</code></td><td>A request for someone to do verification work, with structured <code>wantVerification</code> and <code>constraintConformance</code> fields.</td></tr>
+<tr><td><code>dev.idiolect.verification</code></td><td>The outcome of a verification runner: which lens, which kind, pass/fail, structured report.</td></tr>
+<tr><td><code>dev.idiolect.retrospection</code></td><td>A post-hoc review of a sequence of encounters / observations, with a structured <code>finding</code>.</td></tr>
+<tr><td><code>dev.idiolect.dialect</code></td><td>A community-curated bundle: NSIDs, preferred lenses, endorsed vocabularies, deprecations.</td></tr>
+<tr><td><code>dev.idiolect.community</code></td><td>The community itself: members (with optional roles), record-hosting policy, optional AppView endpoint.</td></tr>
+<tr><td><code>dev.idiolect.vocab</code></td><td>A typed multi-relation knowledge graph used to resolve open-enum slugs.</td></tr>
+<tr><td><code>dev.idiolect.adapter</code></td><td>A description of an external surface (subprocess, http, wasm, ...) that consumes idiolect records, with isolation policy.</td></tr>
+<tr><td><code>dev.idiolect.deliberation</code></td><td>A community-scoped deliberation: topic, classification, status, optional outcome pointer.</td></tr>
+<tr><td><code>dev.idiolect.deliberationStatement</code></td><td>One statement made inside a deliberation.</td></tr>
+<tr><td><code>dev.idiolect.deliberationVote</code></td><td>One vote on a statement, with an open-enum stance plus optional weight + rationale.</td></tr>
+<tr><td><code>dev.idiolect.deliberationOutcome</code></td><td>An observer-published tally: per-statement per-stance counts plus optional adopted-statements.</td></tr>
+</tbody></table>
+</div>
+<p>The full per-lexicon reference is under
+<a href="../reference/lexicons/index.html">Lexicons</a>.</p>
+<h2 id="why-this-set"><a class="header" href="#why-this-set">Why this set</a></h2>
+<p>The family was assembled to cover four concerns:</p>
+<ol>
+<li><strong>What happened?</strong> The encounter / correction / observation
+triple. One record per invocation, with corrections and folds
+on top.</li>
+<li><strong>What should happen?</strong> The recommendation / belief / dialect /
+verification quad. Communities express opinions; opinions cite
+evidence; consumers route translations through them.</li>
+<li><strong>What does this mean?</strong> The vocab + open-enum convention.
+Slugs are open-enum strings resolved through community-published
+knowledge graphs.</li>
+<li><strong>What did we decide?</strong> The deliberation quad (deliberation,
+statement, vote, outcome). A process-shaped counterpart to the
+settled-belief shape.</li>
+</ol>
+<p>A new record kind that fits into one of those four columns is a
+candidate for the family. A record kind that does not fit is
+likely a downstream extension; the <a href="../guide/dialect.html">Bundle records into a
+dialect</a> guide covers how to ship one.</p>
+<h2 id="composition-with-downstream-lexicons"><a class="header" href="#composition-with-downstream-lexicons">Composition with downstream lexicons</a></h2>
+<p>idiolect's shape is meant to be the substrate, not the ceiling. A
+downstream community publishes its own NSID family and uses
+<code>OrFamily&lt;IdiolectFamily, MyFamily&gt;</code> at the indexer boundary so its
+records flow alongside idiolect's. Lenses bridge the two. A
+dialect record from the downstream community lists both
+families' canonical NSIDs.</p>
+<p>The shipped example of this pattern is the planned <code>idiolect-acorn</code>
+bridge; the design is in <code>notes/</code>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts/idiolect-dialect-language.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../concepts/atproto-records.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts/idiolect-dialect-language.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../concepts/atproto-records.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>
