@@ -525,69 +525,31 @@ laws covered in <a href="tutorial/../concepts/lens-laws.html">Lens semantics and
 <p><code>idiolect-lens</code> is <code>publish = false</code>; depend on it via git (or a
 path, when working inside the workspace):</p>
 <pre><code class="language-toml"># in Cargo.toml
-idiolect-lens = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0", features = ["pds-reqwest"] }
-tokio = { version = "1", features = ["full"] }
+idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0", features = ["pds-reqwest"] }
+panproto-schema = { git = "https://github.com/panproto/panproto.git", tag = "v0.39.0" }
+tokio           = { version = "1", features = ["full"] }
 </code></pre>
-<p>A <code>SchemaLoader</code> impl that fetches <code>dev.panproto.schema.schema</code>
-records from a PDS does not ship in v0.8.0 (the shipped
-<code>FilesystemSchemaLoader</code> reads ATProto lexicons; the records
-this tutorial uses carry serialized panproto <code>Schema</code> graphs).
-The contract is small, so we write one in the program. Add
-<code>reqwest</code> to the dependencies:</p>
-<pre><code class="language-toml">reqwest = { version = "0.12", features = ["json"] }
-</code></pre>
-<p>Then <code>src/main.rs</code>:</p>
-<pre><pre class="playground"><code class="language-rust">use std::pin::Pin;
-
-use idiolect_lens::{
-    apply_lens, ApplyLensInput, AtUri, LensError, PdsResolver,
-    ReqwestPdsClient, SchemaLoader,
+<p>The lens runtime needs three pieces: a <code>Resolver</code> (fetches the
+lens record by at-uri), a <code>SchemaLoader</code> (turns the
+<code>dev.panproto.schema.schema</code> at-uris on the lens record into
+typed <code>panproto_schema::Schema</code> values), and a <code>Protocol</code>. v0.9
+ships <code>PdsSchemaLoader</code> to pair with <code>PdsResolver</code>; both share a
+<code>ReqwestPdsClient</code>.</p>
+<p><code>src/main.rs</code>:</p>
+<pre><pre class="playground"><code class="language-rust">use idiolect_lens::{
+    apply_lens, ApplyLensInput, AtUri, PdsResolver, PdsSchemaLoader,
+    ReqwestPdsClient,
 };
-use panproto_schema::{Protocol, Schema};
+use panproto_schema::Protocol;
 
-const PDS: &amp;str = "https://jellybaby.us-east.host.bsky.network";
+const PDS:  &amp;str = "https://jellybaby.us-east.host.bsky.network";
 const LENS: &amp;str = "at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.lens/tutorial-rename-sort-string-to-text";
-
-struct PdsSchemaLoader { http: reqwest::Client }
-
-impl PdsSchemaLoader {
-    fn new() -&gt; Self { Self { http: reqwest::Client::new() } }
-}
-
-impl SchemaLoader for PdsSchemaLoader {
-    fn load&lt;'a&gt;(
-        &amp;'a self,
-        at_uri: &amp;'a str,
-    ) -&gt; Pin&lt;Box&lt;dyn std::future::Future&lt;Output = Result&lt;Schema, LensError&gt;&gt; + Send + 'a&gt;&gt; {
-        Box::pin(async move {
-            let rest = at_uri.strip_prefix("at://").ok_or_else(|| {
-                LensError::Transport(format!("not an at-uri: {at_uri}"))
-            })?;
-            let mut parts = rest.splitn(3, '/');
-            let (did, coll, rkey) = match (parts.next(), parts.next(), parts.next()) {
-                (Some(d), Some(c), Some(r)) =&gt; (d, c, r),
-                _ =&gt; return Err(LensError::Transport(format!("malformed at-uri: {at_uri}"))),
-            };
-            let url = format!(
-                "{PDS}/xrpc/com.atproto.repo.getRecord?repo={did}&amp;collection={coll}&amp;rkey={rkey}"
-            );
-            let body: serde_json::Value = self.http.get(&amp;url).send().await
-                .map_err(|e| LensError::Transport(format!("{e}")))?
-                .json().await
-                .map_err(|e| LensError::Transport(format!("{e}")))?;
-            let blob = body.get("value").and_then(|v| v.get("blob")).cloned()
-                .ok_or_else(|| LensError::LexiconParse("no blob".into()))?;
-            serde_json::from_value(blob)
-                .map_err(|e| LensError::LexiconParse(e.to_string()))
-        })
-    }
-}
 
 #[tokio::main]
 async fn main() -&gt; anyhow::Result&lt;()&gt; {
     let client   = ReqwestPdsClient::with_service_url(PDS);
-    let resolver = PdsResolver::new(client);
-    let loader   = PdsSchemaLoader::new();
+    let resolver = PdsResolver::new(client.clone());
+    let loader   = PdsSchemaLoader::new(client);
     let protocol = Protocol::default();
 
     let lens_uri = AtUri::parse(LENS)?;
@@ -691,45 +653,71 @@ checks against the lens chain.</li>
 checker against any <code>CoerceType</code> step.</li>
 </ul>
 <p>Each ships as a struct implementing <code>VerificationRunner</code>. The
-crate is library-only at v0.8.0; runners are invoked
-programmatically.</p>
+crate is library-only; runners are invoked programmatically.</p>
 <h2 id="wire-up-a-runner"><a class="header" href="#wire-up-a-runner">Wire up a runner</a></h2>
-<p><code>idiolect-verify</code> and <code>idiolect-lens</code> are <code>publish = false</code>;
-depend on them via git:</p>
 <pre><code class="language-toml"># in Cargo.toml
-idiolect-verify = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0" }
-idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0", features = ["pds-reqwest"] }
-tokio = { version = "1", features = ["full"] }
+idiolect-verify = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0" }
+idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0", features = ["pds-reqwest"] }
+idiolect-records = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0" }
+panproto-schema  = { git = "https://github.com/panproto/panproto.git", tag = "v0.47.0" }
+tokio            = { version = "1", features = ["full"] }
 </code></pre>
-<pre><pre class="playground"><code class="language-rust">use idiolect_lens::{
-    InMemoryResolver, FilesystemSchemaLoader, PdsResolver, ReqwestPdsClient,
-};
+<p><code>src/main.rs</code>:</p>
+<pre><pre class="playground"><code class="language-rust">use idiolect_lens::{PdsResolver, PdsSchemaLoader, ReqwestPdsClient};
+use idiolect_records::Datetime;
+use idiolect_records::generated::dev::idiolect::defs::LensRef;
 use idiolect_verify::{
     RoundtripTestRunner, VerificationRunner, VerificationTarget,
 };
+use panproto_schema::Protocol;
+
+const PDS:      &amp;str = "https://jellybaby.us-east.host.bsky.network";
+const LENS_URI: &amp;str = "at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.lens/tutorial-rename-sort-string-to-text";
 
 #[tokio::main]
 async fn main() -&gt; anyhow::Result&lt;()&gt; {
-    let client = ReqwestPdsClient::with_service_url("https://bsky.social");
-    let resolver = PdsResolver::new(client);
-    let loader = FilesystemSchemaLoader::new("./schema-cache")?;
-    // Construct the runner. The exact constructor and the
-    // `VerificationTarget` shape are documented in the
-    // `idiolect-verify` source; load the corpus, lens, and
-    // schema-loader handles into the target.
-    let runner = RoundtripTestRunner::new(/* corpus and config */);
+    let client   = ReqwestPdsClient::with_service_url(PDS);
+    let resolver = PdsResolver::new(client.clone());
+    let loader   = PdsSchemaLoader::new(client);
+
+    // Small corpus matching the lens's source schema (single
+    // `text` string child on a `post:body` object).
+    let corpus = vec![
+        serde_json::json!({ "text": "hello, world" }),
+        serde_json::json!({ "text": "" }),
+        serde_json::json!({ "text": "líneas con tildes y emoji 🦀" }),
+    ];
+
+    let runner = RoundtripTestRunner::new(resolver, loader, Protocol::default(), corpus);
+
     let target = VerificationTarget {
-        // lens, schema_loader, sampling config, ...
+        lens: LensRef {
+            uri: Some(LENS_URI.parse()?),
+            cid: None,
+            direction: None,
+        },
+        verifier: "did:plc:wdl4nnvxxdy4mc5vddxlm6f3".parse()?,
+        occurred_at: Datetime::parse("2026-05-12T00:00:00.000Z")?,
+        tool_override: None,
     };
 
     let verification = runner.run(&amp;target).await?;
-    println!("{:?}", verification.result); // Holds / Falsified / Inconclusive
+    println!("result = {:?}", verification.result);
+    println!("kind   = {:?}", verification.kind);
+    println!("tool   = {} {}",
+             verification.tool.name, verification.tool.version);
     Ok(())
 }</code></pre></pre>
-<p>A runner returns a <code>Verification</code> record. The <code>result</code> field is
-the headline; falsifying runs additionally carry a
-<code>counterexample</code> content reference and (for property tests) a
-shrunk witness.</p>
+<pre><code class="language-bash">cargo run
+</code></pre>
+<pre><code class="language-text">result = Holds
+kind   = RoundtripTest
+tool   = idiolect-verify/roundtrip-test 0.9.0
+</code></pre>
+<p>The runner walked the corpus, applied the rename-sort lens
+forward then backward, and confirmed every record round-tripped
+byte-for-byte. A single counterexample would have produced
+<code>result = Falsified</code>.</p>
 <h2 id="falsified-is-a-record-not-an-error"><a class="header" href="#falsified-is-a-record-not-an-error">Falsified is a record, not an error</a></h2>
 <p>A <em>falsified</em> property returns
 <code>Ok(Verification { result: Falsified, ... })</code>, not an error. The
@@ -743,29 +731,16 @@ a schema the loader could not resolve). Those are operator
 problems; the lens's actual behaviour is captured in the
 returned record.</p>
 <h2 id="publish-the-result"><a class="header" href="#publish-the-result">Publish the result</a></h2>
-<p>Once you have a <code>Verification</code>, publish it through
-<code>idiolect_lens::RecordPublisher</code>:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use idiolect_lens::RecordPublisher;
-
-let publisher = RecordPublisher::new(writer, my_did);
-let resp = publisher.create(&amp;verification).await?;
-println!("published: {}", resp.uri);
-<span class="boring">}</span></code></pre></pre>
-<p><code>writer</code> is any <code>PdsWriter</code> impl. The shipped path is
-<code>SigningPdsWriter</code> (DPoP-bound, behind the <code>pds-reqwest</code> feature)
-plus a <code>DpopProver</code> (typically <code>P256DpopProver</code> from the
-<code>dpop-p256</code> feature, paired with an OAuth session loaded from an
-<code>idiolect_oauth::OAuthTokenStore</code>). Authentication is the
-caller's responsibility: see
-<a href="tutorial/../guide/oauth.html">Configure OAuth sessions</a> for the session
-side.</p>
+<p>The <code>verification</code> value the runner returned is a typed
+<code>Verification</code> record ready to publish. The publishing path
+goes through <code>idiolect_lens::RecordPublisher</code>; see <a href="tutorial/./05-publish.html">chapter 5
+on publishing</a> for the wire-up.</p>
 <h2 id="reading-verifications-back"><a class="header" href="#reading-verifications-back">Reading verifications back</a></h2>
 <p>The orchestrator's HTTP API exposes
 <code>GET /v1/verifications?lens_uri=...</code> for "every verification on
-this lens". From the CLI:</p>
-<pre><code class="language-bash">idiolect orchestrator verifications --lens_uri at://did:plc:.../lens/example
+this lens":</p>
+<pre><code class="language-bash">idiolect orchestrator verifications \
+  --lens_uri at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.lens/tutorial-rename-sort-string-to-text
 </code></pre>
 <p>The orchestrator reads its catalog (populated by the indexer)
 and returns the matching verification records. This is the
@@ -776,8 +751,8 @@ covers the properties their use case requires.</p>
 <h2 id="planned-functionality"><a class="header" href="#planned-functionality">Planned functionality</a></h2>
 <p>A future <code>idiolect verify &lt;kind&gt;</code> CLI subcommand would let
 operators run a runner without writing Rust. It is not shipped
-at v0.8.0; runners are library-only. The four shipped runner
-kinds (<code>roundtrip-test</code>, <code>property-test</code>, <code>static-check</code>,
+yet; runners are library-only. The four shipped runner kinds
+(<code>roundtrip-test</code>, <code>property-test</code>, <code>static-check</code>,
 <code>coercion-law</code>) cover the shape; additional kinds in the
 lexicon's <code>verification.kind</code> enum (<code>formal-proof</code>,
 <code>conformance-test</code>, <code>convergence-preserving</code>) are recognised
@@ -805,87 +780,167 @@ occurredAt       : datetime
 the combinator set defined inside
 <a href="tutorial/../reference/lexicons/recommendation.html"><code>dev.idiolect.recommendation</code></a>.</p>
 <h2 id="author-the-record"><a class="header" href="#author-the-record">Author the record</a></h2>
-<p>Construct the typed record directly:</p>
+<pre><code class="language-toml">idiolect-records = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0" }
+reqwest          = { version = "0.12", features = ["json"] }
+serde            = { version = "1", features = ["derive"] }
+tokio            = { version = "1", features = ["full"] }
+</code></pre>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use idiolect_records::{Recommendation, AtUri, Datetime};
-// Plus the inline def types: Condition, Caveat, LensProperty.
-
-let rec = Recommendation {
-    issuing_community: AtUri::parse(
-        "at://did:plc:tutorial.dev/dev.idiolect.community/canonical",
-    )?,
-    conditions: vec![/* condition variants */],
-    preconditions: vec![],
-    lens_path: vec![AtUri::parse(
-        "at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.lens/example",
-    )?],
-    caveats: vec![],
-    required_verifications: vec![/* lens-property variants */],
-    annotations: None,
-    caveats_text: None,
-    occurred_at: Datetime::parse("2026-04-19T00:00:00.000Z").unwrap(),
+</span>use idiolect_records::generated::dev::idiolect::defs::{LensRef, SchemaRef};
+use idiolect_records::generated::dev::idiolect::recommendation::{
+    ConditionSourceIs, Recommendation, RecommendationConditions,
 };
+use idiolect_records::{Datetime, Record};
+
+const LENS_URI: &amp;str = "at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.lens/tutorial-rename-sort-string-to-text";
+const SRC_SCHEMA_URI: &amp;str = "at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.schema/tutorial-post-body-v1";
+
+fn build_recommendation(community_did: &amp;str) -&gt; anyhow::Result&lt;Recommendation&gt; {
+    let community = format!("at://{community_did}/dev.idiolect.community/canonical");
+    Ok(Recommendation {
+        issuing_community: community.parse()?,
+        conditions: vec![RecommendationConditions::ConditionSourceIs(
+            ConditionSourceIs {
+                schema: SchemaRef {
+                    cid: None,
+                    language: None,
+                    uri: Some(SRC_SCHEMA_URI.parse()?),
+                },
+            },
+        )],
+        preconditions: None,
+        lens_path: vec![LensRef {
+            uri: Some(LENS_URI.parse()?),
+            cid: None,
+            direction: None,
+        }],
+        caveats: None,
+        caveats_text: None,
+        annotations: Some(
+            "Endorses the rename-sort tutorial lens for source \
+             records matching the v1 tutorial post-body schema."
+                .to_owned(),
+        ),
+        required_verifications: None,
+        basis: None,
+        occurred_at: Datetime::parse("2026-05-12T00:00:00.000Z")?,
+        supersedes: None,
+    })
+}
 <span class="boring">}</span></code></pre></pre>
 <p>Every required field is type-checked at construction. Optional
-fields are <code>Option&lt;...&gt;</code>. Open-enum slugs round-trip through
-their <code>*Vocab</code> siblings as covered in
-<a href="tutorial/../concepts/open-enums.html">Open enums and vocabularies</a>.</p>
-<p>The exact field names and the inline <code>Condition</code> /
-<code>Caveat</code> / <code>LensProperty</code> shapes are in
-<code>crates/idiolect-records/src/generated/dev/idiolect/recommendation.rs</code>.
-Consult the generated source for the present field set.</p>
+fields are <code>Option&lt;...&gt;</code>. The open-enum slugs in <code>Condition*</code>
+variants round-trip through their <code>*Vocab</code> siblings as covered
+in <a href="tutorial/../concepts/open-enums.html">Open enums and vocabularies</a>.</p>
 <h2 id="get-an-authenticated-session"><a class="header" href="#get-an-authenticated-session">Get an authenticated session</a></h2>
-<p>You need an OAuth session for the DID you want to publish under.
-The OAuth dance itself is <code>atrium-oauth-client</code>'s job; the
-resulting session is stored via an
-<a href="tutorial/../guide/oauth.html"><code>idiolect_oauth::OAuthTokenStore</code></a>:</p>
+<p>The simplest auth path is an app password (legacy Bearer mode,
+not OAuth + DPoP). Generate one at
+<a href="https://bsky.app/settings/app-passwords">https://bsky.app/settings/app-passwords</a> for the account you
+want to publish under, then load it via env vars:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use idiolect_oauth::{FilesystemOAuthTokenStore, OAuthTokenStore};
+</span>use serde::{Deserialize, Serialize};
 
-let store = FilesystemOAuthTokenStore::open("./sessions/")?;
-let session = store.load(my_did).await?
-    .ok_or_else(|| anyhow::anyhow!("no session for {my_did}"))?;
+#[derive(Serialize)]
+struct CreateSessionRequest&lt;'a&gt; {
+    identifier: &amp;'a str,
+    password: &amp;'a str,
+}
+
+#[derive(Deserialize)]
+struct Session {
+    did: String,
+    #[serde(rename = "accessJwt")]
+    access_jwt: String,
+}
+
+async fn create_session(
+    http: &amp;reqwest::Client,
+    pds: &amp;str,
+    handle: &amp;str,
+    password: &amp;str,
+) -&gt; anyhow::Result&lt;Session&gt; {
+    let resp = http
+        .post(format!("{pds}/xrpc/com.atproto.server.createSession"))
+        .json(&amp;CreateSessionRequest { identifier: handle, password })
+        .send().await?;
+    if !resp.status().is_success() {
+        anyhow::bail!("createSession {}: {}", resp.status(), resp.text().await?);
+    }
+    Ok(resp.json().await?)
+}
 <span class="boring">}</span></code></pre></pre>
-<p>Driving the dance and refreshing on expiry is the application's
-responsibility; the crate ships <code>OAuthSession::is_expired</code> and
-<code>OAuthSession::needs_refresh(now, threshold)</code> for the timing
-decision.</p>
+<p>OAuth + DPoP is the recommended path for production. The
+machinery lives in <code>idiolect-lens</code> under the <code>dpop-p256</code> feature
+plus <code>idiolect-oauth</code>'s session stores. For tutorial purposes
+the Bearer path is enough.</p>
 <h2 id="sign-and-publish"><a class="header" href="#sign-and-publish">Sign and publish</a></h2>
-<p>With a session in hand, construct a <code>SigningPdsWriter</code> paired
-with a <code>DpopProver</code> and wrap it in <code>RecordPublisher</code>. The DPoP
-prover needs the session's private key; converting the JWK
-stored in <code>OAuthSession.dpop_private_key_jwk</code> to a PKCS8 PEM
-suitable for <code>P256DpopProver::from_pkcs8_pem</code> is the caller's
-responsibility (e.g. via the <code>josekit</code> or <code>jsonwebtoken</code> crate).
-The shape of the publish call:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use idiolect_lens::{
-    P256DpopProver, RecordPublisher, ReqwestPdsClient, SigningPdsWriter,
-};
+<p>The PDS accepts a typed record body plus a <code>$type</code> discriminator
+on a <code>com.atproto.repo.createRecord</code> call:</p>
+<pre><pre class="playground"><code class="language-rust">#[derive(Serialize)]
+struct CreateRecordRequest&lt;'a&gt; {
+    repo: &amp;'a str,
+    collection: &amp;'a str,
+    rkey: &amp;'a str,
+    record: serde_json::Value,
+}
 
-let client = ReqwestPdsClient::with_service_url(&amp;session.pds_url);
-let prover = P256DpopProver::from_pkcs8_pem(&amp;pkcs8_pem)?; // converted from JWK
-let writer = SigningPdsWriter::new(
-    client,
-    session.access_jwt.clone(),
-    prover,
-    session.dpop_nonce.clone(),
-);
-let publisher = RecordPublisher::new(writer, session.did.clone());
+async fn publish(
+    http: &amp;reqwest::Client,
+    pds: &amp;str,
+    bearer: &amp;str,
+    repo: &amp;str,
+    rec: &amp;Recommendation,
+    rkey: &amp;str,
+) -&gt; anyhow::Result&lt;()&gt; {
+    let mut value = serde_json::to_value(rec)?;
+    if let serde_json::Value::Object(ref mut map) = value {
+        map.insert(
+            "$type".to_owned(),
+            serde_json::Value::String(Recommendation::NSID.to_owned()),
+        );
+    }
+    let resp = http
+        .post(format!("{pds}/xrpc/com.atproto.repo.createRecord"))
+        .bearer_auth(bearer)
+        .json(&amp;CreateRecordRequest {
+            repo,
+            collection: Recommendation::NSID,
+            rkey,
+            record: value,
+        })
+        .send().await?;
+    if !resp.status().is_success() {
+        anyhow::bail!("createRecord {}: {}", resp.status(), resp.text().await?);
+    }
+    Ok(())
+}
 
-let resp = publisher.create(&amp;rec).await?;
-println!("published: {}", resp.uri);
-<span class="boring">}</span></code></pre></pre>
-<p>The exact field set on <code>OAuthSession</code> and the <code>SigningPdsWriter</code>
-constructor are in <code>crates/idiolect-oauth/src/session.rs</code> and
-<code>crates/idiolect-lens/src/signing_writer.rs</code>; consult the source
-for the present surface. The <code>pds-reqwest</code> and <code>dpop-p256</code>
-features on <code>idiolect-lens</code> enable the writer + prover.</p>
-<h2 id="verify-it-round-trips"><a class="header" href="#verify-it-round-trips">Verify it round-trips</a></h2>
-<pre><code class="language-bash">idiolect fetch "$RECOMMENDATION_URI" | jq .
+#[tokio::main]
+async fn main() -&gt; anyhow::Result&lt;()&gt; {
+    let pds      = std::env::var("PDS_URL")?;
+    let handle   = std::env::var("ATPROTO_HANDLE")?;
+    let password = std::env::var("ATPROTO_PASSWORD")?;
+
+    let http = reqwest::Client::new();
+    let sess = create_session(&amp;http, &amp;pds, &amp;handle, &amp;password).await?;
+    let rec  = build_recommendation(&amp;sess.did)?;
+    publish(&amp;http, &amp;pds, &amp;sess.access_jwt, &amp;sess.did, &amp;rec,
+            "tutorial-rename-sort").await?;
+    println!("published at://{}/{}/tutorial-rename-sort",
+             sess.did, Recommendation::NSID);
+    Ok(())
+}</code></pre></pre>
+<p>Run with credentials in the env:</p>
+<pre><code class="language-bash">PDS_URL=https://bsky.social \
+ATPROTO_HANDLE=yourhandle.bsky.social \
+ATPROTO_PASSWORD='xxxx-xxxx-xxxx-xxxx' \
+cargo run
+</code></pre>
+<p>The project DID has already published this exact record:</p>
+<pre><code class="language-bash">idiolect fetch \
+  at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.idiolect.recommendation/tutorial-rename-sort
 </code></pre>
 <p>If the record decodes and the <code>issuingCommunity</code> resolves to a
 community you control, the loop is closed:</p>
@@ -897,21 +952,22 @@ community you control, the loop is closed:</p>
     C --&gt;|decides| I[invoke or not]
 </pre>
 <p>The community has expressed an opinion. The lens has
-machine-checkable verifications attached. A consumer querying
+machine-checkable verifications attached (chapter 4 produced
+<code>Holds</code> for the <code>roundtrip-test</code> property). A consumer querying
 the orchestrator can fetch both, evaluate the conditions, and
 decide whether to invoke.</p>
 <h2 id="planned-functionality-1"><a class="header" href="#planned-functionality-1">Planned functionality</a></h2>
-<p>The CLI does not currently expose the publishing path. Two
-related subcommands are planned but not shipped at v0.8.0:</p>
+<p>Two related CLI subcommands are planned but not shipped:</p>
 <ul>
-<li>An <code>idiolect oauth login --handle &lt;HANDLE&gt;</code> subcommand that
-runs the OAuth dance and stores the session via the
-configured <code>OAuthTokenStore</code>. Today the dance is driven via
-<code>atrium-oauth-client</code> programmatically.</li>
-<li>An <code>idiolect publish &lt;kind&gt; --record &lt;path&gt;</code> subcommand that
-loads a JSON file and publishes it under the active session.
-Today publishing goes through <code>RecordPublisher::create</code> from
-Rust.</li>
+<li><code>idiolect oauth login --handle &lt;HANDLE&gt;</code> would walk the OAuth
+dance via <code>atrium-oauth-client</code> and persist the resulting
+session through an <code>OAuthTokenStore</code>. Today the dance is
+programmatic; the app-password path above is the easier
+alternative.</li>
+<li><code>idiolect publish &lt;kind&gt; --record &lt;path&gt;</code> would load a JSON
+file and publish it under the active session. Today publishing
+goes through <code>RecordPublisher::create</code> (or the hand-rolled
+client above) from Rust.</li>
 </ul>
 <p>That is the full loop. Where to go next:</p>
 <ul>

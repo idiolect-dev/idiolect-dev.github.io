@@ -198,45 +198,71 @@ checks against the lens chain.</li>
 checker against any <code>CoerceType</code> step.</li>
 </ul>
 <p>Each ships as a struct implementing <code>VerificationRunner</code>. The
-crate is library-only at v0.8.0; runners are invoked
-programmatically.</p>
+crate is library-only; runners are invoked programmatically.</p>
 <h2 id="wire-up-a-runner"><a class="header" href="#wire-up-a-runner">Wire up a runner</a></h2>
-<p><code>idiolect-verify</code> and <code>idiolect-lens</code> are <code>publish = false</code>;
-depend on them via git:</p>
 <pre><code class="language-toml"># in Cargo.toml
-idiolect-verify = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0" }
-idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0", features = ["pds-reqwest"] }
-tokio = { version = "1", features = ["full"] }
+idiolect-verify = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0" }
+idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0", features = ["pds-reqwest"] }
+idiolect-records = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0" }
+panproto-schema  = { git = "https://github.com/panproto/panproto.git", tag = "v0.47.0" }
+tokio            = { version = "1", features = ["full"] }
 </code></pre>
-<pre><pre class="playground"><code class="language-rust">use idiolect_lens::{
-    InMemoryResolver, FilesystemSchemaLoader, PdsResolver, ReqwestPdsClient,
-};
+<p><code>src/main.rs</code>:</p>
+<pre><pre class="playground"><code class="language-rust">use idiolect_lens::{PdsResolver, PdsSchemaLoader, ReqwestPdsClient};
+use idiolect_records::Datetime;
+use idiolect_records::generated::dev::idiolect::defs::LensRef;
 use idiolect_verify::{
     RoundtripTestRunner, VerificationRunner, VerificationTarget,
 };
+use panproto_schema::Protocol;
+
+const PDS:      &amp;str = "https://jellybaby.us-east.host.bsky.network";
+const LENS_URI: &amp;str = "at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.lens/tutorial-rename-sort-string-to-text";
 
 #[tokio::main]
 async fn main() -&gt; anyhow::Result&lt;()&gt; {
-    let client = ReqwestPdsClient::with_service_url("https://bsky.social");
-    let resolver = PdsResolver::new(client);
-    let loader = FilesystemSchemaLoader::new("./schema-cache")?;
-    // Construct the runner. The exact constructor and the
-    // `VerificationTarget` shape are documented in the
-    // `idiolect-verify` source; load the corpus, lens, and
-    // schema-loader handles into the target.
-    let runner = RoundtripTestRunner::new(/* corpus and config */);
+    let client   = ReqwestPdsClient::with_service_url(PDS);
+    let resolver = PdsResolver::new(client.clone());
+    let loader   = PdsSchemaLoader::new(client);
+
+    // Small corpus matching the lens's source schema (single
+    // `text` string child on a `post:body` object).
+    let corpus = vec![
+        serde_json::json!({ "text": "hello, world" }),
+        serde_json::json!({ "text": "" }),
+        serde_json::json!({ "text": "líneas con tildes y emoji 🦀" }),
+    ];
+
+    let runner = RoundtripTestRunner::new(resolver, loader, Protocol::default(), corpus);
+
     let target = VerificationTarget {
-        // lens, schema_loader, sampling config, ...
+        lens: LensRef {
+            uri: Some(LENS_URI.parse()?),
+            cid: None,
+            direction: None,
+        },
+        verifier: "did:plc:wdl4nnvxxdy4mc5vddxlm6f3".parse()?,
+        occurred_at: Datetime::parse("2026-05-12T00:00:00.000Z")?,
+        tool_override: None,
     };
 
     let verification = runner.run(&amp;target).await?;
-    println!("{:?}", verification.result); // Holds / Falsified / Inconclusive
+    println!("result = {:?}", verification.result);
+    println!("kind   = {:?}", verification.kind);
+    println!("tool   = {} {}",
+             verification.tool.name, verification.tool.version);
     Ok(())
 }</code></pre></pre>
-<p>A runner returns a <code>Verification</code> record. The <code>result</code> field is
-the headline; falsifying runs additionally carry a
-<code>counterexample</code> content reference and (for property tests) a
-shrunk witness.</p>
+<pre><code class="language-bash">cargo run
+</code></pre>
+<pre><code class="language-text">result = Holds
+kind   = RoundtripTest
+tool   = idiolect-verify/roundtrip-test 0.9.0
+</code></pre>
+<p>The runner walked the corpus, applied the rename-sort lens
+forward then backward, and confirmed every record round-tripped
+byte-for-byte. A single counterexample would have produced
+<code>result = Falsified</code>.</p>
 <h2 id="falsified-is-a-record-not-an-error"><a class="header" href="#falsified-is-a-record-not-an-error">Falsified is a record, not an error</a></h2>
 <p>A <em>falsified</em> property returns
 <code>Ok(Verification { result: Falsified, ... })</code>, not an error. The
@@ -250,29 +276,16 @@ a schema the loader could not resolve). Those are operator
 problems; the lens's actual behaviour is captured in the
 returned record.</p>
 <h2 id="publish-the-result"><a class="header" href="#publish-the-result">Publish the result</a></h2>
-<p>Once you have a <code>Verification</code>, publish it through
-<code>idiolect_lens::RecordPublisher</code>:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use idiolect_lens::RecordPublisher;
-
-let publisher = RecordPublisher::new(writer, my_did);
-let resp = publisher.create(&amp;verification).await?;
-println!("published: {}", resp.uri);
-<span class="boring">}</span></code></pre></pre>
-<p><code>writer</code> is any <code>PdsWriter</code> impl. The shipped path is
-<code>SigningPdsWriter</code> (DPoP-bound, behind the <code>pds-reqwest</code> feature)
-plus a <code>DpopProver</code> (typically <code>P256DpopProver</code> from the
-<code>dpop-p256</code> feature, paired with an OAuth session loaded from an
-<code>idiolect_oauth::OAuthTokenStore</code>). Authentication is the
-caller's responsibility: see
-<a href="../guide/oauth.html">Configure OAuth sessions</a> for the session
-side.</p>
+<p>The <code>verification</code> value the runner returned is a typed
+<code>Verification</code> record ready to publish. The publishing path
+goes through <code>idiolect_lens::RecordPublisher</code>; see <a href="./05-publish.html">chapter 5
+on publishing</a> for the wire-up.</p>
 <h2 id="reading-verifications-back"><a class="header" href="#reading-verifications-back">Reading verifications back</a></h2>
 <p>The orchestrator's HTTP API exposes
 <code>GET /v1/verifications?lens_uri=...</code> for "every verification on
-this lens". From the CLI:</p>
-<pre><code class="language-bash">idiolect orchestrator verifications --lens_uri at://did:plc:.../lens/example
+this lens":</p>
+<pre><code class="language-bash">idiolect orchestrator verifications \
+  --lens_uri at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.lens/tutorial-rename-sort-string-to-text
 </code></pre>
 <p>The orchestrator reads its catalog (populated by the indexer)
 and returns the matching verification records. This is the
@@ -283,8 +296,8 @@ covers the properties their use case requires.</p>
 <h2 id="planned-functionality"><a class="header" href="#planned-functionality">Planned functionality</a></h2>
 <p>A future <code>idiolect verify &lt;kind&gt;</code> CLI subcommand would let
 operators run a runner without writing Rust. It is not shipped
-at v0.8.0; runners are library-only. The four shipped runner
-kinds (<code>roundtrip-test</code>, <code>property-test</code>, <code>static-check</code>,
+yet; runners are library-only. The four shipped runner kinds
+(<code>roundtrip-test</code>, <code>property-test</code>, <code>static-check</code>,
 <code>coercion-law</code>) cover the shape; additional kinds in the
 lexicon's <code>verification.kind</code> enum (<code>formal-proof</code>,
 <code>conformance-test</code>, <code>convergence-preserving</code>) are recognised
