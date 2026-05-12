@@ -205,13 +205,14 @@ anywhere.</p>
 <h2 id="resolve-a-did"><a class="header" href="#resolve-a-did">Resolve a DID</a></h2>
 <p>The first thing the runtime does on any record fetch is resolve a
 DID to its PDS. <code>idiolect resolve</code> exposes that step on its own:</p>
-<pre><code class="language-bash">idiolect resolve did:plc:idiolect.dev
+<p>The project's own DID is a good first target:</p>
+<pre><code class="language-bash">idiolect resolve did:plc:wdl4nnvxxdy4mc5vddxlm6f3
 </code></pre>
 <pre><code class="language-json">{
-  "did": "did:plc:idiolect.dev",
+  "did": "did:plc:wdl4nnvxxdy4mc5vddxlm6f3",
   "method": "Plc",
   "handle": "idiolect.dev",
-  "pds_url": "https://shimeji.us-east.host.bsky.network",
+  "pds_url": "https://jellybaby.us-east.host.bsky.network",
   "also_known_as": ["at://idiolect.dev"]
 }
 </code></pre>
@@ -226,20 +227,19 @@ on stderr (the message is <code>IdentityError</code>-shaped: the variant
 plus the underlying transport message).</p>
 <h2 id="fetch-a-record"><a class="header" href="#fetch-a-record">Fetch a record</a></h2>
 <p><code>idiolect fetch</code> takes an at-uri and returns the raw record body
-(the <code>value</code> field of the xrpc response, not the response envelope):</p>
+(the <code>value</code> field of the xrpc response, not the response
+envelope). The project DID has a tutorial lens record published;
+fetching it exercises the runtime path end to end:</p>
 <pre><code class="language-bash">idiolect fetch \
-  at://did:plc:idiolect.dev/dev.idiolect.dialect/canonical
+  at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.lens/tutorial-rename-sort-string-to-text
 </code></pre>
-<pre><code class="language-json">{
-  "$type": "dev.idiolect.dialect",
-  "name": "idiolect canonical",
-  "issuingCommunity": "at://did:plc:idiolect.dev/dev.idiolect.community/canonical",
-  "...": "..."
-}
-</code></pre>
-<p>The fetch goes through the same <code>PdsClient</code> impl <code>apply_lens</code> uses,
-so anything you can fetch this way you can also feed into the lens
-runtime in <a href="./03-apply-lens.html">chapter 3</a>.</p>
+<p>The response is a <code>dev.panproto.schema.lens</code> body carrying the
+protolens chain (<code>blob</code>), the source and target schema at-uris,
+the optic class (<code>iso</code>), and the content hash. Chapter 3 takes
+this exact record and runs it through <code>apply_lens</code>.</p>
+<p>The fetch goes through the same <code>PdsClient</code> impl <code>apply_lens</code>
+uses, so any record you can fetch this way you can also feed
+into the lens runtime.</p>
 <h2 id="where-things-are-stored"><a class="header" href="#where-things-are-stored">Where things are stored</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Artifact</th><th>Location</th></tr></thead><tbody>
 <tr><td>The <code>idiolect</code> binary</td><td><code>~/.cargo/bin/idiolect</code></td></tr>

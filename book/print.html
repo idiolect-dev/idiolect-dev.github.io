@@ -329,13 +329,14 @@ anywhere.</p>
 <h2 id="resolve-a-did"><a class="header" href="#resolve-a-did">Resolve a DID</a></h2>
 <p>The first thing the runtime does on any record fetch is resolve a
 DID to its PDS. <code>idiolect resolve</code> exposes that step on its own:</p>
-<pre><code class="language-bash">idiolect resolve did:plc:idiolect.dev
+<p>The project's own DID is a good first target:</p>
+<pre><code class="language-bash">idiolect resolve did:plc:wdl4nnvxxdy4mc5vddxlm6f3
 </code></pre>
 <pre><code class="language-json">{
-  "did": "did:plc:idiolect.dev",
+  "did": "did:plc:wdl4nnvxxdy4mc5vddxlm6f3",
   "method": "Plc",
   "handle": "idiolect.dev",
-  "pds_url": "https://shimeji.us-east.host.bsky.network",
+  "pds_url": "https://jellybaby.us-east.host.bsky.network",
   "also_known_as": ["at://idiolect.dev"]
 }
 </code></pre>
@@ -350,20 +351,19 @@ on stderr (the message is <code>IdentityError</code>-shaped: the variant
 plus the underlying transport message).</p>
 <h2 id="fetch-a-record"><a class="header" href="#fetch-a-record">Fetch a record</a></h2>
 <p><code>idiolect fetch</code> takes an at-uri and returns the raw record body
-(the <code>value</code> field of the xrpc response, not the response envelope):</p>
+(the <code>value</code> field of the xrpc response, not the response
+envelope). The project DID has a tutorial lens record published;
+fetching it exercises the runtime path end to end:</p>
 <pre><code class="language-bash">idiolect fetch \
-  at://did:plc:idiolect.dev/dev.idiolect.dialect/canonical
+  at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.lens/tutorial-rename-sort-string-to-text
 </code></pre>
-<pre><code class="language-json">{
-  "$type": "dev.idiolect.dialect",
-  "name": "idiolect canonical",
-  "issuingCommunity": "at://did:plc:idiolect.dev/dev.idiolect.community/canonical",
-  "...": "..."
-}
-</code></pre>
-<p>The fetch goes through the same <code>PdsClient</code> impl <code>apply_lens</code> uses,
-so anything you can fetch this way you can also feed into the lens
-runtime in <a href="tutorial/./03-apply-lens.html">chapter 3</a>.</p>
+<p>The response is a <code>dev.panproto.schema.lens</code> body carrying the
+protolens chain (<code>blob</code>), the source and target schema at-uris,
+the optic class (<code>iso</code>), and the content hash. Chapter 3 takes
+this exact record and runs it through <code>apply_lens</code>.</p>
+<p>The fetch goes through the same <code>PdsClient</code> impl <code>apply_lens</code>
+uses, so any record you can fetch this way you can also feed
+into the lens runtime.</p>
 <h2 id="where-things-are-stored"><a class="header" href="#where-things-are-stored">Where things are stored</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Artifact</th><th>Location</th></tr></thead><tbody>
 <tr><td>The <code>idiolect</code> binary</td><td><code>~/.cargo/bin/idiolect</code></td></tr>
@@ -390,15 +390,22 @@ cargo add idiolect-records anyhow serde_json tokio --features tokio/macros,tokio
 exports one Rust type per record kind plus the
 <a href="tutorial/../reference/crates/idiolect-records.html"><code>Record</code></a> trait.</p>
 <h2 id="decode-a-record-by-nsid"><a class="header" href="#decode-a-record-by-nsid">Decode a record by NSID</a></h2>
-<p>Save the JSON from chapter 1 to <code>dialect.json</code>. Then:</p>
-<pre><pre class="playground"><code class="language-rust">use idiolect_records::{decode_record, AnyRecord, Dialect, Nsid, Record};
+<p>The crate ships minimally-valid fixtures for every record kind
+under <code>idiolect_records::examples</code>. They are real records: same
+shape the codec emits for a wire-format publish, same
+constraints, same <code>Record</code> impl. Use them to exercise the
+decode path without depending on what's on the network.</p>
+<p>In <code>src/main.rs</code>:</p>
+<pre><pre class="playground"><code class="language-rust">use idiolect_records::{decode_record, examples, AnyRecord, Dialect, Record};
 
 fn main() -&gt; anyhow::Result&lt;()&gt; {
-    let bytes = std::fs::read("dialect.json")?;
-    let value: serde_json::Value = serde_json::from_slice(&amp;bytes)?;
+    // The fixture is a typed value; serialise it back to JSON
+    // and decode through the dispatcher to exercise the same
+    // path a firehose handler would take.
+    let dialect = examples::dialect();
+    let value = serde_json::to_value(&amp;dialect)?;
 
-    let nsid = Dialect::nsid();
-    let rec = decode_record(&amp;nsid, value)?;
+    let rec = decode_record(&amp;Dialect::nsid(), value)?;
 
     match rec {
         AnyRecord::Dialect(d) =&gt; println!(
@@ -407,14 +414,29 @@ fn main() -&gt; anyhow::Result&lt;()&gt; {
             d.idiolects.as_ref().map_or(0, |v| v.len()),
             d.preferred_lenses.as_ref().map_or(0, |v| v.len()),
         ),
-        other =&gt; anyhow::bail!("expected a dialect, got {}", other.nsid_str()),
+        other =&gt; anyhow::bail!(
+            "expected a dialect, got {}",
+            other.nsid_str(),
+        ),
     }
     Ok(())
 }</code></pre></pre>
-<p><code>decode_record</code> is the dispatch primitive: it takes an NSID and a
-JSON value, looks up the matching <code>Record</code> impl, and hands back an
-<code>AnyRecord</code>. If the JSON does not match the schema, it returns an
-error pointing at the first invalid field.</p>
+<p>Run it:</p>
+<pre><code class="language-bash">cargo run
+</code></pre>
+<pre><code class="language-text">ud-en-2026: 0 idiolects, 0 preferred lenses
+</code></pre>
+<p><code>decode_record</code> is the dispatch primitive: it takes an NSID and
+a JSON value, looks up the matching <code>Record</code> impl, and hands
+back an <code>AnyRecord</code>. If the JSON does not match the schema, it
+returns an error pointing at the first invalid field.</p>
+<p>The same path works for a JSON file fetched from a PDS, once
+some party publishes a <code>dev.idiolect.dialect</code> record on the
+network: read the bytes from disk (or from the
+<code>com.atproto.repo.getRecord</code> body), parse as
+<code>serde_json::Value</code>, hand to <code>decode_record</code>. The fixture
+shortcut is just a way to make this chapter not depend on
+network state.</p>
 <h2 id="validation-is-structural-not-just-type-shaped"><a class="header" href="#validation-is-structural-not-just-type-shaped">Validation is structural, not just type-shaped</a></h2>
 <p>The generated codecs validate every constraint declared in the
 lexicon, not just the field types:</p>
@@ -455,9 +477,11 @@ business logic touches the value.</p>
 <tr><td><code>Vocab</code></td><td><code>vocab</code></td><td><code>dev.idiolect.vocab</code></td></tr>
 </tbody></table>
 </div>
-<p>For each record kind a fixture is exported under
-<code>idiolect_records::examples::*</code>. Fixtures are minimally-valid: they
-satisfy every required field and pass the codec round-trip.</p>
+<p>Fixtures are exported under <code>idiolect_records::examples::*</code> for
+every record kind except the four deliberation lexicons, which
+are recent additions still awaiting bundled fixtures. The
+shipped fixtures are minimally-valid: every required field is
+present and the codec round-trip is a no-op.</p>
 <h2 id="reusable-trait-surface"><a class="header" href="#reusable-trait-surface">Reusable trait surface</a></h2>
 <p>Anything you write that consumes records can be generic over the
 <code>Record</code> trait:</p>
@@ -504,41 +528,98 @@ path, when working inside the workspace):</p>
 idiolect-lens = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0", features = ["pds-reqwest"] }
 tokio = { version = "1", features = ["full"] }
 </code></pre>
-<pre><pre class="playground"><code class="language-rust">use idiolect_lens::{
-    apply_lens, ApplyLensInput, AtUri, FilesystemSchemaLoader, PdsResolver,
-    ReqwestPdsClient,
+<p>A <code>SchemaLoader</code> impl that fetches <code>dev.panproto.schema.schema</code>
+records from a PDS does not ship in v0.8.0 (the shipped
+<code>FilesystemSchemaLoader</code> reads ATProto lexicons; the records
+this tutorial uses carry serialized panproto <code>Schema</code> graphs).
+The contract is small, so we write one in the program. Add
+<code>reqwest</code> to the dependencies:</p>
+<pre><code class="language-toml">reqwest = { version = "0.12", features = ["json"] }
+</code></pre>
+<p>Then <code>src/main.rs</code>:</p>
+<pre><pre class="playground"><code class="language-rust">use std::pin::Pin;
+
+use idiolect_lens::{
+    apply_lens, ApplyLensInput, AtUri, LensError, PdsResolver,
+    ReqwestPdsClient, SchemaLoader,
 };
-use panproto_schema::Protocol;
+use panproto_schema::{Protocol, Schema};
+
+const PDS: &amp;str = "https://jellybaby.us-east.host.bsky.network";
+const LENS: &amp;str = "at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.lens/tutorial-rename-sort-string-to-text";
+
+struct PdsSchemaLoader { http: reqwest::Client }
+
+impl PdsSchemaLoader {
+    fn new() -&gt; Self { Self { http: reqwest::Client::new() } }
+}
+
+impl SchemaLoader for PdsSchemaLoader {
+    fn load&lt;'a&gt;(
+        &amp;'a self,
+        at_uri: &amp;'a str,
+    ) -&gt; Pin&lt;Box&lt;dyn std::future::Future&lt;Output = Result&lt;Schema, LensError&gt;&gt; + Send + 'a&gt;&gt; {
+        Box::pin(async move {
+            let rest = at_uri.strip_prefix("at://").ok_or_else(|| {
+                LensError::Transport(format!("not an at-uri: {at_uri}"))
+            })?;
+            let mut parts = rest.splitn(3, '/');
+            let (did, coll, rkey) = match (parts.next(), parts.next(), parts.next()) {
+                (Some(d), Some(c), Some(r)) =&gt; (d, c, r),
+                _ =&gt; return Err(LensError::Transport(format!("malformed at-uri: {at_uri}"))),
+            };
+            let url = format!(
+                "{PDS}/xrpc/com.atproto.repo.getRecord?repo={did}&amp;collection={coll}&amp;rkey={rkey}"
+            );
+            let body: serde_json::Value = self.http.get(&amp;url).send().await
+                .map_err(|e| LensError::Transport(format!("{e}")))?
+                .json().await
+                .map_err(|e| LensError::Transport(format!("{e}")))?;
+            let blob = body.get("value").and_then(|v| v.get("blob")).cloned()
+                .ok_or_else(|| LensError::LexiconParse("no blob".into()))?;
+            serde_json::from_value(blob)
+                .map_err(|e| LensError::LexiconParse(e.to_string()))
+        })
+    }
+}
 
 #[tokio::main]
 async fn main() -&gt; anyhow::Result&lt;()&gt; {
-    let client = ReqwestPdsClient::with_service_url("https://bsky.social");
+    let client   = ReqwestPdsClient::with_service_url(PDS);
     let resolver = PdsResolver::new(client);
-    let loader = FilesystemSchemaLoader::new("./schema-cache")?;
+    let loader   = PdsSchemaLoader::new();
     let protocol = Protocol::default();
 
-    let lens_uri = AtUri::parse(
-        "at://did:plc:idiolect.dev/dev.panproto.schema.lens/example",
-    )?;
-    let source_record: serde_json::Value = serde_json::from_str(SAMPLE)?;
+    let lens_uri = AtUri::parse(LENS)?;
+    let source_record: serde_json::Value =
+        serde_json::from_str(r#"{ "text": "hello, world" }"#)?;
 
-    let out = apply_lens(
-        &amp;resolver,
-        &amp;loader,
-        &amp;protocol,
-        ApplyLensInput {
-            lens_uri,
-            source_record,
-            source_root_vertex: None,
-        },
-    )
-    .await?;
+    let out = apply_lens(&amp;resolver, &amp;loader, &amp;protocol, ApplyLensInput {
+        lens_uri, source_record, source_root_vertex: None,
+    }).await?;
 
     println!("{}", serde_json::to_string_pretty(&amp;out.target_record)?);
     Ok(())
+}</code></pre></pre>
+<p>Run it:</p>
+<pre><code class="language-bash">cargo run
+</code></pre>
+<pre><code class="language-text">{
+  "text": "hello, world"
 }
-
-const SAMPLE: &amp;str = r#"{ "title": "hello", "body": "world" }"#;</code></pre></pre>
+</code></pre>
+<p>The lens referenced above is real. The project DID has the
+three records the runtime needs to resolve it published on its
+PDS:</p>
+<ul>
+<li><code>dev.panproto.schema.schema/tutorial-post-body-v1</code> — a
+single-field "post:body" record with a string <code>text</code> child.</li>
+<li><code>dev.panproto.schema.schema/tutorial-post-body-v2</code> — the same
+shape with the kind relabelled to <code>text</code>.</li>
+<li><code>dev.panproto.schema.lens/tutorial-rename-sort-string-to-text</code>
+— a single-step <code>rename_sort</code> chain. The optic class is
+<code>Iso</code>; round-trip is byte-equal.</li>
+</ul>
 <p><code>apply_lens</code> is one async call. It does five things in order:</p>
 <ol>
 <li>Resolve the lens record from the PDS via <code>PdsResolver</code>.</li>
@@ -737,7 +818,7 @@ let rec = Recommendation {
     conditions: vec![/* condition variants */],
     preconditions: vec![],
     lens_path: vec![AtUri::parse(
-        "at://did:plc:idiolect.dev/dev.panproto.schema.lens/example",
+        "at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.lens/example",
     )?],
     caveats: vec![],
     required_verifications: vec![/* lens-property variants */],

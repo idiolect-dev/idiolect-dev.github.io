@@ -204,41 +204,98 @@ path, when working inside the workspace):</p>
 idiolect-lens = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0", features = ["pds-reqwest"] }
 tokio = { version = "1", features = ["full"] }
 </code></pre>
-<pre><pre class="playground"><code class="language-rust">use idiolect_lens::{
-    apply_lens, ApplyLensInput, AtUri, FilesystemSchemaLoader, PdsResolver,
-    ReqwestPdsClient,
+<p>A <code>SchemaLoader</code> impl that fetches <code>dev.panproto.schema.schema</code>
+records from a PDS does not ship in v0.8.0 (the shipped
+<code>FilesystemSchemaLoader</code> reads ATProto lexicons; the records
+this tutorial uses carry serialized panproto <code>Schema</code> graphs).
+The contract is small, so we write one in the program. Add
+<code>reqwest</code> to the dependencies:</p>
+<pre><code class="language-toml">reqwest = { version = "0.12", features = ["json"] }
+</code></pre>
+<p>Then <code>src/main.rs</code>:</p>
+<pre><pre class="playground"><code class="language-rust">use std::pin::Pin;
+
+use idiolect_lens::{
+    apply_lens, ApplyLensInput, AtUri, LensError, PdsResolver,
+    ReqwestPdsClient, SchemaLoader,
 };
-use panproto_schema::Protocol;
+use panproto_schema::{Protocol, Schema};
+
+const PDS: &amp;str = "https://jellybaby.us-east.host.bsky.network";
+const LENS: &amp;str = "at://did:plc:wdl4nnvxxdy4mc5vddxlm6f3/dev.panproto.schema.lens/tutorial-rename-sort-string-to-text";
+
+struct PdsSchemaLoader { http: reqwest::Client }
+
+impl PdsSchemaLoader {
+    fn new() -&gt; Self { Self { http: reqwest::Client::new() } }
+}
+
+impl SchemaLoader for PdsSchemaLoader {
+    fn load&lt;'a&gt;(
+        &amp;'a self,
+        at_uri: &amp;'a str,
+    ) -&gt; Pin&lt;Box&lt;dyn std::future::Future&lt;Output = Result&lt;Schema, LensError&gt;&gt; + Send + 'a&gt;&gt; {
+        Box::pin(async move {
+            let rest = at_uri.strip_prefix("at://").ok_or_else(|| {
+                LensError::Transport(format!("not an at-uri: {at_uri}"))
+            })?;
+            let mut parts = rest.splitn(3, '/');
+            let (did, coll, rkey) = match (parts.next(), parts.next(), parts.next()) {
+                (Some(d), Some(c), Some(r)) =&gt; (d, c, r),
+                _ =&gt; return Err(LensError::Transport(format!("malformed at-uri: {at_uri}"))),
+            };
+            let url = format!(
+                "{PDS}/xrpc/com.atproto.repo.getRecord?repo={did}&amp;collection={coll}&amp;rkey={rkey}"
+            );
+            let body: serde_json::Value = self.http.get(&amp;url).send().await
+                .map_err(|e| LensError::Transport(format!("{e}")))?
+                .json().await
+                .map_err(|e| LensError::Transport(format!("{e}")))?;
+            let blob = body.get("value").and_then(|v| v.get("blob")).cloned()
+                .ok_or_else(|| LensError::LexiconParse("no blob".into()))?;
+            serde_json::from_value(blob)
+                .map_err(|e| LensError::LexiconParse(e.to_string()))
+        })
+    }
+}
 
 #[tokio::main]
 async fn main() -&gt; anyhow::Result&lt;()&gt; {
-    let client = ReqwestPdsClient::with_service_url("https://bsky.social");
+    let client   = ReqwestPdsClient::with_service_url(PDS);
     let resolver = PdsResolver::new(client);
-    let loader = FilesystemSchemaLoader::new("./schema-cache")?;
+    let loader   = PdsSchemaLoader::new();
     let protocol = Protocol::default();
 
-    let lens_uri = AtUri::parse(
-        "at://did:plc:idiolect.dev/dev.panproto.schema.lens/example",
-    )?;
-    let source_record: serde_json::Value = serde_json::from_str(SAMPLE)?;
+    let lens_uri = AtUri::parse(LENS)?;
+    let source_record: serde_json::Value =
+        serde_json::from_str(r#"{ "text": "hello, world" }"#)?;
 
-    let out = apply_lens(
-        &amp;resolver,
-        &amp;loader,
-        &amp;protocol,
-        ApplyLensInput {
-            lens_uri,
-            source_record,
-            source_root_vertex: None,
-        },
-    )
-    .await?;
+    let out = apply_lens(&amp;resolver, &amp;loader, &amp;protocol, ApplyLensInput {
+        lens_uri, source_record, source_root_vertex: None,
+    }).await?;
 
     println!("{}", serde_json::to_string_pretty(&amp;out.target_record)?);
     Ok(())
+}</code></pre></pre>
+<p>Run it:</p>
+<pre><code class="language-bash">cargo run
+</code></pre>
+<pre><code class="language-text">{
+  "text": "hello, world"
 }
-
-const SAMPLE: &amp;str = r#"{ "title": "hello", "body": "world" }"#;</code></pre></pre>
+</code></pre>
+<p>The lens referenced above is real. The project DID has the
+three records the runtime needs to resolve it published on its
+PDS:</p>
+<ul>
+<li><code>dev.panproto.schema.schema/tutorial-post-body-v1</code> — a
+single-field "post:body" record with a string <code>text</code> child.</li>
+<li><code>dev.panproto.schema.schema/tutorial-post-body-v2</code> — the same
+shape with the kind relabelled to <code>text</code>.</li>
+<li><code>dev.panproto.schema.lens/tutorial-rename-sort-string-to-text</code>
+— a single-step <code>rename_sort</code> chain. The optic class is
+<code>Iso</code>; round-trip is byte-equal.</li>
+</ul>
 <p><code>apply_lens</code> is one async call. It does five things in order:</p>
 <ol>
 <li>Resolve the lens record from the PDS via <code>PdsResolver</code>.</li>

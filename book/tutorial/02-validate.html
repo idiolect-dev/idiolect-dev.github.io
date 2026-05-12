@@ -196,15 +196,22 @@ cargo add idiolect-records anyhow serde_json tokio --features tokio/macros,tokio
 exports one Rust type per record kind plus the
 <a href="../reference/crates/idiolect-records.html"><code>Record</code></a> trait.</p>
 <h2 id="decode-a-record-by-nsid"><a class="header" href="#decode-a-record-by-nsid">Decode a record by NSID</a></h2>
-<p>Save the JSON from chapter 1 to <code>dialect.json</code>. Then:</p>
-<pre><pre class="playground"><code class="language-rust">use idiolect_records::{decode_record, AnyRecord, Dialect, Nsid, Record};
+<p>The crate ships minimally-valid fixtures for every record kind
+under <code>idiolect_records::examples</code>. They are real records: same
+shape the codec emits for a wire-format publish, same
+constraints, same <code>Record</code> impl. Use them to exercise the
+decode path without depending on what's on the network.</p>
+<p>In <code>src/main.rs</code>:</p>
+<pre><pre class="playground"><code class="language-rust">use idiolect_records::{decode_record, examples, AnyRecord, Dialect, Record};
 
 fn main() -&gt; anyhow::Result&lt;()&gt; {
-    let bytes = std::fs::read("dialect.json")?;
-    let value: serde_json::Value = serde_json::from_slice(&amp;bytes)?;
+    // The fixture is a typed value; serialise it back to JSON
+    // and decode through the dispatcher to exercise the same
+    // path a firehose handler would take.
+    let dialect = examples::dialect();
+    let value = serde_json::to_value(&amp;dialect)?;
 
-    let nsid = Dialect::nsid();
-    let rec = decode_record(&amp;nsid, value)?;
+    let rec = decode_record(&amp;Dialect::nsid(), value)?;
 
     match rec {
         AnyRecord::Dialect(d) =&gt; println!(
@@ -213,14 +220,29 @@ fn main() -&gt; anyhow::Result&lt;()&gt; {
             d.idiolects.as_ref().map_or(0, |v| v.len()),
             d.preferred_lenses.as_ref().map_or(0, |v| v.len()),
         ),
-        other =&gt; anyhow::bail!("expected a dialect, got {}", other.nsid_str()),
+        other =&gt; anyhow::bail!(
+            "expected a dialect, got {}",
+            other.nsid_str(),
+        ),
     }
     Ok(())
 }</code></pre></pre>
-<p><code>decode_record</code> is the dispatch primitive: it takes an NSID and a
-JSON value, looks up the matching <code>Record</code> impl, and hands back an
-<code>AnyRecord</code>. If the JSON does not match the schema, it returns an
-error pointing at the first invalid field.</p>
+<p>Run it:</p>
+<pre><code class="language-bash">cargo run
+</code></pre>
+<pre><code class="language-text">ud-en-2026: 0 idiolects, 0 preferred lenses
+</code></pre>
+<p><code>decode_record</code> is the dispatch primitive: it takes an NSID and
+a JSON value, looks up the matching <code>Record</code> impl, and hands
+back an <code>AnyRecord</code>. If the JSON does not match the schema, it
+returns an error pointing at the first invalid field.</p>
+<p>The same path works for a JSON file fetched from a PDS, once
+some party publishes a <code>dev.idiolect.dialect</code> record on the
+network: read the bytes from disk (or from the
+<code>com.atproto.repo.getRecord</code> body), parse as
+<code>serde_json::Value</code>, hand to <code>decode_record</code>. The fixture
+shortcut is just a way to make this chapter not depend on
+network state.</p>
 <h2 id="validation-is-structural-not-just-type-shaped"><a class="header" href="#validation-is-structural-not-just-type-shaped">Validation is structural, not just type-shaped</a></h2>
 <p>The generated codecs validate every constraint declared in the
 lexicon, not just the field types:</p>
@@ -261,9 +283,11 @@ business logic touches the value.</p>
 <tr><td><code>Vocab</code></td><td><code>vocab</code></td><td><code>dev.idiolect.vocab</code></td></tr>
 </tbody></table>
 </div>
-<p>For each record kind a fixture is exported under
-<code>idiolect_records::examples::*</code>. Fixtures are minimally-valid: they
-satisfy every required field and pass the codec round-trip.</p>
+<p>Fixtures are exported under <code>idiolect_records::examples::*</code> for
+every record kind except the four deliberation lexicons, which
+are recent additions still awaiting bundled fixtures. The
+shipped fixtures are minimally-valid: every required field is
+present and the codec round-trip is a no-op.</p>
 <h2 id="reusable-trait-surface"><a class="header" href="#reusable-trait-surface">Reusable trait surface</a></h2>
 <p>Anything you write that consumes records can be generic over the
 <code>Record</code> trait:</p>
