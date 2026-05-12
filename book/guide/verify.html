@@ -254,16 +254,20 @@ println!("published: {}", resp.uri);
 and forwards to the configured <code>PdsWriter</code>. The signing path
 goes through <code>SigningPdsWriter</code> plus a <code>DpopProver</code> from the
 <code>pds-reqwest</code> and (optionally) <code>dpop-p256</code> features.</p>
-<h2 id="planned-functionality"><a class="header" href="#planned-functionality">Planned functionality</a></h2>
-<ul>
-<li>An <code>idiolect verify &lt;kind&gt;</code> CLI subcommand that runs any
-shipped <code>VerificationRunner</code> and publishes the result via
-<code>RecordPublisher</code>. Not shipped at v0.8.0; runners are
-library-only.</li>
-<li>A bundled corpus loader. Each shipped runner takes whatever
-target shape it needs; a unified corpus-loading API across
-runners is plausible future work, not shipped at v0.8.0.</li>
-</ul>
+<h2 id="cli-surface"><a class="header" href="#cli-surface">CLI surface</a></h2>
+<p>The <code>idiolect verify &lt;kind&gt;</code> subcommand wraps each shipped
+runner against a live PDS via <code>PdsResolver</code> + <code>PdsSchemaLoader</code>:</p>
+<pre><code class="language-text">idiolect verify roundtrip-test  --lens AT_URI [--corpus PATH]
+idiolect verify property-test   --lens AT_URI  --corpus PATH  [--budget N]
+idiolect verify static-check    --lens AT_URI
+idiolect verify coercion-law    --lens AT_URI  --vcs-url URL  --standard STD
+</code></pre>
+<p>Corpus files may be JSON arrays or JSON Lines. The
+<code>property-test</code> generator cycles through the corpus by index;
+<code>--budget</code> controls case count. The CLI prints the typed
+<code>Verification</code> record as JSON and exits non-zero on <code>Falsified</code>
+or <code>Inconclusive</code>. Publishing the result is a separate step;
+pipe to <code>idiolect publish verification --record -</code>.</p>
 
                     </main>
 

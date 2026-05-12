@@ -525,7 +525,7 @@ laws covered in <a href="tutorial/../concepts/lens-laws.html">Lens semantics and
 <p><code>idiolect-lens</code> is <code>publish = false</code>; depend on it via git (or a
 path, when working inside the workspace):</p>
 <pre><code class="language-toml"># in Cargo.toml
-idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0", features = ["pds-reqwest"] }
+idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.10.0", features = ["pds-reqwest"] }
 panproto-schema = { git = "https://github.com/panproto/panproto.git", tag = "v0.39.0" }
 tokio           = { version = "1", features = ["full"] }
 </code></pre>
@@ -656,9 +656,9 @@ checker against any <code>CoerceType</code> step.</li>
 crate is library-only; runners are invoked programmatically.</p>
 <h2 id="wire-up-a-runner"><a class="header" href="#wire-up-a-runner">Wire up a runner</a></h2>
 <pre><code class="language-toml"># in Cargo.toml
-idiolect-verify = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0" }
-idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0", features = ["pds-reqwest"] }
-idiolect-records = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0" }
+idiolect-verify = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.10.0" }
+idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.10.0", features = ["pds-reqwest"] }
+idiolect-records = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.10.0" }
 panproto-schema  = { git = "https://github.com/panproto/panproto.git", tag = "v0.47.0" }
 tokio            = { version = "1", features = ["full"] }
 </code></pre>
@@ -748,15 +748,22 @@ shape downstream consumers use to decide whether to invoke a
 lens: query the verifier registry, accept the verifications they
 trust, reject the rest, and proceed only if the surviving set
 covers the properties their use case requires.</p>
-<h2 id="planned-functionality"><a class="header" href="#planned-functionality">Planned functionality</a></h2>
-<p>A future <code>idiolect verify &lt;kind&gt;</code> CLI subcommand would let
-operators run a runner without writing Rust. It is not shipped
-yet; runners are library-only. The four shipped runner kinds
-(<code>roundtrip-test</code>, <code>property-test</code>, <code>static-check</code>,
-<code>coercion-law</code>) cover the shape; additional kinds in the
-lexicon's <code>verification.kind</code> enum (<code>formal-proof</code>,
-<code>conformance-test</code>, <code>convergence-preserving</code>) are recognised
-slugs awaiting community-contributed runners.</p>
+<h2 id="from-the-cli"><a class="header" href="#from-the-cli">From the CLI</a></h2>
+<p>The library code above is also exposed as a CLI subcommand for
+quick operator runs. All four shipped runner kinds are wrapped:</p>
+<pre><code class="language-bash">idiolect verify roundtrip-test --lens at://.../tutorial-rename-sort-string-to-text
+idiolect verify property-test  --lens at://.../tutorial-rename-sort-string-to-text --corpus ./samples.jsonl
+idiolect verify static-check   --lens at://.../tutorial-rename-sort-string-to-text
+idiolect verify coercion-law   --lens at://... --vcs-url https://vcs.example --standard atproto-lexicon
+</code></pre>
+<p>The CLI prints the typed <code>Verification</code> record as JSON and
+exits non-zero on <code>Falsified</code> or <code>Inconclusive</code>, which makes it
+suitable for CI gates.</p>
+<p>Additional kinds in the lexicon's <code>verification.kind</code> enum
+(<code>formal-proof</code>, <code>conformance-test</code>, <code>convergence-preserving</code>)
+are recognised slugs awaiting community-contributed runners;
+authoring one is the
+<a href="tutorial/../guide/verify.html">Author a verification runner</a> loop.</p>
 <p>The next chapter publishes a <code>dev.idiolect.recommendation</code> that
 endorses a lens path under specific applicability conditions.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
@@ -780,7 +787,7 @@ occurredAt       : datetime
 the combinator set defined inside
 <a href="tutorial/../reference/lexicons/recommendation.html"><code>dev.idiolect.recommendation</code></a>.</p>
 <h2 id="author-the-record"><a class="header" href="#author-the-record">Author the record</a></h2>
-<pre><code class="language-toml">idiolect-records = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0" }
+<pre><code class="language-toml">idiolect-records = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.10.0" }
 reqwest          = { version = "0.12", features = ["json"] }
 serde            = { version = "1", features = ["derive"] }
 tokio            = { version = "1", features = ["full"] }
@@ -956,19 +963,24 @@ machine-checkable verifications attached (chapter 4 produced
 <code>Holds</code> for the <code>roundtrip-test</code> property). A consumer querying
 the orchestrator can fetch both, evaluate the conditions, and
 decide whether to invoke.</p>
-<h2 id="planned-functionality-1"><a class="header" href="#planned-functionality-1">Planned functionality</a></h2>
-<p>Two related CLI subcommands are planned but not shipped:</p>
-<ul>
-<li><code>idiolect oauth login --handle &lt;HANDLE&gt;</code> would walk the OAuth
-dance via <code>atrium-oauth-client</code> and persist the resulting
-session through an <code>OAuthTokenStore</code>. Today the dance is
-programmatic; the app-password path above is the easier
-alternative.</li>
-<li><code>idiolect publish &lt;kind&gt; --record &lt;path&gt;</code> would load a JSON
-file and publish it under the active session. Today publishing
-goes through <code>RecordPublisher::create</code> (or the hand-rolled
-client above) from Rust.</li>
-</ul>
+<h2 id="from-the-cli-1"><a class="header" href="#from-the-cli-1">From the CLI</a></h2>
+<p>The CLI ships both pieces of this flow:</p>
+<pre><code class="language-bash"># 1. Authenticate (app password; legacy Bearer mode).
+idiolect oauth login --handle yourhandle.bsky.social
+# password from --app-password or env
+
+# 2. Publish a record from a JSON file.
+idiolect publish recommendation --record ./tutorial-rename-sort.json
+</code></pre>
+<p><code>idiolect oauth login</code> exchanges credentials via
+<code>com.atproto.server.createSession</code> and stores the resulting
+session as a JSON file. <code>idiolect publish &lt;kind&gt;</code> validates the
+JSON against the typed <code>Record</code> impl, splices in <code>$type</code>, and
+POSTs <code>com.atproto.repo.createRecord</code> under the stored session.</p>
+<p>ATProto is moving off app passwords toward OAuth + DPoP; the
+next-iteration CLI wraps <code>atrium-oauth</code>'s browser-handoff dance
+and persists the resulting DPoP-bound session through the same
+<code>OAuthTokenStore</code>. The publish path is unchanged.</p>
 <p>That is the full loop. Where to go next:</p>
 <ul>
 <li><a href="tutorial/../guide/orchestrator.html">Run the orchestrator HTTP API</a>
@@ -1263,12 +1275,14 @@ is expected and useful; consumers can require quorum among <span class="katex"><
 of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> trusted observers before treating an observation as
 authoritative.</li>
 </ul>
-<h2 id="what-is-not-currently-shipped"><a class="header" href="#what-is-not-currently-shipped">What is not currently shipped</a></h2>
-<p>A <code>deliberation-tally</code> method that produces
-<code>dev.idiolect.deliberationOutcome</code> records is not in the
-shipped method set. Communities that need a Polis-style tally
-of a deliberation author the method against the same
-<code>ObservationMethod</code> trait or build it as a downstream daemon.</p>
+<h2 id="note-on-deliberation-tally"><a class="header" href="#note-on-deliberation-tally">Note on <code>deliberation-tally</code></a></h2>
+<p>The shipped <code>deliberation-tally</code> method emits its
+per-statement per-stance vote counts inside an
+<code>observation.output</code> blob, not as a typed
+<code>dev.idiolect.deliberationOutcome</code> record. The data shape is
+the same; the surface differs. A variant that publishes the
+typed outcome record directly is a small refactor on top of
+the existing <code>DeliberationTallyMethod</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="author-a-verification-runner"><a class="header" href="#author-a-verification-runner">Author a verification runner</a></h1>
 <p>A verification runner is a function that takes a lens (and a
@@ -1343,16 +1357,20 @@ println!("published: {}", resp.uri);
 and forwards to the configured <code>PdsWriter</code>. The signing path
 goes through <code>SigningPdsWriter</code> plus a <code>DpopProver</code> from the
 <code>pds-reqwest</code> and (optionally) <code>dpop-p256</code> features.</p>
-<h2 id="planned-functionality-2"><a class="header" href="#planned-functionality-2">Planned functionality</a></h2>
-<ul>
-<li>An <code>idiolect verify &lt;kind&gt;</code> CLI subcommand that runs any
-shipped <code>VerificationRunner</code> and publishes the result via
-<code>RecordPublisher</code>. Not shipped at v0.8.0; runners are
-library-only.</li>
-<li>A bundled corpus loader. Each shipped runner takes whatever
-target shape it needs; a unified corpus-loading API across
-runners is plausible future work, not shipped at v0.8.0.</li>
-</ul>
+<h2 id="cli-surface"><a class="header" href="#cli-surface">CLI surface</a></h2>
+<p>The <code>idiolect verify &lt;kind&gt;</code> subcommand wraps each shipped
+runner against a live PDS via <code>PdsResolver</code> + <code>PdsSchemaLoader</code>:</p>
+<pre><code class="language-text">idiolect verify roundtrip-test  --lens AT_URI [--corpus PATH]
+idiolect verify property-test   --lens AT_URI  --corpus PATH  [--budget N]
+idiolect verify static-check    --lens AT_URI
+idiolect verify coercion-law    --lens AT_URI  --vcs-url URL  --standard STD
+</code></pre>
+<p>Corpus files may be JSON arrays or JSON Lines. The
+<code>property-test</code> generator cycles through the corpus by index;
+<code>--budget</code> controls case count. The CLI prints the typed
+<code>Verification</code> record as JSON and exits non-zero on <code>Falsified</code>
+or <code>Inconclusive</code>. Publishing the result is a separate step;
+pipe to <code>idiolect publish verification --record -</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="publish-and-resolve-a-lens"><a class="header" href="#publish-and-resolve-a-lens">Publish and resolve a lens</a></h1>
 <p>A lens on the network is two artifacts:</p>
@@ -1579,12 +1597,21 @@ reviewer.</li>
 </ol>
 <p>Each step is mechanical and gated; the policy is what makes
 migrations reviewable.</p>
-<h2 id="what-is-not-in-this-crate"><a class="header" href="#what-is-not-in-this-crate">What is not in this crate</a></h2>
-<p>A streaming batch CLI that takes a directory of records and
-writes a migrated directory is not currently shipped. Callers
-that want one wire <code>migrate_record</code> into their own loop. The
-shape is small enough that a per-deployment script is usually
-the right answer.</p>
+<h2 id="batch-migration"><a class="header" href="#batch-migration">Batch migration</a></h2>
+<p>The crate ships an <code>idiolect-migrate</code> binary (behind the <code>cli</code>
+feature) that walks a directory of JSON records and writes a
+migrated directory:</p>
+<pre><code class="language-bash">cargo install --path crates/idiolect-migrate --features cli
+idiolect-migrate \
+    --lens   at://did:plc:.../dev.panproto.schema.lens/example \
+    --in     ./records-v1/ \
+    --out    ./records-v2/ \
+   [--pds-url URL]
+</code></pre>
+<p>Records stream one at a time so the working set stays bounded
+even on multi-million-record corpora. Failed migrations log to
+stderr and the binary's exit code reflects the worst case (0 if
+every file succeeded, 1 if any failed).</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="configure-oauth-sessions"><a class="header" href="#configure-oauth-sessions">Configure OAuth sessions</a></h1>
 <p><a href="guide/../reference/crates/idiolect-oauth.html"><code>idiolect-oauth</code></a>
@@ -1656,19 +1683,53 @@ and signs every PDS write through <code>SigningPdsWriter</code>.</p>
 Both shipped persistent stores
 (<code>FilesystemOAuthTokenStore</code>, <code>SqliteOAuthTokenStore</code>) do; if
 you write a custom store, do the same.</p>
-<h2 id="planned-functionality-3"><a class="header" href="#planned-functionality-3">Planned functionality</a></h2>
-<ul>
-<li>An <code>idiolect oauth login --handle &lt;HANDLE&gt;</code> CLI subcommand
-driving the OAuth dance via <code>atrium-oauth-client</code> and
-persisting the resulting session through the configured
-<code>OAuthTokenStore</code>. Not shipped at v0.8.0; the dance is
-programmatic.</li>
-<li>A <code>refresh_if_needed(store, did)</code> helper that wraps the
-refresh-on-expiry pattern. Not shipped at v0.8.0; the
-primitives (<code>is_expired</code>, <code>needs_refresh</code>,
-<code>refresh_expired</code>) are exposed and applications drive the
-refresh call themselves.</li>
-</ul>
+<h2 id="idiolect-oauth-login-transitional"><a class="header" href="#idiolect-oauth-login-transitional"><code>idiolect oauth login</code> (transitional)</a></h2>
+<p>The <code>idiolect</code> CLI ships an <code>oauth login</code> subcommand that
+exchanges a handle + app password for an access JWT via
+<code>com.atproto.server.createSession</code> and persists the resulting
+session as a JSON file under
+<code>$IDIOLECT_SESSION_DIR</code> (default
+<code>~/.config/idiolect/sessions/</code>):</p>
+<pre><code class="language-bash">idiolect oauth login --handle yourhandle.bsky.social --pds-url https://bsky.social
+# password from --app-password or ATPROTO_APP_PASSWORD / ATPROTO_PASSWORD env
+idiolect oauth list
+idiolect oauth logout --did did:plc:...
+</code></pre>
+<p>This path uses <strong>app passwords in legacy Bearer mode</strong>.
+ATProto is moving off app passwords in favour of OAuth +
+DPoP; the next-iteration login UX wraps <code>atrium-oauth</code>'s
+browser-handoff dance and persists the resulting DPoP-bound
+session through the same <code>OAuthTokenStore</code>. The <code>OAuthSession</code>
+shape already carries the DPoP private key field; switching
+flows is a CLI substitution, not a session-shape change.</p>
+<h2 id="refresh_if_needed"><a class="header" href="#refresh_if_needed"><code>refresh_if_needed</code></a></h2>
+<p><code>idiolect_oauth::refresh_if_needed(&amp;store, &amp;refresher, did)</code>
+loads a session, decides whether to refresh based on the
+current wall clock plus a 60-second buffer, drives the caller-
+supplied <code>Refresher::refresh</code> if so, persists the result, and
+returns the live session. Callers who want to drive the
+decision themselves read <code>OAuthSession::needs_refresh</code> and
+<code>OAuthSession::is_expired</code> directly.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use idiolect_oauth::{refresh_if_needed, Refresher, RefreshError, OAuthSession};
+
+struct MyRefresher { /* http client, auth-server URL, ... */ }
+
+impl Refresher for MyRefresher {
+    async fn refresh(&amp;self, session: &amp;OAuthSession) -&gt; Result&lt;OAuthSession, RefreshError&gt; {
+        // POST refresh_token to the auth-server's token_endpoint.
+        // Return a fresh OAuthSession with new access_jwt / expires_at.
+        todo!()
+    }
+}
+
+let fresh = refresh_if_needed(&amp;store, &amp;MyRefresher { /* ... */ }, "did:plc:...").await?;
+<span class="boring">}</span></code></pre></pre>
+<p>The trait is narrow on purpose: the refresh HTTP call lives in
+whatever OAuth client the application uses (atrium-oauth, a
+hand-rolled reqwest call, an in-memory fake for tests).
+<code>idiolect-oauth</code> owns the storage and timing decision around it.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="run-codegen"><a class="header" href="#run-codegen">Run codegen</a></h1>
 <p>Codegen keeps the lexicons (under <code>lexicons/dev/idiolect/</code>) the
@@ -6107,14 +6168,17 @@ form.</p>
 idiolect fetch &lt;at-uri&gt;
 idiolect orchestrator &lt;subcommand&gt;
 idiolect encounter record [...]
+idiolect oauth login | list | logout [...]
+idiolect publish &lt;kind&gt; --record &lt;path&gt; [...]
+idiolect verify &lt;kind&gt; [...]
 idiolect version          # also accepts --version, -V
 idiolect help [&lt;sub&gt;]     # also accepts --help, -h
 </code></pre>
-<p>The two hand-written subcommands (<code>resolve</code>, <code>fetch</code>) live in
-<code>main.rs</code> and call directly into <code>idiolect-identity</code> and
-<code>idiolect-lens</code>. The <code>orchestrator</code> subcommand is generated
-from <code>orchestrator-spec/queries.json</code> and routes its calls to
-the orchestrator's HTTP API.</p>
+<p>The hand-written subcommands (<code>resolve</code>, <code>fetch</code>, <code>oauth</code>,
+<code>publish</code>, <code>verify</code>, <code>encounter</code>) live in their own modules
+under <code>crates/idiolect-cli/src/</code>. The <code>orchestrator</code> subcommand
+is generated from <code>orchestrator-spec/queries.json</code> and routes
+its calls to the orchestrator's HTTP API.</p>
 <h2 id="resolve"><a class="header" href="#resolve"><code>resolve</code></a></h2>
 <pre><code class="language-text">idiolect resolve &lt;did&gt;
 </code></pre>
@@ -6145,6 +6209,49 @@ the live list):</p>
 <p>Adding a query to the spec extends both the HTTP and the CLI
 surface; see <a href="reference/../guide/codegen.html">Run codegen</a>. The CLI's
 top-level <code>--url</code> flag overrides the default orchestrator base.</p>
+<h2 id="oauth"><a class="header" href="#oauth"><code>oauth</code></a></h2>
+<p>Authenticated PDS sessions for <code>idiolect publish</code> and downstream
+record-writing flows.</p>
+<pre><code class="language-text">idiolect oauth login  --handle HANDLE --app-password PASSWORD [--pds-url URL]
+idiolect oauth list
+idiolect oauth logout --did DID
+</code></pre>
+<p><code>login</code> exchanges <code>(handle, app-password)</code> for an access JWT via
+<code>com.atproto.server.createSession</code> and persists <code>{did, handle, pds_url, access_jwt, refresh_jwt}</code> as one JSON file per DID
+under <code>$IDIOLECT_SESSION_DIR</code> (default
+<code>~/.config/idiolect/sessions/</code>). <code>--app-password</code> may be passed
+as a flag or via <code>ATPROTO_APP_PASSWORD</code> / <code>ATPROTO_PASSWORD</code>
+env vars to avoid leaking into shell history.</p>
+<p><code>list</code> enumerates every stored session as a JSON array of
+<code>{did, handle, pds_url}</code> triples.</p>
+<p><code>logout</code> deletes the session file for <code>--did</code>; a missing file is
+not an error.</p>
+<h2 id="publish-kind"><a class="header" href="#publish-kind"><code>publish &lt;kind&gt;</code></a></h2>
+<pre><code class="language-text">idiolect publish &lt;kind&gt; --record &lt;path&gt; [--rkey RKEY] [--did DID]
+</code></pre>
+<p>Loads a JSON file, validates it against the typed <code>Record</code> impl
+for <code>&lt;kind&gt;</code> (which can be either the unqualified kind like
+<code>recommendation</code> or the fully-qualified NSID like
+<code>dev.idiolect.recommendation</code>), splices in a <code>$type</code>
+discriminator, and POSTs <code>com.atproto.repo.createRecord</code> using
+the stored session's bearer auth.</p>
+<p>When <code>--did</code> is omitted the CLI picks the first stored session.
+When <code>--rkey</code> is omitted the CLI generates a TID-shaped key.</p>
+<p>Prints <code>{uri, cid}</code> of the published record on success.</p>
+<h2 id="verify-kind"><a class="header" href="#verify-kind"><code>verify &lt;kind&gt;</code></a></h2>
+<pre><code class="language-text">idiolect verify roundtrip-test  --lens AT_URI [--corpus PATH]   [--pds-url URL] [--verifier-did DID]
+idiolect verify property-test   --lens AT_URI  --corpus PATH    [--budget N]    [--pds-url URL] [--verifier-did DID]
+idiolect verify static-check    --lens AT_URI                   [--pds-url URL] [--verifier-did DID]
+idiolect verify coercion-law    --lens AT_URI  --vcs-url URL    --standard STD  [--version V] [--violation-threshold N] [--verifier-did DID]
+</code></pre>
+<p>Runs the shipped <code>VerificationRunner</code> for the named kind against
+the live PDS, prints the typed <code>Verification</code> record as JSON,
+and exits non-zero on <code>Falsified</code> / <code>Inconclusive</code> so CI surfaces
+failures.</p>
+<p>The corpus file (for <code>roundtrip-test</code> and <code>property-test</code>) may
+be a JSON array or JSON Lines. <code>property-test</code>'s generator
+cycles through the corpus by index, so <code>--budget</code> controls how
+many cases run.</p>
 <h2 id="encounter-record"><a class="header" href="#encounter-record"><code>encounter record</code></a></h2>
 <pre><code class="language-text">idiolect encounter record \
   --lens &lt;AT-URI&gt; --source-schema &lt;AT-URI&gt; [--target-schema &lt;AT-URI&gt;] \
@@ -6158,25 +6265,14 @@ Errors go to stderr:</p>
 <pre><code class="language-text">error: &lt;message&gt;
 </code></pre>
 <p>Pipe stdout to <code>jq</code> for further processing.</p>
-<h2 id="planned-subcommands"><a class="header" href="#planned-subcommands">Planned subcommands</a></h2>
-<p>A few operations the book references on the library side are
-planned for the CLI but not shipped at v0.8.0:</p>
-<ul>
-<li><code>idiolect oauth login --handle &lt;HANDLE&gt;</code> — would walk the
-OAuth dance via <code>atrium-oauth-client</code> and persist the
-resulting session through <code>idiolect_oauth::OAuthTokenStore</code>.
-Today the dance is driven programmatically.</li>
-<li><code>idiolect verify &lt;kind&gt; [...]</code> — would run any shipped
-<code>VerificationRunner</code> from the command line and publish the
-result. Today runners are library-only.</li>
-<li><code>idiolect publish &lt;kind&gt; --record &lt;path&gt;</code> — would load a
-typed record from JSON and publish it under the active
-session. Today publishing goes through
-<code>idiolect_lens::RecordPublisher</code> from Rust.</li>
-</ul>
-<p>These gaps are expected pre-1.0: the library surface is the
-stable contract, and CLI subcommands accumulate as the
-hyperdeclarative spec grows.</p>
+<h2 id="roadmap"><a class="header" href="#roadmap">Roadmap</a></h2>
+<p>The shipped login path uses app passwords in legacy Bearer
+mode (<code>com.atproto.server.createSession</code> plus
+<code>Authorization: Bearer &lt;token&gt;</code>). The full OAuth + DPoP flow
+via <code>atrium-oauth</code> (browser handoff, PKCE, DPoP-bound tokens)
+is the next-iteration login UX; the library <code>OAuthSession</code>
+shape and <code>OAuthTokenStore</code> trait are already in place to
+receive whatever the dance returns.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="http-query-api"><a class="header" href="#http-query-api">HTTP query API</a></h1>
 <p>Read-only endpoints exposed by <code>idiolect-orchestrator</code> under the

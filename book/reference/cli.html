@@ -188,14 +188,17 @@
 idiolect fetch &lt;at-uri&gt;
 idiolect orchestrator &lt;subcommand&gt;
 idiolect encounter record [...]
+idiolect oauth login | list | logout [...]
+idiolect publish &lt;kind&gt; --record &lt;path&gt; [...]
+idiolect verify &lt;kind&gt; [...]
 idiolect version          # also accepts --version, -V
 idiolect help [&lt;sub&gt;]     # also accepts --help, -h
 </code></pre>
-<p>The two hand-written subcommands (<code>resolve</code>, <code>fetch</code>) live in
-<code>main.rs</code> and call directly into <code>idiolect-identity</code> and
-<code>idiolect-lens</code>. The <code>orchestrator</code> subcommand is generated
-from <code>orchestrator-spec/queries.json</code> and routes its calls to
-the orchestrator's HTTP API.</p>
+<p>The hand-written subcommands (<code>resolve</code>, <code>fetch</code>, <code>oauth</code>,
+<code>publish</code>, <code>verify</code>, <code>encounter</code>) live in their own modules
+under <code>crates/idiolect-cli/src/</code>. The <code>orchestrator</code> subcommand
+is generated from <code>orchestrator-spec/queries.json</code> and routes
+its calls to the orchestrator's HTTP API.</p>
 <h2 id="resolve"><a class="header" href="#resolve"><code>resolve</code></a></h2>
 <pre><code class="language-text">idiolect resolve &lt;did&gt;
 </code></pre>
@@ -226,6 +229,49 @@ the live list):</p>
 <p>Adding a query to the spec extends both the HTTP and the CLI
 surface; see <a href="../guide/codegen.html">Run codegen</a>. The CLI's
 top-level <code>--url</code> flag overrides the default orchestrator base.</p>
+<h2 id="oauth"><a class="header" href="#oauth"><code>oauth</code></a></h2>
+<p>Authenticated PDS sessions for <code>idiolect publish</code> and downstream
+record-writing flows.</p>
+<pre><code class="language-text">idiolect oauth login  --handle HANDLE --app-password PASSWORD [--pds-url URL]
+idiolect oauth list
+idiolect oauth logout --did DID
+</code></pre>
+<p><code>login</code> exchanges <code>(handle, app-password)</code> for an access JWT via
+<code>com.atproto.server.createSession</code> and persists <code>{did, handle, pds_url, access_jwt, refresh_jwt}</code> as one JSON file per DID
+under <code>$IDIOLECT_SESSION_DIR</code> (default
+<code>~/.config/idiolect/sessions/</code>). <code>--app-password</code> may be passed
+as a flag or via <code>ATPROTO_APP_PASSWORD</code> / <code>ATPROTO_PASSWORD</code>
+env vars to avoid leaking into shell history.</p>
+<p><code>list</code> enumerates every stored session as a JSON array of
+<code>{did, handle, pds_url}</code> triples.</p>
+<p><code>logout</code> deletes the session file for <code>--did</code>; a missing file is
+not an error.</p>
+<h2 id="publish-kind"><a class="header" href="#publish-kind"><code>publish &lt;kind&gt;</code></a></h2>
+<pre><code class="language-text">idiolect publish &lt;kind&gt; --record &lt;path&gt; [--rkey RKEY] [--did DID]
+</code></pre>
+<p>Loads a JSON file, validates it against the typed <code>Record</code> impl
+for <code>&lt;kind&gt;</code> (which can be either the unqualified kind like
+<code>recommendation</code> or the fully-qualified NSID like
+<code>dev.idiolect.recommendation</code>), splices in a <code>$type</code>
+discriminator, and POSTs <code>com.atproto.repo.createRecord</code> using
+the stored session's bearer auth.</p>
+<p>When <code>--did</code> is omitted the CLI picks the first stored session.
+When <code>--rkey</code> is omitted the CLI generates a TID-shaped key.</p>
+<p>Prints <code>{uri, cid}</code> of the published record on success.</p>
+<h2 id="verify-kind"><a class="header" href="#verify-kind"><code>verify &lt;kind&gt;</code></a></h2>
+<pre><code class="language-text">idiolect verify roundtrip-test  --lens AT_URI [--corpus PATH]   [--pds-url URL] [--verifier-did DID]
+idiolect verify property-test   --lens AT_URI  --corpus PATH    [--budget N]    [--pds-url URL] [--verifier-did DID]
+idiolect verify static-check    --lens AT_URI                   [--pds-url URL] [--verifier-did DID]
+idiolect verify coercion-law    --lens AT_URI  --vcs-url URL    --standard STD  [--version V] [--violation-threshold N] [--verifier-did DID]
+</code></pre>
+<p>Runs the shipped <code>VerificationRunner</code> for the named kind against
+the live PDS, prints the typed <code>Verification</code> record as JSON,
+and exits non-zero on <code>Falsified</code> / <code>Inconclusive</code> so CI surfaces
+failures.</p>
+<p>The corpus file (for <code>roundtrip-test</code> and <code>property-test</code>) may
+be a JSON array or JSON Lines. <code>property-test</code>'s generator
+cycles through the corpus by index, so <code>--budget</code> controls how
+many cases run.</p>
 <h2 id="encounter-record"><a class="header" href="#encounter-record"><code>encounter record</code></a></h2>
 <pre><code class="language-text">idiolect encounter record \
   --lens &lt;AT-URI&gt; --source-schema &lt;AT-URI&gt; [--target-schema &lt;AT-URI&gt;] \
@@ -239,25 +285,14 @@ Errors go to stderr:</p>
 <pre><code class="language-text">error: &lt;message&gt;
 </code></pre>
 <p>Pipe stdout to <code>jq</code> for further processing.</p>
-<h2 id="planned-subcommands"><a class="header" href="#planned-subcommands">Planned subcommands</a></h2>
-<p>A few operations the book references on the library side are
-planned for the CLI but not shipped at v0.8.0:</p>
-<ul>
-<li><code>idiolect oauth login --handle &lt;HANDLE&gt;</code> — would walk the
-OAuth dance via <code>atrium-oauth-client</code> and persist the
-resulting session through <code>idiolect_oauth::OAuthTokenStore</code>.
-Today the dance is driven programmatically.</li>
-<li><code>idiolect verify &lt;kind&gt; [...]</code> — would run any shipped
-<code>VerificationRunner</code> from the command line and publish the
-result. Today runners are library-only.</li>
-<li><code>idiolect publish &lt;kind&gt; --record &lt;path&gt;</code> — would load a
-typed record from JSON and publish it under the active
-session. Today publishing goes through
-<code>idiolect_lens::RecordPublisher</code> from Rust.</li>
-</ul>
-<p>These gaps are expected pre-1.0: the library surface is the
-stable contract, and CLI subcommands accumulate as the
-hyperdeclarative spec grows.</p>
+<h2 id="roadmap"><a class="header" href="#roadmap">Roadmap</a></h2>
+<p>The shipped login path uses app passwords in legacy Bearer
+mode (<code>com.atproto.server.createSession</code> plus
+<code>Authorization: Bearer &lt;token&gt;</code>). The full OAuth + DPoP flow
+via <code>atrium-oauth</code> (browser handoff, PKCE, DPoP-bound tokens)
+is the next-iteration login UX; the library <code>OAuthSession</code>
+shape and <code>OAuthTokenStore</code> trait are already in place to
+receive whatever the dance returns.</p>
 
                     </main>
 

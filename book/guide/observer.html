@@ -265,12 +265,14 @@ is expected and useful; consumers can require quorum among <span class="katex"><
 of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> trusted observers before treating an observation as
 authoritative.</li>
 </ul>
-<h2 id="what-is-not-currently-shipped"><a class="header" href="#what-is-not-currently-shipped">What is not currently shipped</a></h2>
-<p>A <code>deliberation-tally</code> method that produces
-<code>dev.idiolect.deliberationOutcome</code> records is not in the
-shipped method set. Communities that need a Polis-style tally
-of a deliberation author the method against the same
-<code>ObservationMethod</code> trait or build it as a downstream daemon.</p>
+<h2 id="note-on-deliberation-tally"><a class="header" href="#note-on-deliberation-tally">Note on <code>deliberation-tally</code></a></h2>
+<p>The shipped <code>deliberation-tally</code> method emits its
+per-statement per-stance vote counts inside an
+<code>observation.output</code> blob, not as a typed
+<code>dev.idiolect.deliberationOutcome</code> record. The data shape is
+the same; the surface differs. A variant that publishes the
+typed outcome record directly is a small refactor on top of
+the existing <code>DeliberationTallyMethod</code>.</p>
 
                     </main>
 

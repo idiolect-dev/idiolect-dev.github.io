@@ -201,9 +201,9 @@ checker against any <code>CoerceType</code> step.</li>
 crate is library-only; runners are invoked programmatically.</p>
 <h2 id="wire-up-a-runner"><a class="header" href="#wire-up-a-runner">Wire up a runner</a></h2>
 <pre><code class="language-toml"># in Cargo.toml
-idiolect-verify = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0" }
-idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0", features = ["pds-reqwest"] }
-idiolect-records = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0" }
+idiolect-verify = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.10.0" }
+idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.10.0", features = ["pds-reqwest"] }
+idiolect-records = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.10.0" }
 panproto-schema  = { git = "https://github.com/panproto/panproto.git", tag = "v0.47.0" }
 tokio            = { version = "1", features = ["full"] }
 </code></pre>
@@ -293,15 +293,22 @@ shape downstream consumers use to decide whether to invoke a
 lens: query the verifier registry, accept the verifications they
 trust, reject the rest, and proceed only if the surviving set
 covers the properties their use case requires.</p>
-<h2 id="planned-functionality"><a class="header" href="#planned-functionality">Planned functionality</a></h2>
-<p>A future <code>idiolect verify &lt;kind&gt;</code> CLI subcommand would let
-operators run a runner without writing Rust. It is not shipped
-yet; runners are library-only. The four shipped runner kinds
-(<code>roundtrip-test</code>, <code>property-test</code>, <code>static-check</code>,
-<code>coercion-law</code>) cover the shape; additional kinds in the
-lexicon's <code>verification.kind</code> enum (<code>formal-proof</code>,
-<code>conformance-test</code>, <code>convergence-preserving</code>) are recognised
-slugs awaiting community-contributed runners.</p>
+<h2 id="from-the-cli"><a class="header" href="#from-the-cli">From the CLI</a></h2>
+<p>The library code above is also exposed as a CLI subcommand for
+quick operator runs. All four shipped runner kinds are wrapped:</p>
+<pre><code class="language-bash">idiolect verify roundtrip-test --lens at://.../tutorial-rename-sort-string-to-text
+idiolect verify property-test  --lens at://.../tutorial-rename-sort-string-to-text --corpus ./samples.jsonl
+idiolect verify static-check   --lens at://.../tutorial-rename-sort-string-to-text
+idiolect verify coercion-law   --lens at://... --vcs-url https://vcs.example --standard atproto-lexicon
+</code></pre>
+<p>The CLI prints the typed <code>Verification</code> record as JSON and
+exits non-zero on <code>Falsified</code> or <code>Inconclusive</code>, which makes it
+suitable for CI gates.</p>
+<p>Additional kinds in the lexicon's <code>verification.kind</code> enum
+(<code>formal-proof</code>, <code>conformance-test</code>, <code>convergence-preserving</code>)
+are recognised slugs awaiting community-contributed runners;
+authoring one is the
+<a href="../guide/verify.html">Author a verification runner</a> loop.</p>
 <p>The next chapter publishes a <code>dev.idiolect.recommendation</code> that
 endorses a lens path under specific applicability conditions.</p>
 

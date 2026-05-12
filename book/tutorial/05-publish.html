@@ -201,7 +201,7 @@ occurredAt       : datetime
 the combinator set defined inside
 <a href="../reference/lexicons/recommendation.html"><code>dev.idiolect.recommendation</code></a>.</p>
 <h2 id="author-the-record"><a class="header" href="#author-the-record">Author the record</a></h2>
-<pre><code class="language-toml">idiolect-records = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.9.0" }
+<pre><code class="language-toml">idiolect-records = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.10.0" }
 reqwest          = { version = "0.12", features = ["json"] }
 serde            = { version = "1", features = ["derive"] }
 tokio            = { version = "1", features = ["full"] }
@@ -377,19 +377,24 @@ machine-checkable verifications attached (chapter 4 produced
 <code>Holds</code> for the <code>roundtrip-test</code> property). A consumer querying
 the orchestrator can fetch both, evaluate the conditions, and
 decide whether to invoke.</p>
-<h2 id="planned-functionality"><a class="header" href="#planned-functionality">Planned functionality</a></h2>
-<p>Two related CLI subcommands are planned but not shipped:</p>
-<ul>
-<li><code>idiolect oauth login --handle &lt;HANDLE&gt;</code> would walk the OAuth
-dance via <code>atrium-oauth-client</code> and persist the resulting
-session through an <code>OAuthTokenStore</code>. Today the dance is
-programmatic; the app-password path above is the easier
-alternative.</li>
-<li><code>idiolect publish &lt;kind&gt; --record &lt;path&gt;</code> would load a JSON
-file and publish it under the active session. Today publishing
-goes through <code>RecordPublisher::create</code> (or the hand-rolled
-client above) from Rust.</li>
-</ul>
+<h2 id="from-the-cli"><a class="header" href="#from-the-cli">From the CLI</a></h2>
+<p>The CLI ships both pieces of this flow:</p>
+<pre><code class="language-bash"># 1. Authenticate (app password; legacy Bearer mode).
+idiolect oauth login --handle yourhandle.bsky.social
+# password from --app-password or env
+
+# 2. Publish a record from a JSON file.
+idiolect publish recommendation --record ./tutorial-rename-sort.json
+</code></pre>
+<p><code>idiolect oauth login</code> exchanges credentials via
+<code>com.atproto.server.createSession</code> and stores the resulting
+session as a JSON file. <code>idiolect publish &lt;kind&gt;</code> validates the
+JSON against the typed <code>Record</code> impl, splices in <code>$type</code>, and
+POSTs <code>com.atproto.repo.createRecord</code> under the stored session.</p>
+<p>ATProto is moving off app passwords toward OAuth + DPoP; the
+next-iteration CLI wraps <code>atrium-oauth</code>'s browser-handoff dance
+and persists the resulting DPoP-bound session through the same
+<code>OAuthTokenStore</code>. The publish path is unchanged.</p>
 <p>That is the full loop. Where to go next:</p>
 <ul>
 <li><a href="../guide/orchestrator.html">Run the orchestrator HTTP API</a>
