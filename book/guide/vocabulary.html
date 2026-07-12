@@ -260,14 +260,14 @@ you can author either direction (or both, redundantly).</p>
   "example": "I agree with the proposal as drafted.",
   "notation": "1",
   "externalIds": [
-    { "system": "wikidata", "id": "Q4116214", "match": "exact" }
+    { "system": "wikidata", "identifier": "Q4116214", "matchType": "exact" }
   ]
 }
 </code></pre>
 <p>The full annotation set is <code>label</code>, <code>alternateLabels</code>,
 <code>hiddenLabels</code>, <code>description</code> (definition), <code>scopeNote</code>, <code>example</code>,
 <code>historyNote</code>, <code>editorialNote</code>, <code>changeNote</code>, <code>notation</code>, and
-<code>externalIds</code>. The match types on <code>externalIds</code> carry SKOS
+<code>externalIds</code>. The <code>matchType</code> values on <code>externalIds</code> carry SKOS
 semantics (<code>exact</code>, <code>close</code>, <code>broader</code>, <code>narrower</code>, <code>related</code>).</p>
 <p>A <code>kind: "collection"</code> plus <code>member_of</code> edges expresses a SKOS
 Collection.</p>

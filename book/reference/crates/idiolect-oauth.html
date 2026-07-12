@@ -197,8 +197,9 @@ in <code>atrium-oauth-client</code>, and the DPoP signer lives in
 idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0", features = ["store-filesystem"] }
 </code></pre>
 <h2 id="public-surface"><a class="header" href="#public-surface">Public surface</a></h2>
-<p><code>OAuthTokenStore</code> is the trait every store implements. The
-typical surface is <code>get</code> / <code>put</code> / <code>delete</code> keyed by DID.
+<p><code>OAuthTokenStore</code> is the trait every store implements. Its
+methods are <code>save</code> / <code>load</code> / <code>delete</code> keyed by DID, plus a
+defaulted <code>list_dids</code>.
 <code>OAuthSession</code> carries the access token, refresh token, expiry,
 and DPoP key. The session has helpers (<code>is_expired</code>,
 <code>time_until_expiry</code>, <code>needs_refresh(now, threshold)</code>,

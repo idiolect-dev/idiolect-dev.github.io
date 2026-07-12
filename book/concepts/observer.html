@@ -259,12 +259,15 @@ from random sampling has to commit the seed in the record.</li>
 <tr><td><code>purpose-distribution</code></td><td>Encounter counts grouped by <code>use.purpose</code>.</td></tr>
 <tr><td><code>basis-distribution</code></td><td>Record counts grouped by <code>basis</code> variant.</td></tr>
 <tr><td><code>attribution-chains</code></td><td><code>dev.idiolect.belief</code> counts by holder and subject.</td></tr>
+<tr><td><code>deliberation-tally</code></td><td>Per-statement per-stance <code>deliberationVote</code> counts.</td></tr>
 </tbody></table>
 </div>
-<p>All eight produce <code>dev.idiolect.observation</code> records. A
-<code>deliberation-tally</code> method that produces
-<code>dev.idiolect.deliberationOutcome</code> records is a plausible
-addition but is not in the shipped set at v0.8.0.</p>
+<p>All nine produce <code>dev.idiolect.observation</code> records. The ninth,
+<code>deliberation-tally</code>, folds <code>deliberationVote</code> records into
+per-statement per-stance counts and packs them into the
+observation's <code>output</code>; a variant that instead publishes a typed
+<code>dev.idiolect.deliberationOutcome</code> record is a small refactor on
+<code>DeliberationTallyMethod</code>.</p>
 <p>The spec is a single JSON file (<code>observer-spec/methods.json</code>),
 not a directory of files. Codegen emits the descriptor table.
 See <a href="../guide/observer.html">Run the observer daemon</a> for the

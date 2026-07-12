@@ -187,7 +187,7 @@ a firehose consumer factored into three trait surfaces:</p>
 <ul>
 <li><code>EventStream</code>: yields <code>RawEvent</code>s from a PDS firehose. Shipped
 impls: <code>JetstreamEventStream</code> (Jetstream websocket feed) and
-<code>TappedFirehoseStream</code> (the at-proto-native firehose via
+<code>TappedEventStream</code> (the at-proto-native firehose via
 <code>tapped</code>).</li>
 <li><code>RecordHandler&lt;F: RecordFamily = IdiolectFamily&gt;</code>: handles one
 decoded <code>IndexerEvent&lt;F&gt;</code>. The family parameter narrows the

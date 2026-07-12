@@ -238,8 +238,8 @@ where
 <h3 id="shipped-impls"><a class="header" href="#shipped-impls">Shipped impls</a></h3>
 <div class="table-wrapper"><table><thead><tr><th>Type</th><th>Feature</th><th>Purpose</th></tr></thead><tbody>
 <tr><td><code>JetstreamEventStream</code></td><td><code>firehose-jetstream</code></td><td>Subscribes to a Jetstream websocket feed.</td></tr>
-<tr><td><code>TappedFirehoseStream</code></td><td><code>firehose-tapped</code></td><td>Subscribes to the at-proto-native firehose via <code>tapped</code>.</td></tr>
-<tr><td><code>ReconnectingStream&lt;S&gt;</code></td><td><code>reconnecting</code></td><td>Wraps any <code>S: EventStream</code> with exponential-backoff reconnect.</td></tr>
+<tr><td><code>TappedEventStream</code></td><td><code>firehose-tapped</code></td><td>Subscribes to the at-proto-native firehose via <code>tapped</code>.</td></tr>
+<tr><td><code>ReconnectingEventStream&lt;S&gt;</code></td><td><code>reconnecting</code></td><td>Wraps any <code>S: EventStream</code> with exponential-backoff reconnect.</td></tr>
 <tr><td><code>InMemoryCursorStore</code></td><td>(always)</td><td><code>HashMap</code>-backed; for tests.</td></tr>
 <tr><td><code>FilesystemCursorStore</code></td><td><code>cursor-filesystem</code></td><td>One JSON file per stream.</td></tr>
 <tr><td><code>SqliteCursorStore</code></td><td><code>cursor-sqlite</code></td><td>One row per stream. Pairs with handlers that also write SQLite.</td></tr>

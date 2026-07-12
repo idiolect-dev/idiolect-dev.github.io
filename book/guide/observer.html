@@ -229,7 +229,7 @@ to an <code>ObservationPublisher</code>.</li>
 <li>A flush schedule that triggers observation publication.</li>
 </ul>
 <h2 id="bundled-methods"><a class="header" href="#bundled-methods">Bundled methods</a></h2>
-<p>The spec at <code>observer-spec/methods.json</code> declares eight bundled
+<p>The spec at <code>observer-spec/methods.json</code> declares nine bundled
 methods. Each lives in <code>crates/idiolect-observer/src/methods/</code>.</p>
 <div class="table-wrapper"><table><thead><tr><th>Method</th><th>Folds</th></tr></thead><tbody>
 <tr><td><code>correction-rate</code></td><td>Per-lens correction counts grouped by reason.</td></tr>
@@ -240,6 +240,7 @@ methods. Each lives in <code>crates/idiolect-observer/src/methods/</code>.</p>
 <tr><td><code>purpose-distribution</code></td><td>Encounter counts grouped by <code>use.purpose</code>.</td></tr>
 <tr><td><code>basis-distribution</code></td><td>Record counts grouped by <code>basis</code> variant, bucketed by record kind.</td></tr>
 <tr><td><code>attribution-chains</code></td><td><code>dev.idiolect.belief</code> counts by holder and subject.</td></tr>
+<tr><td><code>deliberation-tally</code></td><td>Per-statement per-stance <code>deliberationVote</code> counts (see the note below).</td></tr>
 </tbody></table>
 </div>
 <p>Methods come in two forms (declared in the spec): record-form

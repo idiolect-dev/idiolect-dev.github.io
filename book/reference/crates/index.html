@@ -198,9 +198,13 @@ versioned but bumped together at every release.</p>
 <tr><td><a href="./idiolect-cli.html">idiolect-cli</a></td><td>Command-line tool wrapping the library crates.</td></tr>
 </tbody></table>
 </div>
-<p>Cargo manifests live under <code>crates/&lt;name&gt;/Cargo.toml</code>. Every
-shipped crate is published to crates.io under the same name and
-to docs.rs at <code>https://docs.rs/&lt;name&gt;/latest/&lt;name_underscored&gt;/</code>.</p>
+<p>Cargo manifests live under <code>crates/&lt;name&gt;/Cargo.toml</code>. Three
+crates — <code>idiolect-records</code>, <code>idiolect-identity</code>, and
+<code>idiolect-indexer</code> — are published to crates.io under the same
+name and to docs.rs at
+<code>https://docs.rs/&lt;name&gt;/latest/&lt;name_underscored&gt;/</code>. The rest are
+<code>publish = false</code> and are consumed via a git or path reference;
+each crate page states which applies.</p>
 <h2 id="policy"><a class="header" href="#policy">Policy</a></h2>
 <p>The pages in this section are editorial overviews: an opinionated
 summary of what each crate is for, the public types you reach for

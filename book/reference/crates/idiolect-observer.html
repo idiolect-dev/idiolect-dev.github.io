@@ -224,7 +224,7 @@ events into internal state and snapshots that state on flush.
 and triggers periodic flushes that publish observations through
 the configured publisher.</p>
 <h2 id="shipped-methods"><a class="header" href="#shipped-methods">Shipped methods</a></h2>
-<p>The spec at <code>observer-spec/methods.json</code> declares eight bundled
+<p>The spec at <code>observer-spec/methods.json</code> declares nine bundled
 methods. The typed structs ship in <code>crates/idiolect-observer/src/methods/</code>:</p>
 <div class="table-wrapper"><table><thead><tr><th>Spec name</th><th>Module</th><th>Folds</th></tr></thead><tbody>
 <tr><td><code>correction-rate</code></td><td><code>correction_rate</code></td><td>Per-lens correction counts grouped by reason.</td></tr>
@@ -235,6 +235,7 @@ methods. The typed structs ship in <code>crates/idiolect-observer/src/methods/</
 <tr><td><code>purpose-distribution</code></td><td><code>purpose_distribution</code></td><td>Encounter counts grouped by <code>use.purpose</code>.</td></tr>
 <tr><td><code>basis-distribution</code></td><td><code>basis_distribution</code></td><td>Record counts grouped by <code>basis</code> variant, bucketed by record kind.</td></tr>
 <tr><td><code>attribution-chains</code></td><td><code>attribution_chains</code></td><td>Counts of <code>dev.idiolect.belief</code> records by holder and subject.</td></tr>
+<tr><td><code>deliberation-tally</code></td><td><code>deliberation_tally</code></td><td>Per-statement per-stance <code>deliberationVote</code> counts, packed into the observation's <code>output</code>.</td></tr>
 </tbody></table>
 </div>
 <p>Methods come in two forms (declared in the spec):</p>

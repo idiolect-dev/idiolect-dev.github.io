@@ -1014,7 +1014,7 @@ a firehose consumer factored into three trait surfaces:</p>
 <ul>
 <li><code>EventStream</code>: yields <code>RawEvent</code>s from a PDS firehose. Shipped
 impls: <code>JetstreamEventStream</code> (Jetstream websocket feed) and
-<code>TappedFirehoseStream</code> (the at-proto-native firehose via
+<code>TappedEventStream</code> (the at-proto-native firehose via
 <code>tapped</code>).</li>
 <li><code>RecordHandler&lt;F: RecordFamily = IdiolectFamily&gt;</code>: handles one
 decoded <code>IndexerEvent&lt;F&gt;</code>. The family parameter narrows the
@@ -1239,7 +1239,7 @@ to an <code>ObservationPublisher</code>.</li>
 <li>A flush schedule that triggers observation publication.</li>
 </ul>
 <h2 id="bundled-methods"><a class="header" href="#bundled-methods">Bundled methods</a></h2>
-<p>The spec at <code>observer-spec/methods.json</code> declares eight bundled
+<p>The spec at <code>observer-spec/methods.json</code> declares nine bundled
 methods. Each lives in <code>crates/idiolect-observer/src/methods/</code>.</p>
 <div class="table-wrapper"><table><thead><tr><th>Method</th><th>Folds</th></tr></thead><tbody>
 <tr><td><code>correction-rate</code></td><td>Per-lens correction counts grouped by reason.</td></tr>
@@ -1250,6 +1250,7 @@ methods. Each lives in <code>crates/idiolect-observer/src/methods/</code>.</p>
 <tr><td><code>purpose-distribution</code></td><td>Encounter counts grouped by <code>use.purpose</code>.</td></tr>
 <tr><td><code>basis-distribution</code></td><td>Record counts grouped by <code>basis</code> variant, bucketed by record kind.</td></tr>
 <tr><td><code>attribution-chains</code></td><td><code>dev.idiolect.belief</code> counts by holder and subject.</td></tr>
+<tr><td><code>deliberation-tally</code></td><td>Per-statement per-stance <code>deliberationVote</code> counts (see the note below).</td></tr>
 </tbody></table>
 </div>
 <p>Methods come in two forms (declared in the spec): record-form
@@ -1892,14 +1893,14 @@ you can author either direction (or both, redundantly).</p>
   "example": "I agree with the proposal as drafted.",
   "notation": "1",
   "externalIds": [
-    { "system": "wikidata", "id": "Q4116214", "match": "exact" }
+    { "system": "wikidata", "identifier": "Q4116214", "matchType": "exact" }
   ]
 }
 </code></pre>
 <p>The full annotation set is <code>label</code>, <code>alternateLabels</code>,
 <code>hiddenLabels</code>, <code>description</code> (definition), <code>scopeNote</code>, <code>example</code>,
 <code>historyNote</code>, <code>editorialNote</code>, <code>changeNote</code>, <code>notation</code>, and
-<code>externalIds</code>. The match types on <code>externalIds</code> carry SKOS
+<code>externalIds</code>. The <code>matchType</code> values on <code>externalIds</code> carry SKOS
 semantics (<code>exact</code>, <code>close</code>, <code>broader</code>, <code>narrower</code>, <code>related</code>).</p>
 <p>A <code>kind: "collection"</code> plus <code>member_of</code> edges expresses a SKOS
 Collection.</p>
@@ -2638,7 +2639,7 @@ URI.</li>
 validate every registered vocab.</li>
 </ul>
 <p>The exact signatures and return types are on docs.rs at
-<a href="https://docs.rs/idiolect-records/latest/idiolect_records/struct.VocabGraph.html"><code>idiolect_records::VocabGraph</code></a>.</p>
+<a href="https://docs.rs/idiolect-records/latest/idiolect_records/vocab/struct.VocabGraph.html"><code>idiolect_records::vocab::VocabGraph</code></a>.</p>
 <h2 id="cross-vocab-translation"><a class="header" href="#cross-vocab-translation">Cross-vocab translation</a></h2>
 <p>Two vocabs that publish <code>equivalent_to</code> edges between their nodes
 form an undirected bridge. A consumer holding both records and a
@@ -2845,12 +2846,15 @@ from random sampling has to commit the seed in the record.</li>
 <tr><td><code>purpose-distribution</code></td><td>Encounter counts grouped by <code>use.purpose</code>.</td></tr>
 <tr><td><code>basis-distribution</code></td><td>Record counts grouped by <code>basis</code> variant.</td></tr>
 <tr><td><code>attribution-chains</code></td><td><code>dev.idiolect.belief</code> counts by holder and subject.</td></tr>
+<tr><td><code>deliberation-tally</code></td><td>Per-statement per-stance <code>deliberationVote</code> counts.</td></tr>
 </tbody></table>
 </div>
-<p>All eight produce <code>dev.idiolect.observation</code> records. A
-<code>deliberation-tally</code> method that produces
-<code>dev.idiolect.deliberationOutcome</code> records is a plausible
-addition but is not in the shipped set at v0.8.0.</p>
+<p>All nine produce <code>dev.idiolect.observation</code> records. The ninth,
+<code>deliberation-tally</code>, folds <code>deliberationVote</code> records into
+per-statement per-stance counts and packs them into the
+observation's <code>output</code>; a variant that instead publishes a typed
+<code>dev.idiolect.deliberationOutcome</code> record is a small refactor on
+<code>DeliberationTallyMethod</code>.</p>
 <p>The spec is a single JSON file (<code>observer-spec/methods.json</code>),
 not a directory of files. Codegen emits the descriptor table.
 See <a href="concepts/../guide/observer.html">Run the observer daemon</a> for the
@@ -3045,9 +3049,13 @@ versioned but bumped together at every release.</p>
 <tr><td><a href="reference/crates/./idiolect-cli.html">idiolect-cli</a></td><td>Command-line tool wrapping the library crates.</td></tr>
 </tbody></table>
 </div>
-<p>Cargo manifests live under <code>crates/&lt;name&gt;/Cargo.toml</code>. Every
-shipped crate is published to crates.io under the same name and
-to docs.rs at <code>https://docs.rs/&lt;name&gt;/latest/&lt;name_underscored&gt;/</code>.</p>
+<p>Cargo manifests live under <code>crates/&lt;name&gt;/Cargo.toml</code>. Three
+crates — <code>idiolect-records</code>, <code>idiolect-identity</code>, and
+<code>idiolect-indexer</code> — are published to crates.io under the same
+name and to docs.rs at
+<code>https://docs.rs/&lt;name&gt;/latest/&lt;name_underscored&gt;/</code>. The rest are
+<code>publish = false</code> and are consumed via a git or path reference;
+each crate page states which applies.</p>
 <h2 id="policy"><a class="header" href="#policy">Policy</a></h2>
 <p>The pages in this section are editorial overviews: an opinionated
 summary of what each crate is for, the public types you reach for
@@ -3270,7 +3278,9 @@ future is <code>Send</code>.</p>
 </div>
 <h3 id="schema-loaders"><a class="header" href="#schema-loaders">Schema loaders</a></h3>
 <p><code>SchemaLoader</code> is also object-safe. Shipped implementations:
-<code>InMemorySchemaLoader</code>, <code>FilesystemSchemaLoader</code>.</p>
+<code>InMemorySchemaLoader</code>, <code>FilesystemSchemaLoader</code>, and
+<code>PdsSchemaLoader</code> (the loader the tutorials use, pairing with
+<code>PdsResolver</code>).</p>
 <h3 id="apply-functions"><a class="header" href="#apply-functions">Apply functions</a></h3>
 <p>The runtime shipped under <code>idiolect_lens::runtime</code>:</p>
 <ul>
@@ -3427,8 +3437,8 @@ where
 <h3 id="shipped-impls"><a class="header" href="#shipped-impls">Shipped impls</a></h3>
 <div class="table-wrapper"><table><thead><tr><th>Type</th><th>Feature</th><th>Purpose</th></tr></thead><tbody>
 <tr><td><code>JetstreamEventStream</code></td><td><code>firehose-jetstream</code></td><td>Subscribes to a Jetstream websocket feed.</td></tr>
-<tr><td><code>TappedFirehoseStream</code></td><td><code>firehose-tapped</code></td><td>Subscribes to the at-proto-native firehose via <code>tapped</code>.</td></tr>
-<tr><td><code>ReconnectingStream&lt;S&gt;</code></td><td><code>reconnecting</code></td><td>Wraps any <code>S: EventStream</code> with exponential-backoff reconnect.</td></tr>
+<tr><td><code>TappedEventStream</code></td><td><code>firehose-tapped</code></td><td>Subscribes to the at-proto-native firehose via <code>tapped</code>.</td></tr>
+<tr><td><code>ReconnectingEventStream&lt;S&gt;</code></td><td><code>reconnecting</code></td><td>Wraps any <code>S: EventStream</code> with exponential-backoff reconnect.</td></tr>
 <tr><td><code>InMemoryCursorStore</code></td><td>(always)</td><td><code>HashMap</code>-backed; for tests.</td></tr>
 <tr><td><code>FilesystemCursorStore</code></td><td><code>cursor-filesystem</code></td><td>One JSON file per stream.</td></tr>
 <tr><td><code>SqliteCursorStore</code></td><td><code>cursor-sqlite</code></td><td>One row per stream. Pairs with handlers that also write SQLite.</td></tr>
@@ -3481,8 +3491,9 @@ in <code>atrium-oauth-client</code>, and the DPoP signer lives in
 idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0", features = ["store-filesystem"] }
 </code></pre>
 <h2 id="public-surface-3"><a class="header" href="#public-surface-3">Public surface</a></h2>
-<p><code>OAuthTokenStore</code> is the trait every store implements. The
-typical surface is <code>get</code> / <code>put</code> / <code>delete</code> keyed by DID.
+<p><code>OAuthTokenStore</code> is the trait every store implements. Its
+methods are <code>save</code> / <code>load</code> / <code>delete</code> keyed by DID, plus a
+defaulted <code>list_dids</code>.
 <code>OAuthSession</code> carries the access token, refresh token, expiry,
 and DPoP key. The session has helpers (<code>is_expired</code>,
 <code>time_until_expiry</code>, <code>needs_refresh(now, threshold)</code>,
@@ -3565,7 +3576,7 @@ events into internal state and snapshots that state on flush.
 and triggers periodic flushes that publish observations through
 the configured publisher.</p>
 <h2 id="shipped-methods"><a class="header" href="#shipped-methods">Shipped methods</a></h2>
-<p>The spec at <code>observer-spec/methods.json</code> declares eight bundled
+<p>The spec at <code>observer-spec/methods.json</code> declares nine bundled
 methods. The typed structs ship in <code>crates/idiolect-observer/src/methods/</code>:</p>
 <div class="table-wrapper"><table><thead><tr><th>Spec name</th><th>Module</th><th>Folds</th></tr></thead><tbody>
 <tr><td><code>correction-rate</code></td><td><code>correction_rate</code></td><td>Per-lens correction counts grouped by reason.</td></tr>
@@ -3576,6 +3587,7 @@ methods. The typed structs ship in <code>crates/idiolect-observer/src/methods/</
 <tr><td><code>purpose-distribution</code></td><td><code>purpose_distribution</code></td><td>Encounter counts grouped by <code>use.purpose</code>.</td></tr>
 <tr><td><code>basis-distribution</code></td><td><code>basis_distribution</code></td><td>Record counts grouped by <code>basis</code> variant, bucketed by record kind.</td></tr>
 <tr><td><code>attribution-chains</code></td><td><code>attribution_chains</code></td><td>Counts of <code>dev.idiolect.belief</code> records by holder and subject.</td></tr>
+<tr><td><code>deliberation-tally</code></td><td><code>deliberation_tally</code></td><td>Per-statement per-stance <code>deliberationVote</code> counts, packed into the observation's <code>output</code>.</td></tr>
 </tbody></table>
 </div>
 <p>Methods come in two forms (declared in the spec):</p>
@@ -6064,7 +6076,7 @@ metadata.</p>
 <tr><td><code>changeNote</code></td><td>string (≤2000 graphemes)</td><td>no</td><td>SKOS <code>changeNote</code>.</td></tr>
 <tr><td><code>notation</code></td><td>string (≤500)</td><td>no</td><td>SKOS <code>notation</code>: non-text identifier.</td></tr>
 <tr><td><code>externalIds</code></td><td>array (≤20) of <code>externalId</code></td><td>no</td><td>Mappings to external knowledge bases.</td></tr>
-<tr><td><code>status</code></td><td>open enum</td><td>no</td><td><code>proposed</code> / <code>active</code> / <code>deprecated</code>.</td></tr>
+<tr><td><code>status</code></td><td>open enum</td><td>no</td><td><code>proposed</code> / <code>provisional</code> / <code>established</code> / <code>deprecated</code>.</td></tr>
 <tr><td><code>relationMetadata</code></td><td><code>relationMetadata</code></td><td>no</td><td>OWL Lite property characteristics. Required for <code>kind: relation</code>.</td></tr>
 </tbody></table>
 </div>
@@ -6124,9 +6136,12 @@ the asserted edges and emits one violation per inconsistency.</p>
 <h2 id="external-id-mappings"><a class="header" href="#external-id-mappings">External-id mappings</a></h2>
 <p>Each <code>externalId</code> carries:</p>
 <div class="table-wrapper"><table><thead><tr><th>Subfield</th><th>Type</th><th>Notes</th></tr></thead><tbody>
-<tr><td><code>system</code></td><td>string</td><td>Knowledge-base identifier (<code>wikidata</code>, <code>ror</code>, <code>orcid</code>, <code>lcsh</code>, ...).</td></tr>
-<tr><td><code>id</code></td><td>string</td><td>Identifier in that system.</td></tr>
-<tr><td><code>match</code></td><td>enum</td><td><code>exact</code> / <code>close</code> / <code>broader</code> / <code>narrower</code> / <code>related</code>.</td></tr>
+<tr><td><code>system</code></td><td>open enum</td><td>Knowledge-base identifier (<code>wikidata</code>, <code>ror</code>, <code>orcid</code>, <code>lcsh</code>, ...).</td></tr>
+<tr><td><code>systemVocab</code></td><td><code>vocabRef</code></td><td>Vocab the <code>system</code> slug resolves against.</td></tr>
+<tr><td><code>identifier</code></td><td>string</td><td>Identifier in that system.</td></tr>
+<tr><td><code>uri</code></td><td>uri</td><td>Optional direct URI for the external entity.</td></tr>
+<tr><td><code>matchType</code></td><td>open enum</td><td><code>exact</code> / <code>close</code> / <code>broader</code> / <code>narrower</code> / <code>related</code>.</td></tr>
+<tr><td><code>matchTypeVocab</code></td><td><code>vocabRef</code></td><td>Vocab the <code>matchType</code> slug resolves against.</td></tr>
 </tbody></table>
 </div>
 <p>External ids enable cross-system translation. A consumer holding

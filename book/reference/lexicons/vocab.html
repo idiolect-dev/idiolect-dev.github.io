@@ -258,7 +258,7 @@ metadata.</p>
 <tr><td><code>changeNote</code></td><td>string (≤2000 graphemes)</td><td>no</td><td>SKOS <code>changeNote</code>.</td></tr>
 <tr><td><code>notation</code></td><td>string (≤500)</td><td>no</td><td>SKOS <code>notation</code>: non-text identifier.</td></tr>
 <tr><td><code>externalIds</code></td><td>array (≤20) of <code>externalId</code></td><td>no</td><td>Mappings to external knowledge bases.</td></tr>
-<tr><td><code>status</code></td><td>open enum</td><td>no</td><td><code>proposed</code> / <code>active</code> / <code>deprecated</code>.</td></tr>
+<tr><td><code>status</code></td><td>open enum</td><td>no</td><td><code>proposed</code> / <code>provisional</code> / <code>established</code> / <code>deprecated</code>.</td></tr>
 <tr><td><code>relationMetadata</code></td><td><code>relationMetadata</code></td><td>no</td><td>OWL Lite property characteristics. Required for <code>kind: relation</code>.</td></tr>
 </tbody></table>
 </div>
@@ -318,9 +318,12 @@ the asserted edges and emits one violation per inconsistency.</p>
 <h2 id="external-id-mappings"><a class="header" href="#external-id-mappings">External-id mappings</a></h2>
 <p>Each <code>externalId</code> carries:</p>
 <div class="table-wrapper"><table><thead><tr><th>Subfield</th><th>Type</th><th>Notes</th></tr></thead><tbody>
-<tr><td><code>system</code></td><td>string</td><td>Knowledge-base identifier (<code>wikidata</code>, <code>ror</code>, <code>orcid</code>, <code>lcsh</code>, ...).</td></tr>
-<tr><td><code>id</code></td><td>string</td><td>Identifier in that system.</td></tr>
-<tr><td><code>match</code></td><td>enum</td><td><code>exact</code> / <code>close</code> / <code>broader</code> / <code>narrower</code> / <code>related</code>.</td></tr>
+<tr><td><code>system</code></td><td>open enum</td><td>Knowledge-base identifier (<code>wikidata</code>, <code>ror</code>, <code>orcid</code>, <code>lcsh</code>, ...).</td></tr>
+<tr><td><code>systemVocab</code></td><td><code>vocabRef</code></td><td>Vocab the <code>system</code> slug resolves against.</td></tr>
+<tr><td><code>identifier</code></td><td>string</td><td>Identifier in that system.</td></tr>
+<tr><td><code>uri</code></td><td>uri</td><td>Optional direct URI for the external entity.</td></tr>
+<tr><td><code>matchType</code></td><td>open enum</td><td><code>exact</code> / <code>close</code> / <code>broader</code> / <code>narrower</code> / <code>related</code>.</td></tr>
+<tr><td><code>matchTypeVocab</code></td><td><code>vocabRef</code></td><td>Vocab the <code>matchType</code> slug resolves against.</td></tr>
 </tbody></table>
 </div>
 <p>External ids enable cross-system translation. A consumer holding
