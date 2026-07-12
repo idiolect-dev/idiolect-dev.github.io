@@ -213,7 +213,7 @@ as JSON.</p>
 <h2 id="orchestrator-subcommand"><a class="header" href="#orchestrator-subcommand"><code>orchestrator &lt;subcommand&gt;</code></a></h2>
 <p>The orchestrator dispatcher accepts a flat path-and-flags shape
 generated from <code>orchestrator-spec/queries.json</code>. Each query
-maps onto a subcommand and a flag set; the CLI translates the
+maps onto a subcommand and a flag set. The CLI translates the
 invocation into an HTTP path and calls the orchestrator at
 <code>--url</code> (default <code>http://localhost:8787</code>).</p>
 <p>The current subcommands (run <code>idiolect help orchestrator</code> for
@@ -227,7 +227,7 @@ the live list):</p>
 </tbody></table>
 </div>
 <p>Adding a query to the spec extends both the HTTP and the CLI
-surface; see <a href="../guide/codegen.html">Run codegen</a>. The CLI's
+surface. See <a href="../guide/codegen.html">Run codegen</a>. The CLI's
 top-level <code>--url</code> flag overrides the default orchestrator base.</p>
 <h2 id="oauth"><a class="header" href="#oauth"><code>oauth</code></a></h2>
 <p>Authenticated PDS sessions for <code>idiolect publish</code> and downstream
@@ -244,7 +244,7 @@ as a flag or via <code>ATPROTO_APP_PASSWORD</code> / <code>ATPROTO_PASSWORD</cod
 env vars to avoid leaking into shell history.</p>
 <p><code>list</code> enumerates every stored session as a JSON array of
 <code>{did, handle, pds_url}</code> triples.</p>
-<p><code>logout</code> deletes the session file for <code>--did</code>; a missing file is
+<p><code>logout</code> deletes the session file for <code>--did</code>. A missing file is
 not an error.</p>
 <h2 id="publish-kind"><a class="header" href="#publish-kind"><code>publish &lt;kind&gt;</code></a></h2>
 <pre><code class="language-text">idiolect publish &lt;kind&gt; --record &lt;path&gt; [--rkey RKEY] [--did DID]
@@ -264,7 +264,7 @@ idiolect verify property-test   --lens AT_URI  --corpus PATH    [--budget N]    
 idiolect verify static-check    --lens AT_URI                   [--pds-url URL] [--verifier-did DID]
 idiolect verify coercion-law    --lens AT_URI  --vcs-url URL    --standard STD  [--version V] [--violation-threshold N] [--verifier-did DID]
 </code></pre>
-<p>Runs the shipped <code>VerificationRunner</code> for the named kind against
+<p>Runs the shipped <code>VerificationRunner</code> for the given kind against
 the live PDS, prints the typed <code>Verification</code> record as JSON,
 and exits non-zero on <code>Falsified</code> / <code>Inconclusive</code> so CI surfaces
 failures.</p>
@@ -290,7 +290,7 @@ Errors go to stderr:</p>
 mode (<code>com.atproto.server.createSession</code> plus
 <code>Authorization: Bearer &lt;token&gt;</code>). The full OAuth + DPoP flow
 via <code>atrium-oauth</code> (browser handoff, PKCE, DPoP-bound tokens)
-is the next-iteration login UX; the library <code>OAuthSession</code>
+is the next-iteration login UX. The library <code>OAuthSession</code>
 shape and <code>OAuthTokenStore</code> trait are already in place to
 receive whatever the dance returns.</p>
 

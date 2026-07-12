@@ -194,7 +194,7 @@ operations.</p>
 <pre><code class="language-bash">cargo install --path crates/idiolect-cli
 </code></pre>
 <p>The CLI hardcodes the <code>idiolect-lens</code> features it needs
-(<code>pds-reqwest</code>, <code>pds-resolve</code>); there are no CLI-level features
+(<code>pds-reqwest</code>, <code>pds-resolve</code>). There are no CLI-level features
 to set.</p>
 <h2 id="subcommand-surface"><a class="header" href="#subcommand-surface">Subcommand surface</a></h2>
 <pre><code class="language-text">idiolect resolve &lt;did&gt;
@@ -219,7 +219,7 @@ installed broadly.</li>
 <code>orchestrator-spec/queries.json</code> into
 <code>crates/idiolect-cli/src/generated.rs</code>. Adding a query (per the
 <a href="../../guide/orchestrator.html">orchestrator guide</a>) regenerates
-the dispatcher; the new subcommand becomes available
+the dispatcher. The new subcommand becomes available
 automatically.</p>
 <p>The hand-written subcommands (<code>resolve</code>, <code>fetch</code>,
 <code>encounter record</code>, <code>version</code>, <code>help</code>) live in <code>main.rs</code> and

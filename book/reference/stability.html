@@ -196,8 +196,8 @@ before bumping.</p>
 versions. The most recent example is the <code>Resolver</code> /
 <code>SchemaLoader</code> Send bound in v0.8.0.</li>
 <li><strong>Lexicon shapes</strong> can change. Wire-compatible changes go through
-the <a href="../concepts/lexicon-evolution.html">lexicon-evolution policy</a>;
-breaking changes ship with a derived migration lens.</li>
+the <a href="../concepts/lexicon-evolution.html">lexicon-evolution policy</a>.
+Breaking changes ship with a derived migration lens.</li>
 <li><strong>CLI subcommands</strong> can rename or reshape. The output JSON shape
 is more stable than the flag surface.</li>
 <li><strong>HTTP routes</strong> can change under the <code>v1</code> prefix between minor
@@ -206,7 +206,7 @@ versions. After 1.0 they will not.</li>
 <h2 id="what-does-not-change"><a class="header" href="#what-does-not-change">What does not change</a></h2>
 <ul>
 <li>The <code>dev.idiolect.*</code> namespace stays as is. NSID renames are
-possible but extraordinarily unusual; one would ship with a
+possible but extraordinarily unusual. One would ship with a
 deprecation note in <code>dev.idiolect.dialect#deprecations</code>.</li>
 <li>Records that pass validation continue to pass validation. A
 record valid against v0.7's lexicon is also valid against v0.8's
@@ -222,14 +222,14 @@ are the single source of truth, the codegen drift gate is on.</li>
 ship in major versions only.</li>
 <li>The lexicon-evolution <code>check-compat</code> gate flips from advisory to
 a hard fail.</li>
-<li>The HTTP API's <code>v1</code> prefix becomes a stability commitment; new
+<li>The HTTP API's <code>v1</code> prefix becomes a stability commitment. New
 endpoints are additive.</li>
 <li>Trait signatures in <code>idiolect-records</code>, <code>idiolect-lens</code>,
 <code>idiolect-indexer</code>, and <code>idiolect-orchestrator</code> become
 semver-stable.</li>
 </ul>
 <p>The 1.0 release date is not committed. The pre-1.0 series
-deliberately churns to find the right shape; 1.0 ships when the
+deliberately churns to find the right shape. 1.0 ships when the
 shape stops moving.</p>
 <h2 id="reading-the-changelog"><a class="header" href="#reading-the-changelog">Reading the changelog</a></h2>
 <p>The project follows
@@ -256,7 +256,7 @@ release section has six fixed buckets:</p>
 <tr><td><code>idiolect-observer</code> container</td><td><code>ghcr.io/idiolect-dev/observer</code></td><td>image SHA</td></tr>
 </tbody></table>
 </div>
-<p>The container images are sigstore-signed; verification policy is
+<p>The container images are sigstore-signed. Verification policy is
 in
 <a href="https://github.com/idiolect-dev/idiolect/blob/main/docs/ci-cd.md"><code>docs/ci-cd.md</code></a>.</p>
 

@@ -189,7 +189,7 @@ authoritative reference is the source above plus the rustdoc
 built locally with <code>cargo doc -p idiolect-observer --open</code>.</p>
 </blockquote>
 <p>Fold encounter-family records into observation records. Driven
-by the declarative spec at <code>observer-spec/methods.json</code>; codegen
+by the declarative spec at <code>observer-spec/methods.json</code>. Codegen
 emits the method-descriptor table.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
@@ -220,12 +220,12 @@ pub async fn drive_observer&lt;S, C, M, P&gt;(
 <p><code>ObservationMethod</code> is the stateful aggregator. It folds decoded
 events into internal state and snapshots that state on flush.
 <code>ObserverHandler</code> wires the method onto the indexer's
-<code>RecordHandler</code> boundary; <code>drive_observer</code> runs the indexer loop
+<code>RecordHandler</code> boundary. <code>drive_observer</code> runs the indexer loop
 and triggers periodic flushes that publish observations through
 the configured publisher.</p>
 <h2 id="shipped-methods"><a class="header" href="#shipped-methods">Shipped methods</a></h2>
 <p>The spec at <code>observer-spec/methods.json</code> declares eight bundled
-methods; the typed structs ship in <code>crates/idiolect-observer/src/methods/</code>:</p>
+methods. The typed structs ship in <code>crates/idiolect-observer/src/methods/</code>:</p>
 <div class="table-wrapper"><table><thead><tr><th>Spec name</th><th>Module</th><th>Folds</th></tr></thead><tbody>
 <tr><td><code>correction-rate</code></td><td><code>correction_rate</code></td><td>Per-lens correction counts grouped by reason.</td></tr>
 <tr><td><code>encounter-throughput</code></td><td><code>encounter_throughput</code></td><td>Encounter traffic by kind and downstream result.</td></tr>
@@ -256,7 +256,7 @@ implementations:</p>
 </tbody></table>
 </div>
 <h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
-<p><code>ObserverError</code> is a flattened error type; <code>ObserverResult&lt;T&gt;</code>
+<p><code>ObserverError</code> is a flattened error type. <code>ObserverResult&lt;T&gt;</code>
 is its alias.</p>
 <h2 id="feature-flags"><a class="header" href="#feature-flags">Feature flags</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Feature</th><th>Adds</th></tr></thead><tbody>
@@ -267,7 +267,7 @@ is its alias.</p>
 <h2 id="adding-a-method"><a class="header" href="#adding-a-method">Adding a method</a></h2>
 <p>Edit <code>observer-spec/methods.json</code>, add the method's entry, run
 <code>cargo run -p idiolect-codegen</code>. The generated descriptor table
-picks up the new method; you write the
+picks up the new method. You write the
 <code>ObservationMethod</code> (or <code>InstanceMethod</code>) impl in
 <code>crates/idiolect-observer/src/methods/&lt;module&gt;.rs</code> and add it to
 the <code>default_methods()</code> constructor.</p>

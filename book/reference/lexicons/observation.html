@@ -234,15 +234,14 @@ consumers choose whom to trust.</p>
 kind, <a href="./deliberationOutcome.html"><code>deliberationOutcome</code></a>, rather
 than as an observation output.</p>
 <p>A consumer reading an observation must know the method to
-interpret the output. The <code>method.name</code> plus <code>version</code> plus
-optional <code>codeRef</code> together is what makes the output
-interpretable.</p>
+interpret the output. The <code>method.name</code>, <code>version</code>, and optional
+<code>codeRef</code> together tell a consumer how to interpret the output.</p>
 <h3 id="scopeencounterkinds"><a class="header" href="#scopeencounterkinds"><code>scope.encounterKinds</code></a></h3>
 <p>The observer must disclose which encounter kinds it includes or
 the observation is uninterpretable. An observation that includes
 <code>adversarial</code> encounters at the same weight as <code>invocation-log</code>
 encounters is meaningfully different from one that excludes
-adversarial samples; consumers reading the observation rely on
+adversarial samples. Consumers reading the observation rely on
 this disclosure to decide whether the result fits their use case.</p>
 <h3 id="version-versus-occurredat"><a class="header" href="#version-versus-occurredat"><code>version</code> versus <code>occurredAt</code></a></h3>
 <p><code>version</code> is the method's version. Two observations with the same
@@ -303,8 +302,8 @@ says it is).</li>
 <li>Disagree with itself across observers.</li>
 </ul>
 <p>A signed observation can. Two observers running the same fold on
-overlapping data will produce records with comparable counts;
-consumers can require quorum among trusted observers before
+overlapping data will produce records with comparable counts.
+Consumers can require quorum among trusted observers before
 treating an observation as authoritative.</p>
 <h2 id="concept-references"><a class="header" href="#concept-references">Concept references</a></h2>
 <ul>

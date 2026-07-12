@@ -228,7 +228,7 @@ paths that should have converged.</li>
 </ul>
 <p>The encounter / correction / observation triple cannot capture
 these without distorting their semantics. A retrospection record
-is the right shape: it points at the original encounter, names a
+handles this: it points at the original encounter, records a
 delayed finding, and carries the evidence.</p>
 <h2 id="the-four-finding-kinds"><a class="header" href="#the-four-finding-kinds">The four finding kinds</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Slug</th><th>Evidence shape</th><th>What it captures</th></tr></thead><tbody>
@@ -253,11 +253,11 @@ meaningful.</p>
 <h3 id="confidence"><a class="header" href="#confidence"><code>confidence</code></a></h3>
 <p>Optional, in <code>[0, 1]</code>. A finding the detecting party is sure of
 omits it. A finding hedged on uncertain evidence sets a value
-below 1. Aggregators may weight findings by confidence; consumers
+below 1. Aggregators may weight findings by confidence. Consumers
 treating findings as ground truth filter for high confidence.</p>
 <h3 id="disputedattribution"><a class="header" href="#disputedattribution"><code>disputedAttribution</code></a></h3>
 <p>A hint the detecting party expects the causal attribution to be
-contested. The substrate does not enforce contestation; a
+contested. idiolect does not enforce contestation. A
 contesting party publishes its own retrospection with
 disagreement, or a <code>dev.idiolect.belief</code> over the finding. The
 flag exists so consumers can flag the finding as
@@ -267,7 +267,7 @@ flag exists so consumers can flag the finding as
 Most retrospections are first-party: the repo owner is the
 detecting party. Some are third-party: a researcher republishing
 a finding from a trusted source. <code>holder</code> is not a field here
-(unlike encounter / belief / correction); <code>detectingParty</code> plus
+(unlike encounter / belief / correction). <code>detectingParty</code> plus
 the repo signer carry the relevant attribution.</p>
 <h2 id="example"><a class="header" href="#example">Example</a></h2>
 <pre><code class="language-json">{

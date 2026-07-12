@@ -188,7 +188,7 @@
 · <strong>Crate:</strong> <a href="https://crates.io/crates/idiolect-identity">crates.io/idiolect-identity</a></p>
 <p>This page is an editorial overview. The per-symbol surface
 (every public type, trait, function, and feature flag) is the
-docs.rs link above; that is the authoritative reference.</p>
+docs.rs link above. That is the authoritative reference.</p>
 </blockquote>
 <p>DID resolution. Maps a <code>did</code> to a structured <code>DidDocument</code>
 carrying the also-known-as set, service entries, verification
@@ -197,7 +197,7 @@ methods, and any additional fields the source document carries.</p>
 idiolect-identity = { version = "0.8", features = ["resolver-reqwest"] }
 </code></pre>
 <h2 id="public-surface"><a class="header" href="#public-surface">Public surface</a></h2>
-<p><code>IdentityResolver</code> is the trait every resolver implements; the
+<p><code>IdentityResolver</code> is the trait every resolver implements. The
 crate ships three implementations.</p>
 <div class="table-wrapper"><table><thead><tr><th>Type</th><th>Feature</th><th>Backing</th></tr></thead><tbody>
 <tr><td><code>InMemoryIdentityResolver</code></td><td>(always)</td><td><code>HashMap&lt;Did, DidDocument&gt;</code>. Tests and fixtures.</td></tr>
@@ -207,7 +207,7 @@ crate ships three implementations.</p>
 </div>
 <p><code>DidDocument</code> carries the resolved data. The shipped accessors
 include <code>handle()</code>, <code>pds_url()</code>, and the underlying
-<code>also_known_as</code> field; see docs.rs for the full surface.</p>
+<code>also_known_as</code> field. See docs.rs for the full surface.</p>
 <h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
 <p><code>IdentityError</code> is the single error type the crate exposes.
 Variants distinguish transport failures, parse failures, and
@@ -220,7 +220,7 @@ unsupported DID methods.</p>
 <h2 id="caching"><a class="header" href="#caching">Caching</a></h2>
 <p>The shipped <code>CachingIdentityResolver</code> wraps any inner resolver
 with a TTL'd cache. Default TTL and overrides are documented on
-docs.rs. Cache hits skip the HTTP request entirely; cache misses
+docs.rs. Cache hits skip the HTTP request entirely. Cache misses
 fall through to the inner resolver. Errors are not cached.</p>
 
                     </main>

@@ -191,7 +191,7 @@ page. The authoritative reference is the source above.</p>
 <p>Lexicon-driven Rust + TypeScript emitter. Reads
 <code>lexicons/dev/idiolect/*.json</code> and the three spec files
 (<code>orchestrator-spec/queries.json</code>, <code>observer-spec/methods.json</code>,
-<code>verify-spec/runners.json</code>); writes the generated modules under
+<code>verify-spec/runners.json</code>). Writes the generated modules under
 each downstream crate.</p>
 <p>The crate is shipped both as a library (callable from a
 downstream emitter) and as a binary (<code>cargo run -p idiolect-codegen</code>).</p>
@@ -217,7 +217,7 @@ use idiolect_codegen::Example;
 <code>emit_typescript(docs, examples, family)</code> take pre-loaded
 <code>LexiconDoc</code> and <code>Example</code> slices plus a <code>FamilyConfig</code>, and
 return <code>Vec&lt;EmittedFile&gt;</code>. Loading the lexicons from disk is the
-caller's job; the workspace binary does this through the
+caller's job. The workspace binary does this through the
 <code>idiolect_codegen::lexicon</code> parser.</p>
 <p><code>FamilyConfig</code> carries three <code>Cow&lt;'static, str&gt;</code> fields: the
 marker name, the family ID, and the NSID prefix. The shipped
@@ -247,7 +247,7 @@ taxonomy (<code>crates/idiolect-observer/src/generated.rs</code>).</li>
 taxonomy (<code>crates/idiolect-verify/src/generated.rs</code>).</li>
 </ul>
 <p>Each spec file is a single JSON document with a top-level
-<code>queries</code> / <code>methods</code> / <code>runners</code> array; codegen produces the
+<code>queries</code> / <code>methods</code> / <code>runners</code> array. Codegen produces the
 dispatch tables and typed enums. The hand-written predicates
 live alongside the generated tree.</p>
 <h2 id="drift-gate-semantics"><a class="header" href="#drift-gate-semantics">Drift gate semantics</a></h2>
@@ -265,7 +265,7 @@ rejects non-conforming input.</li>
 On collision (<code>foo-bar</code> and <code>foo_bar</code>), the second occurrence
 gets a numeric suffix (<code>FooBar2</code>).</li>
 <li>The emitter walks each record's path until each member's
-prefix is unique within the colliding group; the alias is
+prefix is unique within the colliding group. The alias is
 the unique-prefix concatenation (e.g. <code>ChangelogEntry</code>,
 <code>ResourceEntry</code>).</li>
 </ol>

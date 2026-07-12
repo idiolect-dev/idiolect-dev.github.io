@@ -216,7 +216,7 @@ the indexer's tapped firehose, and the SQLite cursor store. Run:</p>
 </code></pre>
 <p>The exact CLI surface is documented by the daemon's <code>--help</code>.
 The catalog is populated by the indexer that ships with the
-daemon; the orchestrator reads from the same SQLite file.</p>
+daemon. The orchestrator reads from the same SQLite file.</p>
 <h2 id="query-it"><a class="header" href="#query-it">Query it</a></h2>
 <pre><code class="language-bash">curl -s http://localhost:8787/v1/stats | jq
 curl -s 'http://localhost:8787/v1/bounties/open' | jq
@@ -246,18 +246,18 @@ over.</li>
 query-string parser, response shape, and CLI subcommand.</li>
 </ol>
 <p>The hand-written part is the panproto-expr predicate inside the
-spec entry; the generated tree handles routing, parameter
+spec entry. The generated tree handles routing, parameter
 parsing, and response encoding.</p>
 <h2 id="observability"><a class="header" href="#observability">Observability</a></h2>
 <p>The orchestrator exposes <code>/metrics</code> in Prometheus exposition
-format. Plus structured <code>tracing</code> logs. The exact metric names
+format, plus structured <code>tracing</code> logs. The exact metric names
 and label sets are defined in
-<code>crates/idiolect-orchestrator/src/http.rs</code>; see the source for
+<code>crates/idiolect-orchestrator/src/http.rs</code>. See the source for
 the live list.</p>
 <h2 id="deployment"><a class="header" href="#deployment">Deployment</a></h2>
 <p>A pre-built container image ships at
 <code>ghcr.io/idiolect-dev/orchestrator:&lt;version&gt;</code> per release. The
-image is signed with sigstore keyless; verification policy is
+image is signed with sigstore keyless. Verification policy is
 in
 <a href="https://github.com/idiolect-dev/idiolect/blob/main/docs/ci-cd.md"><code>docs/ci-cd.md</code></a>.</p>
 

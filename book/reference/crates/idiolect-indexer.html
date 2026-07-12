@@ -188,10 +188,10 @@
 · <strong>Crate:</strong> <a href="https://crates.io/crates/idiolect-indexer">crates.io/idiolect-indexer</a></p>
 <p>This page is an editorial overview. The per-symbol surface
 (every public type, trait, function, and feature flag) is the
-docs.rs link above; that is the authoritative reference.</p>
+docs.rs link above. That is the authoritative reference.</p>
 </blockquote>
 <p>Firehose consumer factored into three trait surfaces. The crate
-owns the loop; you bring the stream, the handler, and the cursor
+owns the loop. You bring the stream, the handler, and the cursor
 store.</p>
 <pre><code class="language-toml">[dependencies]
 idiolect-indexer = { version = "0.8",
@@ -271,7 +271,7 @@ boundaries. Variants:</p>
 </div>
 <h2 id="cursor-commit-semantics"><a class="header" href="#cursor-commit-semantics">Cursor commit semantics</a></h2>
 <p><code>drive_indexer</code> commits the cursor only after the handler
-returns <code>Ok</code>. A failing handler does not commit; the loop
+returns <code>Ok</code>. A failing handler does not commit. The loop
 either retries on the next event (default) or surfaces the
 error. For exactly-once semantics, the handler coordinates the
 cursor commit with its own storage transaction.</p>

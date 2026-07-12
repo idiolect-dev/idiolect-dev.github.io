@@ -221,13 +221,13 @@ Polis-style opinion map without further computation.</p>
 </div>
 <h2 id="field-details"><a class="header" href="#field-details">Field details</a></h2>
 <h3 id="why-outcomes-are-observer-published"><a class="header" href="#why-outcomes-are-observer-published">Why outcomes are observer-published</a></h3>
-<p>The deliberation owns the topic; participants own the statements
+<p>The deliberation owns the topic. Participants own the statements
 and votes. The aggregate is <em>opinion</em>: it depends on the
 observer's fold method, the cut-off time, and which encounter
 kinds it weights. Two observers can produce different but
 defensible outcomes for the same deliberation.</p>
-<p>The substrate's answer: outcomes are records, signed by the
-observer, comparable across observers. A consumer that distrusts
+<p>The answer is that outcomes are records, signed by the observer
+and comparable across observers. A consumer that distrusts
 one observer's fold can:</p>
 <ul>
 <li>Fetch all outcomes for the deliberation.</li>
@@ -260,7 +260,7 @@ fetch the exact statement revision being tallied).</li>
 <code>weight</code>.</li>
 </ul>
 <p>The 4096-entry cap matches the maximum statement count per
-deliberation in practice; communities expecting more should
+deliberation in practice. Communities expecting more should
 publish multiple outcome records partitioned by statement
 window.</p>
 <h3 id="adopted"><a class="header" href="#adopted"><code>adopted</code></a></h3>
@@ -281,7 +281,7 @@ adoption (rejected, tabled, or closed without resolution).</p>
 Two outcomes for the same deliberation produced by different
 tools (or different versions of the same tool) are not directly
 comparable: the algorithm differs. Consumers compare outcomes
-across tools at their own risk; the substrate records the tool
+across tools at their own risk. The record carries the tool
 identity so the comparison is at least informed.</p>
 <h2 id="example"><a class="header" href="#example">Example</a></h2>
 <pre><code class="language-json">{

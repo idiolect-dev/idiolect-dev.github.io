@@ -189,7 +189,7 @@ authoritative reference is the source above plus the rustdoc
 built locally with <code>cargo doc -p idiolect-verify --open</code>.</p>
 </blockquote>
 <p>Verification runners with declarative dispatch. Driven by
-<code>verify-spec/runners.json</code>; codegen emits the kind taxonomy.</p>
+<code>verify-spec/runners.json</code>. Codegen emits the kind taxonomy.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
 idiolect-verify = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0" }
@@ -223,12 +223,12 @@ kinds:</p>
 </div>
 <p>The lexicon's <code>verification.kind</code> field is open-enum and lists
 additional kinds (<code>formal-proof</code>, <code>conformance-test</code>,
-<code>convergence-preserving</code>); those kinds are <em>recognised</em> but not
+<code>convergence-preserving</code>). Those kinds are <em>recognised</em> but not
 shipped as runners. Communities that need them author their own
 runner against the trait.</p>
 <h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
 <p><code>VerifyError</code> covers input-shape, transport, and
-irrecoverable-state failures; <code>VerifyResult&lt;T&gt;</code> is its alias.</p>
+irrecoverable-state failures. <code>VerifyResult&lt;T&gt;</code> is its alias.</p>
 <h2 id="result-records"><a class="header" href="#result-records">Result records</a></h2>
 <p>A passing run produces a <code>Verification</code> record with
 <code>result: "holds"</code>. A falsifying run produces one with

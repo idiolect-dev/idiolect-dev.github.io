@@ -184,10 +184,10 @@
 <h1 id="publish-a-recommendation"><a class="header" href="#publish-a-recommendation">Publish a recommendation</a></h1>
 <p>A <code>dev.idiolect.recommendation</code> is a community-published opinion
 that a particular lens path is appropriate under specific
-applicability conditions. It is the unit consumers query before
-choosing a translation: a lens that nobody recommends is just
-code; a lens that a community recommends under conditions a
-consumer satisfies is a routing decision.</p>
+applicability conditions. Consumers query recommendations before
+choosing a translation. A lens nobody recommends is just code. A
+lens a community recommends, under conditions the consumer meets,
+is a routing decision.</p>
 <p>The shape is:</p>
 <pre><code class="language-text">issuingCommunity : at-uri        # the community publishing
 conditions       : [Condition]   # postfix applicability tree
@@ -395,7 +395,7 @@ POSTs <code>com.atproto.repo.createRecord</code> under the stored session.</p>
 next-iteration CLI wraps <code>atrium-oauth</code>'s browser-handoff dance
 and persists the resulting DPoP-bound session through the same
 <code>OAuthTokenStore</code>. The publish path is unchanged.</p>
-<p>That is the full loop. Where to go next:</p>
+<p>That completes the loop. Where to go next:</p>
 <ul>
 <li><a href="../guide/orchestrator.html">Run the orchestrator HTTP API</a>
 shows how the consumer side of that flow is served.</li>

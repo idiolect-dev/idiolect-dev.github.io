@@ -242,9 +242,9 @@ that maintains the roll. Appropriate for larger communities
 shouldn't bloat the community record itself.</li>
 </ul>
 <p>A community may use both for the transition period while moving
-from inline to external; consumers union the two sets.</p>
+from inline to external. Consumers union the two sets.</p>
 <h3 id="roleassignments-versus-the-default-role"><a class="header" href="#roleassignments-versus-the-default-role"><code>roleAssignments</code> versus the default role</a></h3>
-<p>The default role (named on the role vocabulary's top node) applies
+<p>The default role (declared on the role vocabulary's top node) applies
 to every member who does not have an explicit <code>roleAssignment</code>.
 Only members whose role <em>differs</em> from the default need an entry.
 A 500-member community with five moderators carries five
@@ -264,10 +264,10 @@ surface. A community that publishes <code>community-hosted</code> plus an
 <code>appviewEndpoint</code> is telling consumers to route XRPC reads
 through the AppView instead of crawling member PDSes.</p>
 <h3 id="endorsedcommunities"><a class="header" href="#endorsedcommunities"><code>endorsedCommunities</code></a></h3>
-<p>A community names other communities it recognises as legitimate
+<p>A community lists other communities it recognises as legitimate
 interlocutors. The endorsement is <em>not</em> transitive: A endorsing B
-and B endorsing C does not imply A endorsing C. The substrate
-records the assertion; consumers decide what to do with it. Common
+and B endorsing C does not imply A endorsing C. The record only
+states the assertion. Consumers decide what to do with it. Common
 patterns: a quorum policy that requires endorsements from <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span>
 trusted communities; a denylist that excludes communities not
 endorsed by any trusted party.</p>

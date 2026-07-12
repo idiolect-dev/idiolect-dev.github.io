@@ -189,21 +189,26 @@ authoritative reference is the source above plus the rustdoc
 built locally with <code>cargo doc -p idiolect-oauth --open</code>.</p>
 </blockquote>
 <p>ATProto OAuth session storage. The crate carries the token-store
-trait and shipped implementations; the OAuth dance itself lives
-in <code>atrium-oauth-client</code> and the DPoP signer lives in
+trait and shipped implementations. The OAuth dance itself lives
+in <code>atrium-oauth-client</code>, and the DPoP signer lives in
 <code>idiolect-lens</code> under the <code>dpop-p256</code> feature.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
 idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0", features = ["store-filesystem"] }
 </code></pre>
 <h2 id="public-surface"><a class="header" href="#public-surface">Public surface</a></h2>
-<p><code>OAuthTokenStore</code> is the trait every store implements; the
+<p><code>OAuthTokenStore</code> is the trait every store implements. The
 typical surface is <code>get</code> / <code>put</code> / <code>delete</code> keyed by DID.
 <code>OAuthSession</code> carries the access token, refresh token, expiry,
 and DPoP key. The session has helpers (<code>is_expired</code>,
 <code>time_until_expiry</code>, <code>needs_refresh(now, threshold)</code>,
 <code>refresh_expired</code>) for callers that want to drive their own
 refresh policy.</p>
+<p>For the common case, the crate also ships <code>refresh_if_needed</code>
+and a <code>Refresher</code> trait: <code>refresh_if_needed(store, refresher, did)</code> loads the session, decides whether to refresh (wall clock
+plus a <code>DEFAULT_REFRESH_THRESHOLD_SECS</code> buffer), drives the
+caller-supplied <code>Refresher</code> if so, persists the result, and
+returns the live session.</p>
 <h2 id="shipped-stores"><a class="header" href="#shipped-stores">Shipped stores</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Store</th><th>Feature</th><th>Backing</th></tr></thead><tbody>
 <tr><td><code>InMemoryOAuthTokenStore</code></td><td>(always)</td><td><code>HashMap</code>-backed; for tests.</td></tr>
@@ -214,7 +219,7 @@ refresh policy.</p>
 <p>All three implement <code>OAuthTokenStore</code>. Anything that takes
 <code>Arc&lt;dyn OAuthTokenStore&gt;</code> accepts any of them.</p>
 <h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
-<p><code>StoreError</code> covers store-side failures; <code>SessionError</code> covers
+<p><code>StoreError</code> covers store-side failures. <code>SessionError</code> covers
 session-shape failures. Callers that want a flattened error type
 build their own at the application boundary.</p>
 <h2 id="feature-flags"><a class="header" href="#feature-flags">Feature flags</a></h2>
@@ -226,7 +231,7 @@ build their own at the application boundary.</p>
 <h2 id="dpop-keys"><a class="header" href="#dpop-keys">DPoP keys</a></h2>
 <p>The session carries a DPoP keypair. Persistence is the store's
 responsibility; both shipped stores persist it alongside the
-session. A custom store must do the same; the OAuth RFC
+session. A custom store must do the same. The OAuth RFC
 requires DPoP keys to survive across requests.</p>
 <p>The signer behind the DPoP-bound HTTP layer is <code>P256DpopProver</code>
 in <code>idiolect-lens</code> under the <code>dpop-p256</code> feature. The lens

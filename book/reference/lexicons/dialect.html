@@ -221,10 +221,10 @@ translations through <code>preferredLenses</code>, validates incoming records
 against the schemas in <code>idiolects</code>, and treats the deprecation
 list as a redirect table.</p>
 <p>The dialect record is data, not configuration. Adding an entry is
-a record edit; deprecating one is another record edit on the same
+a record edit. Deprecating one is another record edit on the same
 dialect with a <code>Deprecation</code> entry. Two dialects from different
 communities can list the same NSID with different preferred
-lenses; consumers pick a dialect (or a quorum of dialects) and
+lenses. Consumers pick a dialect (or a quorum of dialects) and
 follow it.</p>
 <h3 id="previousversion-and-the-version-chain"><a class="header" href="#previousversion-and-the-version-chain"><code>previousVersion</code> and the version chain</a></h3>
 <p>A dialect revision points at its predecessor via <code>previousVersion</code>.
@@ -234,12 +234,12 @@ at the right time, and audit the change history without trusting
 the orchestrator's catalog.</p>
 <p>The chain is not enforced: a community can publish a dialect with
 no <code>previousVersion</code> (a fresh start) or skip versions (publishing
-v3 with <code>previousVersion = v1</code>). The substrate records what was
-done; consumers decide whether to trust it.</p>
+v3 with <code>previousVersion = v1</code>). The record captures what was
+done. Consumers decide whether to trust it.</p>
 <h3 id="deprecations"><a class="header" href="#deprecations"><code>deprecations</code></a></h3>
 <p>Each entry records an idiolect or lens that was once part of the
 dialect and is now superseded. The <code>ref</code> field points at the
-deprecated artifact; <code>replacement</code> optionally points at the
+deprecated artifact. <code>replacement</code> optionally points at the
 successor. Consumers reading a record at the deprecated <code>ref</code> can
 follow <code>replacement</code> to the new one, with the <code>reason</code> field
 explaining why.</p>
@@ -273,8 +273,8 @@ automatically when a non-Iso lens revision ships. See
 </code></pre>
 <h2 id="multiple-dialects"><a class="header" href="#multiple-dialects">Multiple dialects</a></h2>
 <p>Two communities can publish disjoint, overlapping, or
-contradictory dialects. The substrate treats them as opinions;
-nothing in the protocol prefers one over another. Consumers pick
+contradictory dialects. The protocol treats them all as opinions
+and prefers none. Consumers pick
 a resolution policy:</p>
 <ul>
 <li><code>first-match</code> — pick the first dialect listed in the consumer's

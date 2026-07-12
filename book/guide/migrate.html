@@ -188,7 +188,9 @@ what <a href="../reference/crates/idiolect-migrate.html"><code>idiolect-migrate<
 is for.</p>
 <p>The crate is a thin typed façade over <code>panproto-check</code> (for diff
 classification) and <code>idiolect-lens</code> (for record translation). It
-ships as a library only; there is no <code>idiolect-migrate</code> binary.</p>
+is primarily a library, and also ships an optional
+<code>idiolect-migrate</code> binary behind the <code>cli</code> feature for streaming
+batch migration (see <a href="#batch-migration">Batch migration</a>).</p>
 <p>The runtime path:</p>
 <pre class="mermaid">flowchart LR
     OLD[record at v1] --&gt; APPLY[apply_lens forward]
@@ -280,8 +282,8 @@ covers that case. The authoring loop is:</p>
 <li>Publish the chain plus a verification record signed by a
 reviewer.</li>
 </ol>
-<p>Each step is mechanical and gated; the policy is what makes
-migrations reviewable.</p>
+<p>Each step is mechanical and gated. The policy makes migrations
+reviewable.</p>
 <h2 id="batch-migration"><a class="header" href="#batch-migration">Batch migration</a></h2>
 <p>The crate ships an <code>idiolect-migrate</code> binary (behind the <code>cli</code>
 feature) that walks a directory of JSON records and writes a

@@ -199,7 +199,7 @@ idiolect-lens = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.
 <h2 id="public-surface"><a class="header" href="#public-surface">Public surface</a></h2>
 <h3 id="resolvers"><a class="header" href="#resolvers">Resolvers</a></h3>
 <p><code>Resolver</code> is the trait every resolver implements. It is
-object-safe (<code>Arc&lt;dyn Resolver&gt;</code>) since v0.8.0; the resolve
+object-safe (<code>Arc&lt;dyn Resolver&gt;</code>) since v0.8.0. The resolve
 future is <code>Send</code>.</p>
 <p>Shipped implementations:</p>
 <div class="table-wrapper"><table><thead><tr><th>Type</th><th>Backing store</th></tr></thead><tbody>
@@ -223,7 +223,7 @@ variants for incremental translation.</li>
 lenses sharing a middle schema.</li>
 </ul>
 <p>Each takes a resolver, a schema loader, a <code>Protocol</code>, and a
-typed input struct; each returns a typed output struct. The
+typed input struct. Each returns a typed output struct. The
 composed future is <code>Send</code> so callers can spawn it under
 <code>tokio::spawn</code> or hold it inside an <code>#[async_trait]</code> impl.</p>
 <h3 id="pds-clients"><a class="header" href="#pds-clients">PDS clients</a></h3>
@@ -247,7 +247,7 @@ the record, splices the <code>$type</code> field, and forwards to the
 <p><code>LensError</code> collapses backend-specific errors into a small set
 of variants (<code>NotFound</code>, <code>Transport</code>, decode failures, translate
 failures). Backend-specific errors collapse to one of these at
-the resolver layer; callers do not pattern-match on transport
+the resolver layer. Callers do not pattern-match on transport
 types.</p>
 <h2 id="composition-pattern"><a class="header" href="#composition-pattern">Composition pattern</a></h2>
 <p>The recommended runtime stack:</p>

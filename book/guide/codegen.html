@@ -209,8 +209,8 @@ non-zero on any drift. CI runs <code>--check</code> on every PR.</p>
 <tr><td>Verifier kind taxonomy</td><td><code>verify-spec/runners.json</code></td><td><code>crates/idiolect-verify/src/generated.rs</code></td></tr>
 </tbody></table>
 </div>
-<p>The three spec files are single JSON documents (not directories);
-each declares an array of entries that codegen reads.</p>
+<p>The three spec files are single JSON documents (not directories).
+Each declares an array of entries that codegen reads.</p>
 <h2 id="the-drift-gate"><a class="header" href="#the-drift-gate">The drift gate</a></h2>
 <p><code>--check</code> is the drift gate. CI runs it on every PR. A red gate
 means somebody edited a lexicon (or a spec) without rerunning
@@ -239,7 +239,7 @@ for an orchestrator query, the <code>ObservationMethod</code> impl for
 an observer method, the <code>VerificationRunner</code> impl for a
 verifier runner).</li>
 </ol>
-<p>The dispatcher routes to the new entry by its kind; the
+<p>The dispatcher routes to the new entry by its kind. The
 generated tree handles parsing and shape.</p>
 <h2 id="library-api"><a class="header" href="#library-api">Library API</a></h2>
 <p>For consumers outside the workspace, the emitter is callable as
@@ -255,9 +255,9 @@ use idiolect_codegen::emit::family::{FamilyConfig, idiolect_family};
 return a <code>Vec&lt;EmittedFile&gt;</code>. Loading the lexicons from disk is
 the caller's job.</p>
 <p><code>FamilyConfig::new(marker_name, id, nsid_prefix)</code> constructs a
-config from any string-like inputs; the shipped default for
+config from any string-like inputs. The shipped default for
 <code>dev.idiolect.*</code> is <code>idiolect_family()</code>.</p>
-<p>The crate is <code>publish = false</code> and not on crates.io; downstream
+<p>The crate is <code>publish = false</code> and not on crates.io. Downstream
 consumers depend on it via a path or git reference rather than
 a registry version.</p>
 

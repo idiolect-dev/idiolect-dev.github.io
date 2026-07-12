@@ -241,8 +241,8 @@ is meaningfully different from one that covers <code>domain: "the training corpu
 </div>
 <p>Falsified verifications are first-class records and are how the
 community learns a lens is wrong. A consumer that ignores a
-falsified verification is making a routing decision; the substrate
-records the falsification and lets consumers decide.</p>
+falsified verification is making a routing decision. The record
+captures the falsification and lets consumers decide.</p>
 <h3 id="tool"><a class="header" href="#tool"><code>tool</code></a></h3>
 <p>The <code>tool</code> field records the tool's name, version, and optional
 commit. Consumers reading a verification can decide whether to
@@ -300,8 +300,7 @@ for verification records on each lens, accepts the records signed
 by trusted verifiers with <code>result: "holds"</code>, and confirms each
 required verification is covered. A recommendation with required
 verifications that nobody has published is a community asking for
-work to be done; a <code>dev.idiolect.bounty</code> is the canonical way to
-ask for it.</p>
+work to be done. A <code>dev.idiolect.bounty</code> is how you ask for it.</p>
 <h2 id="concept-references"><a class="header" href="#concept-references">Concept references</a></h2>
 <ul>
 <li><a href="../../concepts/lens-laws.html">Concepts: Lens semantics and laws</a></li>

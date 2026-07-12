@@ -184,7 +184,7 @@
 <h1 id="open-enums-and-vocabularies"><a class="header" href="#open-enums-and-vocabularies">Open enums and vocabularies</a></h1>
 <p>Closed enums are the wrong default for a federated lexicon.
 Adding a value should not require coordinating with every
-consumer; refusing to accept a new value should not be the
+consumer. Refusing to accept a new value should not be the
 default.</p>
 <p>idiolect's policy is: every enum-shaped field is open, and the
 extension story is mechanical.</p>
@@ -269,7 +269,7 @@ contract, not the data:</p>
 <li><code>vocab.world</code> (<code>open</code> / <code>closed-with-default</code> / <code>hierarchy-closed</code>)
 controls the runtime's open-enum policy itself.</li>
 <li><code>lensClass</code> (<code>isomorphism</code> / <code>injection</code> / <code>projection</code> /
-<code>affine</code> / <code>general</code>) is a panproto contract; extending it
+<code>affine</code> / <code>general</code>) is a panproto contract. Extending it
 changes what the runtime promises.</li>
 <li><code>recordHosting</code> (<code>member-hosted</code> / <code>community-hosted</code> / <code>hybrid</code>)
 controls a federation policy.</li>
@@ -279,7 +279,7 @@ controls a federation policy.</li>
 <p>Converting a closed enum to an open enum is wire-compatible:
 existing records continue to validate, and the codegen-emitted
 helpers degrade to "if <code>Other</code>, ignore" in consumers that have
-not regenerated. Going the other way is breaking; the shipped
+not regenerated. Going the other way is breaking, and the shipped
 lexicons do not do that.</p>
 <h2 id="codegen-identifier-collisions"><a class="header" href="#codegen-identifier-collisions">Codegen identifier collisions</a></h2>
 <p>When two distinct slugs would pascal-case to the same Rust

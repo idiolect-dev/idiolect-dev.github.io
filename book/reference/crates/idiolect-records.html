@@ -188,11 +188,11 @@
 · <strong>Crate:</strong> <a href="https://crates.io/crates/idiolect-records">crates.io/idiolect-records</a></p>
 <p>This page is an editorial overview. The per-symbol surface
 (every public type, trait, function, and feature flag) is the
-docs.rs link above; that is the authoritative reference.</p>
+docs.rs link above. That is the authoritative reference.</p>
 </blockquote>
 <p>Serde record types mirroring the <code>dev.idiolect.*</code> lexicons. The
 contents of <code>crates/idiolect-records/src/generated/</code> are written
-by <a href="./idiolect-codegen.html"><code>idiolect-codegen</code></a>; do not edit by
+by <a href="./idiolect-codegen.html"><code>idiolect-codegen</code></a>. Do not edit by
 hand.</p>
 <pre><code class="language-toml">[dependencies]
 idiolect-records = "0.8"
@@ -216,11 +216,11 @@ family.</p>
 <code>PanprotoProtolensChain</code>, <code>PanprotoComplement</code>,
 <code>PanprotoLensAttestation</code>, <code>PanprotoProtocol</code>, plus
 <code>PanprotoCommit</code>, <code>PanprotoRefUpdate</code>, <code>PanprotoRepo</code>) are
-re-exported at the crate root as their own structs; they are
+re-exported at the crate root as their own structs. They are
 not variants of <code>AnyRecord</code> (which is scoped to
 <code>IdiolectFamily</code>'s NSIDs).</p>
 <h3 id="family"><a class="header" href="#family">Family</a></h3>
-<p><code>RecordFamily</code> is the trait every family implements; the crate
+<p><code>RecordFamily</code> is the trait every family implements. The crate
 ships <code>IdiolectFamily</code> for <code>dev.idiolect.*</code> and the
 <code>OrFamily&lt;F1, F2&gt;</code> composer that recognises every NSID either
 side claims. <code>detect_or_family_overlap</code> audits a probe set at
@@ -237,7 +237,7 @@ right-side family.</p>
 <tr><td><code>Language</code></td><td>BCP 47</td></tr>
 </tbody></table>
 </div>
-<p>Each wraps a string with a parser; the parser fires at
+<p>Each wraps a string with a parser. The parser fires at
 deserialize time. <code>Display</code> / <code>as_str</code> / <code>Deref&lt;Target=str&gt;</code> are
 uniform.</p>
 <h3 id="vocab-graph-helpers"><a class="header" href="#vocab-graph-helpers">Vocab graph helpers</a></h3>
@@ -260,7 +260,7 @@ shipped fixtures cover: <code>adapter</code>, <code>belief</code>, <code>bounty<
 <code>panproto_schema</code>, <code>panproto_commit</code>, ...). Use them in tests so
 you do not have to hand-roll JSON.</p>
 <p>The four deliberation lexicons do not currently ship example
-fixtures; consumers building deliberation tests construct
+fixtures. Consumers building deliberation tests construct
 records directly via the typed structs.</p>
 <h2 id="feature-flags"><a class="header" href="#feature-flags">Feature flags</a></h2>
 <p>None. The crate is feature-flag-free and has no transport

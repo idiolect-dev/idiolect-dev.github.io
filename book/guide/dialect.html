@@ -241,11 +241,11 @@ dialect record (via <code>idiolect_lens::PdsResolver</code>'s
 <code>Resolver::resolve</code> or any other resolver) and walk the typed
 fields directly. A small wrapper layer is the right shape if a
 consumer wants a <code>dialect.preferred_lens_for(nsid)</code> style
-accessor; the substrate ships only the record.</p>
+accessor. The runtime ships only the record.</p>
 <h2 id="multiple-dialects"><a class="header" href="#multiple-dialects">Multiple dialects</a></h2>
 <p>Two communities can publish disjoint, overlapping, or
-contradictory dialects. The substrate treats them as opinions;
-nothing in the protocol prefers one over another. Consumers
+contradictory dialects. The protocol treats them all as opinions
+and prefers none. Consumers
 pick a resolution policy in their own code:</p>
 <ul>
 <li><em>first-match</em> — pick the first dialect listed in the
@@ -255,7 +255,7 @@ dialects endorse the same lens path.</li>
 <li><em>merge</em> — union the entries; on collision, fall back to a
 configured tie-breaker.</li>
 </ul>
-<p>The substrate does not ship trait or implementation for any of
+<p>The runtime ships no trait or implementation for any of
 these: dialect resolution is a consumer decision, and the right
 shape varies by deployment.</p>
 

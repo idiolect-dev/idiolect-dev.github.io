@@ -199,9 +199,9 @@ record can decide whether to trust it.</p>
 <span class="boring">}</span></code></pre></pre>
 <p>A <em>falsified</em> property returns
 <code>Ok(Verification { result: Falsified, ... })</code>, not an error.
-Falsification is the signal the community is paying the runner
-to produce; <code>VerifyError</code> is reserved for input-shape, transport,
-or irrecoverable-state failures.</p>
+A falsified result is a finding the runner is meant to report,
+not an error. <code>VerifyError</code> is reserved for input-shape,
+transport, or irrecoverable-state failures.</p>
 <h2 id="shipped-runners"><a class="header" href="#shipped-runners">Shipped runners</a></h2>
 <p>Four kinds ship in <code>crates/idiolect-verify/src/</code>:</p>
 <div class="table-wrapper"><table><thead><tr><th>Kind</th><th>Runner</th></tr></thead><tbody>
@@ -213,15 +213,15 @@ or irrecoverable-state failures.</p>
 </div>
 <p>The lexicon's <code>verification.kind</code> field is open-enum and lists
 additional kinds (<code>formal-proof</code>, <code>conformance-test</code>,
-<code>convergence-preserving</code>); those kinds are recognised but not
+<code>convergence-preserving</code>). Those kinds are recognised but not
 shipped as runners. Communities that need them author their own.</p>
 <h2 id="add-a-runner-kind"><a class="header" href="#add-a-runner-kind">Add a runner kind</a></h2>
 <p>The project's spec-driven layout means adding a kind is two
 edits:</p>
 <ol>
 <li>Add an entry to <code>verify-spec/runners.json</code> declaring the kind
-and its description. Run <code>cargo run -p idiolect-codegen</code>;
-the generated kind taxonomy
+and its description. Run <code>cargo run -p idiolect-codegen</code>.
+The generated kind taxonomy
 (<code>crates/idiolect-verify/src/generated.rs</code>) picks up the
 new kind.</li>
 <li>Implement <code>VerificationRunner</code> for a struct in a new module
@@ -229,7 +229,7 @@ under <code>crates/idiolect-verify/src/</code>. Re-export it from
 <code>lib.rs</code>.</li>
 </ol>
 <p>The runner's <code>kind()</code> returns the new <code>VerificationKind</code>
-variant; the <code>run</code> method does the work and returns a
+variant. The <code>run</code> method does the work and returns a
 <code>Verification</code> record. Use <code>build_verification</code> (in
 <code>runner.rs</code>) to package the result with the structured
 <code>property</code> field.</p>
@@ -263,10 +263,10 @@ idiolect verify static-check    --lens AT_URI
 idiolect verify coercion-law    --lens AT_URI  --vcs-url URL  --standard STD
 </code></pre>
 <p>Corpus files may be JSON arrays or JSON Lines. The
-<code>property-test</code> generator cycles through the corpus by index;
-<code>--budget</code> controls case count. The CLI prints the typed
+<code>property-test</code> generator cycles through the corpus by index,
+and <code>--budget</code> controls case count. The CLI prints the typed
 <code>Verification</code> record as JSON and exits non-zero on <code>Falsified</code>
-or <code>Inconclusive</code>. Publishing the result is a separate step;
+or <code>Inconclusive</code>. Publishing the result is a separate step:
 pipe to <code>idiolect publish verification --record -</code>.</p>
 
                     </main>

@@ -233,8 +233,17 @@ is a different shape than the runtime API
 heavier dep than the lens runtime itself. Keeping it
 separate keeps the runtime crate's compile-time small.</li>
 </ol>
+<h2 id="the-idiolect-migrate-binary"><a class="header" href="#the-idiolect-migrate-binary">The <code>idiolect-migrate</code> binary</a></h2>
+<p>Behind the <code>cli</code> feature the crate also ships an
+<code>idiolect-migrate</code> binary (<code>src/bin/idiolect_migrate.rs</code>) that
+streams a directory of JSON records through a lens at-uri against
+a live PDS. The library is the default; the binary is opt-in:</p>
+<pre><code class="language-bash">cargo install --path crates/idiolect-migrate --features cli
+</code></pre>
+<p>See <a href="../../guide/migrate.html">Migrate records across a revision</a>
+for the batch-migration flow.</p>
 <h2 id="scope"><a class="header" href="#scope">Scope</a></h2>
-<p>The crate owns no runtime state. It is a thin façade; the
+<p>The crate is a thin façade with no runtime state. The
 runtime cost of a migration equals the cost of one <code>apply_lens</code>
 per record.</p>
 

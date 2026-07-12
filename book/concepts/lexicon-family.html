@@ -226,7 +226,7 @@ namespace. The record kinds are organized by what they describe.</p>
 <p>The arrows are by-reference relationships; the records themselves
 are independent.</p>
 <h2 id="lexicon-by-lexicon"><a class="header" href="#lexicon-by-lexicon">Lexicon-by-lexicon</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>Lexicon</th><th>What it names</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>Lexicon</th><th>What it describes</th></tr></thead><tbody>
 <tr><td><code>dev.idiolect.encounter</code></td><td>One invocation of a lens. Carries the lens, the source schema, the action / material / purpose / actor (<code>use</code>), and the outcome.</td></tr>
 <tr><td><code>dev.idiolect.observation</code></td><td>Aggregate over encounters folded by an observer. Per-outcome counts plus optional weighted aggregates over a window.</td></tr>
 <tr><td><code>dev.idiolect.correction</code></td><td>A claim that a specific encounter's outcome was wrong, plus the corrected output.</td></tr>
@@ -254,8 +254,8 @@ are independent.</p>
 triple. One record per invocation, with corrections and folds
 on top.</li>
 <li><strong>What should happen?</strong> The recommendation / belief / dialect /
-verification quad. Communities express opinions; opinions cite
-evidence; consumers route translations through them.</li>
+verification quad. Communities express opinions, those opinions
+cite evidence, and consumers route translations through them.</li>
 <li><strong>What does this mean?</strong> The vocab + open-enum convention.
 Slugs are open-enum strings resolved through community-published
 knowledge graphs.</li>
@@ -265,17 +265,18 @@ settled-belief shape.</li>
 </ol>
 <p>A new record kind that fits into one of those four columns is a
 candidate for the family. A record kind that does not fit is
-likely a downstream extension; the <a href="../guide/dialect.html">Bundle records into a
+likely a downstream extension. The <a href="../guide/dialect.html">Bundle records into a
 dialect</a> guide covers how to ship one.</p>
 <h2 id="composition-with-downstream-lexicons"><a class="header" href="#composition-with-downstream-lexicons">Composition with downstream lexicons</a></h2>
-<p>idiolect's shape is meant to be the substrate, not the ceiling. A
+<p>The idiolect family is meant as a base for downstream extension,
+not a fixed set. A
 downstream community publishes its own NSID family and uses
 <code>OrFamily&lt;IdiolectFamily, MyFamily&gt;</code> at the indexer boundary so its
 records flow alongside idiolect's. Lenses bridge the two. A
 dialect record from the downstream community lists both
 families' canonical NSIDs.</p>
-<p>The shipped example of this pattern is the planned <code>idiolect-acorn</code>
-bridge; the design is in <code>notes/</code>.</p>
+<p>The worked example of this pattern is the planned <code>idiolect-acorn</code>
+bridge. The design is in <code>notes/</code>.</p>
 
                     </main>
 

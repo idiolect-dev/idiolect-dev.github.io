@@ -237,7 +237,7 @@ keeps the validator simple.</p>
 <h2 id="field-details"><a class="header" href="#field-details">Field details</a></h2>
 <h3 id="lenspath"><a class="header" href="#lenspath"><code>lensPath</code></a></h3>
 <p>The recommendation endorses a <em>path</em> of lenses, not just a single
-lens. A <code>lensPath</code> of length 1 is the single-lens case; longer
+lens. A <code>lensPath</code> of length 1 is the single-lens case. Longer
 paths are a community's recommendation for a chained translation
 (e.g. v1 → middle-form → v3 instead of a direct v1 → v3 lens
 when the direct lens has worse properties).</p>
@@ -248,7 +248,7 @@ the next. See <a href="../../concepts/lens-laws.html">Concepts: Lens semantics</
 <p>A list of specific lens properties (<code>lensProperty</code> from
 <a href="./defs.html"><code>defs</code></a>). Each entry specifies what the recommendation
 <em>assumes</em> is in place: a particular roundtrip domain, a specific
-formal theorem, a conformance to a named standard.</p>
+formal theorem, a conformance to a specific standard.</p>
 <p>A consumer verifies the recommendation by:</p>
 <ol>
 <li>Querying the verifier registry for verification records on each
@@ -258,9 +258,9 @@ accepted record (signed by a trusted verifier, with <code>result: "holds"</code>
 <li>Adopting the recommendation only when all required
 verifications check out.</li>
 </ol>
-<p>This is what makes a recommendation more than an opinion: the
-required-verifications list pins exactly what the community is
-relying on, and consumers can audit it.</p>
+<p>The required-verifications list pins exactly what the community
+is relying on, so a recommendation is auditable rather than a
+bare opinion.</p>
 <h3 id="caveats"><a class="header" href="#caveats"><code>caveats</code></a></h3>
 <p>A structured failure-mode list. Each <code>caveat</code> has:</p>
 <div class="table-wrapper"><table><thead><tr><th>Subfield</th><th>Type</th><th>Notes</th></tr></thead><tbody>

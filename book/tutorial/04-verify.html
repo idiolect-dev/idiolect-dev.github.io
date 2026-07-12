@@ -265,15 +265,15 @@ byte-for-byte. A single counterexample would have produced
 <code>result = Falsified</code>.</p>
 <h2 id="falsified-is-a-record-not-an-error"><a class="header" href="#falsified-is-a-record-not-an-error">Falsified is a record, not an error</a></h2>
 <p>A <em>falsified</em> property returns
-<code>Ok(Verification { result: Falsified, ... })</code>, not an error. The
-substrate's view: a falsified verification is the signal the
-community is paying the runner to produce. Treat it like a
-finding, sign and publish it. Consumers reading the falsified
-record decide whether to continue invoking the lens.</p>
+<code>Ok(Verification { result: Falsified, ... })</code>, not an error. A
+falsified verification is a normal result the runner exists to
+report. Treat it like a finding: sign it and publish it.
+Consumers reading the falsified record decide whether to continue
+invoking the lens.</p>
 <p><code>VerifyError</code> is reserved for input-shape, transport, or
 irrecoverable-state failures (a corpus the runner could not load,
 a schema the loader could not resolve). Those are operator
-problems; the lens's actual behaviour is captured in the
+problems. The lens's actual behaviour is captured in the
 returned record.</p>
 <h2 id="publish-the-result"><a class="header" href="#publish-the-result">Publish the result</a></h2>
 <p>The <code>verification</code> value the runner returned is a typed

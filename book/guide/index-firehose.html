@@ -191,7 +191,7 @@ impls: <code>JetstreamEventStream</code> (Jetstream websocket feed) and
 <code>tapped</code>).</li>
 <li><code>RecordHandler&lt;F: RecordFamily = IdiolectFamily&gt;</code>: handles one
 decoded <code>IndexerEvent&lt;F&gt;</code>. The family parameter narrows the
-handler to the records the indexer should not skip; everything
+handler to the records the indexer should not skip. Everything
 outside the family is dropped before decode.</li>
 <li><code>CursorStore</code>: persists the last-acknowledged sequence number
 per subscription so a restart resumes where the previous run
@@ -261,7 +261,7 @@ family.</p>
 <p><code>drive_indexer</code> calls
 <code>CursorStore::commit(subscription_id, seq)</code> after the handler
 returns <code>Ok</code>. A handler that wants at-least-once semantics
-should make its work idempotent before returning; a handler
+should make its work idempotent before returning. A handler
 that wants exactly-once semantics needs to coordinate the commit
 with its own storage transaction.</p>
 <p>Errors propagate as <code>IndexerError</code>. The variants distinguish
@@ -281,7 +281,7 @@ subscriber:</p>
 <span class="boring">}</span></code></pre></pre>
 <p>You will see one log line per accepted commit, one per skipped
 commit (debug level), and one per cursor commit. The
-orchestrator exposes a Prometheus surface; see
+orchestrator exposes a Prometheus surface. See
 <a href="./orchestrator.html">Run the orchestrator HTTP API</a>.</p>
 
                     </main>

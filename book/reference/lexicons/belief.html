@@ -186,8 +186,8 @@
 applicable. Belief records are how third parties represent what
 <em>they</em> think about <em>another</em> record without flattening provenance:
 the <code>subject</code> strong-ref pins the exact referenced record, the
-<code>holder</code> names the party whose attitude is represented, and the
-<code>basis</code> names what grounds it.</p>
+<code>holder</code> identifies the party whose attitude is represented, and
+the <code>basis</code> records what grounds it.</p>
 <blockquote>
 <p><strong>Source:</strong> <a href="https://github.com/idiolect-dev/idiolect/blob/main/lexicons/dev/idiolect/belief.json"><code>lexicons/dev/idiolect/belief.json</code></a>
 · <strong>Rust:</strong> <a href="https://docs.rs/idiolect-records/latest/idiolect_records/struct.Belief.html"><code>idiolect_records::Belief</code></a>
@@ -214,13 +214,13 @@ exact recommendation revision the holder believed in, even if the
 recommendation has been edited since.</p>
 <h3 id="holder-versus-the-repo-owner"><a class="header" href="#holder-versus-the-repo-owner"><code>holder</code> versus the repo owner</a></h3>
 <p>The simplest case: the repo owner is the holder. The record
-expresses the publisher's own belief; <code>holder</code> is omitted.</p>
+expresses the publisher's own belief, and <code>holder</code> is omitted.</p>
 <p>The richer case: the repo owner is publishing a belief on behalf
 of, or about, another party. A labeler that publishes
 <code>{ subject: &lt;some encounter&gt;, holder: did:plc:other-party }</code>
 is asserting that <em>the other party</em> believes the encounter is
 applicable. The labeler's signature attests that the labeler
-made the attribution; the holder field carries who the attitude
+made the attribution. The holder field carries who the attitude
 is attributed to.</p>
 <h3 id="basis-carries-the-grounds"><a class="header" href="#basis-carries-the-grounds"><code>basis</code> carries the grounds</a></h3>
 <p>When the holder is not the repo owner, the consumer needs to know
@@ -229,7 +229,7 @@ on what grounds the attribution rests. The four <code>basis</code> variants:</p>
 <tr><td><code>basisSelfAsserted</code></td><td>The holder asserted directly with no external grounding claimed. The default when <code>basis</code> is omitted.</td></tr>
 <tr><td><code>basisCommunityPolicy</code></td><td>Grounded in a community's published policy.</td></tr>
 <tr><td><code>basisExternalSignal</code></td><td>Grounded in something outside ATProto (a license, an external standard, a statement on another network).</td></tr>
-<tr><td><code>basisDerivedFromRecord</code></td><td>Grounded in another ATProto record (with an inference rule naming the derivation).</td></tr>
+<tr><td><code>basisDerivedFromRecord</code></td><td>Grounded in another ATProto record (with an inference rule identifying the derivation).</td></tr>
 </tbody></table>
 </div>
 <p>See <a href="./defs.html"><code>defs#basis</code></a> for the field shapes.</p>
@@ -245,7 +245,7 @@ at the encounter / recommendation, <code>holder</code> set to the third
 party's DID, and <code>basis</code> carrying the structured grounds.</li>
 </ol>
 <p>Consumers reading the belief see all three. The labeler's
-signature on the belief is what makes the attribution accountable.</p>
+signature on the belief makes the attribution accountable.</p>
 <h2 id="example"><a class="header" href="#example">Example</a></h2>
 <pre><code class="language-json">{
   "$type": "dev.idiolect.belief",

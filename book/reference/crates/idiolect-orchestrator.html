@@ -189,7 +189,7 @@ authoritative reference is the source above plus the rustdoc
 built locally with <code>cargo doc -p idiolect-orchestrator --features daemon --open</code>.</p>
 </blockquote>
 <p>Read-only HTTP query API over a record catalog. Driven by
-<code>orchestrator-spec/queries.json</code>; codegen emits the routes plus
+<code>orchestrator-spec/queries.json</code>. Codegen emits the routes plus
 the matching CLI dispatcher.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
@@ -237,11 +237,11 @@ generated query handlers.</li>
 <tr><td><code>GET /v1/vocabularies/by-name?...</code></td><td>Vocabularies by name.</td></tr>
 </tbody></table>
 </div>
-<p>The full path-and-flag table for each endpoint is generated; see
+<p>The full path-and-flag table for each endpoint is generated. See
 <a href="https://github.com/idiolect-dev/idiolect/blob/main/orchestrator-spec/queries.json"><code>orchestrator-spec/queries.json</code></a>
 for the authoritative list.</p>
 <h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
-<p><code>OrchestratorError</code> flattens catalog and HTTP errors;
+<p><code>OrchestratorError</code> flattens catalog and HTTP errors.
 <code>OrchestratorResult&lt;T&gt;</code> is its alias.</p>
 <h2 id="feature-flags"><a class="header" href="#feature-flags">Feature flags</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Feature</th><th>Adds</th></tr></thead><tbody>
@@ -252,8 +252,8 @@ for the authoritative list.</p>
 </div>
 <h2 id="observability"><a class="header" href="#observability">Observability</a></h2>
 <p><code>/metrics</code> exposes Prometheus counters and histograms for the
-catalog and per-endpoint latency. Structured <code>tracing</code> logs at
-<code>info</code> level for accepted requests; <code>debug</code> for query
+catalog and per-endpoint latency. Structured <code>tracing</code> logs run
+at <code>info</code> level for accepted requests and <code>debug</code> for query
 internals. The exact metric names are defined in
 <code>crates/idiolect-orchestrator/src/http.rs</code>.</p>
 

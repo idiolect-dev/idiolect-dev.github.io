@@ -182,10 +182,10 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="observer-protocol"><a class="header" href="#observer-protocol">Observer protocol</a></h1>
-<p>Aggregate state in idiolect is records, not endpoints. An
-observer is a process that reads encounter-family records from
-the firehose, folds them along a key, and publishes the fold as
-a record.</p>
+<p>In idiolect, aggregate state lives in records rather than in a
+served endpoint. An observer is a process that reads
+encounter-family records from the firehose, folds them along a
+key, and publishes the fold as a record.</p>
 <h2 id="what-an-observer-is"><a class="header" href="#what-an-observer-is">What an observer is</a></h2>
 <pre class="mermaid">flowchart LR
     PDS[(PDS firehose)] --&gt;|encounters| OBS[Observer process]
@@ -215,8 +215,8 @@ the counter's history is whatever the endpoint says it is.</li>
 <li>Be re-folded by an independent party. A consumer that distrusts
 the operator cannot re-derive the count from the underlying
 data.</li>
-<li>Disagree with itself across observers. There is one operator,
-one number.</li>
+<li>Disagree with itself across observers. A single operator
+produces a single number.</li>
 </ul>
 <p>A signed record can be:</p>
 <ul>
@@ -227,7 +227,7 @@ reading an observation can ask the indexer for the encounters
 in scope and recompute the fold independently.</li>
 <li>Compared across observers. Two observers running the same fold
 on overlapping data will produce records with comparable
-counts; consumers can require quorum before treating an
+counts. Consumers can require quorum before treating an
 observation as authoritative.</li>
 </ul>
 <p>The cost is an extra serialization per fold and an extra commit
@@ -266,7 +266,7 @@ from random sampling has to commit the seed in the record.</li>
 <code>dev.idiolect.deliberationOutcome</code> records is a plausible
 addition but is not in the shipped set at v0.8.0.</p>
 <p>The spec is a single JSON file (<code>observer-spec/methods.json</code>),
-not a directory of files; codegen emits the descriptor table.
+not a directory of files. Codegen emits the descriptor table.
 See <a href="../guide/observer.html">Run the observer daemon</a> for the
 operator-facing path.</p>
 <h2 id="coordination-among-observers"><a class="header" href="#coordination-among-observers">Coordination among observers</a></h2>
@@ -283,7 +283,7 @@ that did not.</li>
 </ul>
 <p>Consumers that want consensus require <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> trusted observers
 to publish records that agree within a tolerance. This is a
-consumer policy; the substrate ships the records.</p>
+consumer policy. The runtime only provides the records.</p>
 <h2 id="why-folds-are-the-right-primitive"><a class="header" href="#why-folds-are-the-right-primitive">Why folds are the right primitive</a></h2>
 <p>A simple primitive — the observer publishes an aggregate signed
 by its DID — supports a lot of structure:</p>
@@ -295,8 +295,8 @@ authoritative when it does not want to fold itself).</li>
 <li>Fork detection (two observers' aggregates over the same window
 diverging is a signal that one of them is missing data).</li>
 </ul>
-<p>None of those need protocol changes. They are policies on top of
-records.</p>
+<p>None of them require protocol changes, since they are all
+policies layered on top of records.</p>
 
                     </main>
 

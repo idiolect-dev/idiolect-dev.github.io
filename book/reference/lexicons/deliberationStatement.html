@@ -184,7 +184,7 @@
 <h1 id="devidiolectdeliberationstatement"><a class="header" href="#devidiolectdeliberationstatement">dev.idiolect.deliberationStatement</a></h1>
 <p>A participant utterance submitted to a
 <a href="./deliberation.html"><code>deliberation</code></a>. Statements are the units
-votes attach to; the deliberation itself is not voted on
+votes attach to. The deliberation itself is not voted on
 directly. Classification is an open-enum slug resolved against a
 community vocabulary, so communities that draw the line between
 <code>claim</code> and <code>proposal</code> differently can extend or remap without
@@ -214,11 +214,11 @@ follows the pointer gets the exact deliberation revision the
 participant was responding to.</p>
 <p>This matters when deliberations are edited mid-process (e.g. the
 publisher clarifies the topic). Statements published before the
-edit pin the pre-edit revision; statements published after pin
+edit pin the pre-edit revision. Statements published after pin
 the post-edit revision. Folds and consumers can distinguish.</p>
 <h3 id="text"><a class="header" href="#text"><code>text</code></a></h3>
 <p>The statement itself. The 400-grapheme cap is conventional, not
-arbitrary: brevity is what makes statements voteable. Long-form
+arbitrary: brevity keeps statements voteable. Long-form
 context belongs on the deliberation record's <code>description</code> or
 in a community-published companion document linked from the
 description.</p>
@@ -234,7 +234,7 @@ description.</p>
 <p>Classifications are <em>argumentative roles</em>, not topics. A
 community that draws different distinctions (<code>amendment</code>,
 <code>process-objection</code>, <code>tangent</code>, ...) extends via
-<code>classificationVocab</code>. The classification is optional; a
+<code>classificationVocab</code>. The classification is optional. A
 deliberation that wants to stay agnostic on argumentative roles
 omits it.</p>
 <h3 id="anonymous"><a class="header" href="#anonymous"><code>anonymous</code></a></h3>
@@ -244,7 +244,7 @@ designated service DID rather than the participant's personal
 repo, so the repo signature does not reveal identity. Consumers
 that need provenance match on the repo DID (the service DID),
 not on this record's content.</p>
-<p>The flag is a <em>declaration</em>: the substrate does not enforce
+<p>The flag is a <em>declaration</em>: idiolect does not enforce
 anonymity beyond what the publishing rail provides. A community
 that wants strong anonymity uses an anonymizing service DID with
 its own access controls.</p>

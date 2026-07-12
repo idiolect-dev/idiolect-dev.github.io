@@ -232,12 +232,12 @@ emitted Rust types in
 shape per endpoint.</p>
 <h2 id="error-shape"><a class="header" href="#error-shape">Error shape</a></h2>
 <p>A request that fails parameter validation returns 400 with a
-JSON body naming the offending field. Internal failures return
-500 with a brief message.</p>
+JSON body identifying the offending field. Internal failures
+return 500 with a brief message.</p>
 <h2 id="versioning"><a class="header" href="#versioning">Versioning</a></h2>
 <p>The <code>v1</code> and <code>/xrpc/</code> prefixes are the route contract. New
 endpoints are additive. Pre-1.0 the project may rename or
-restructure endpoints between minor versions; see
+restructure endpoints between minor versions. See
 <a href="./stability.html">Stability and versioning</a>. At 1.0 the prefixes
 become stable and breaking changes ship under <code>v2</code> (or, for the
 xrpc surface, under new method names that deprecate the old).</p>

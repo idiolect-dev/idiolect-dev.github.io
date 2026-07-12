@@ -183,7 +183,7 @@
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="devidiolectbounty"><a class="header" href="#devidiolectbounty">dev.idiolect.bounty</a></h1>
 <p>A declaration that a translation, verification, or adapter is
-wanted, with terms. The substrate does not intermediate fulfillment:
+wanted, with terms. idiolect does not intermediate fulfillment:
 payment, review, and acceptance happen on external rails referenced
 in the record. The record is the <em>request</em> primitive.</p>
 <blockquote>
@@ -197,7 +197,7 @@ in the record. The record is the <em>request</em> primitive.</p>
 <tr><td><code>requester</code></td><td>did</td><td>yes</td><td>Who is requesting.</td></tr>
 <tr><td><code>wants</code></td><td>union</td><td>yes</td><td>Exactly one of <code>wantLens</code> / <code>wantVerification</code> / <code>wantAdapter</code>.</td></tr>
 <tr><td><code>constraints</code></td><td>array (≤64)</td><td>no</td><td>Structured constraints the deliverable must satisfy.</td></tr>
-<tr><td><code>reward</code></td><td>object</td><td>no</td><td><code>{ summary?, externalRef? }</code>. The substrate does not transact.</td></tr>
+<tr><td><code>reward</code></td><td>object</td><td>no</td><td><code>{ summary?, externalRef? }</code>. idiolect does not transact.</td></tr>
 <tr><td><code>eligibility</code></td><td>array (≤128)</td><td>no</td><td>Postfix eligibility tree.</td></tr>
 <tr><td><code>fulfillment</code></td><td>at-uri</td><td>no</td><td>Once fulfilled, points to the deliverable record.</td></tr>
 <tr><td><code>status</code></td><td>open enum</td><td>no</td><td><code>open</code> / <code>claimed</code> / <code>fulfilled</code> / <code>withdrawn</code>.</td></tr>
@@ -263,11 +263,11 @@ Empty array means no eligibility restriction.</p>
 <h2 id="field-details"><a class="header" href="#field-details">Field details</a></h2>
 <h3 id="reward"><a class="header" href="#reward"><code>reward</code></a></h3>
 <p><code>reward</code> is intentionally underspecified. <code>summary</code> is narrative
-prose; <code>externalRef</code> is a URL pointing at the rail that handles
+prose. <code>externalRef</code> is a URL pointing at the rail that handles
 the actual reward (a grant portal, a payment platform, an
-attestation service). The substrate does not validate that the
+attestation service). idiolect does not validate that the
 external rail exists, that it is solvent, or that the reward will
-be paid; that is the consumer's diligence.</p>
+be paid. That is the consumer's diligence.</p>
 <p>The pattern: a bounty with <code>externalRef</code> pointing at a known
 grant portal is more credible than a bounty with only a narrative
 summary. Consumers route their effort accordingly.</p>
@@ -275,7 +275,7 @@ summary. Consumers route their effort accordingly.</p>
 <p>Once a deliverable exists, the bounty publisher edits the bounty
 record (a put, not a new record) to set <code>fulfillment</code> to the
 deliverable's at-uri and <code>status</code> to <code>fulfilled</code>. Consumers
-querying open bounties filter on <code>status: open</code>; consumers
+querying open bounties filter on <code>status: open</code>. Consumers
 auditing the fulfilled set filter on <code>status: fulfilled</code> and
 follow <code>fulfillment</code>.</p>
 <h3 id="basis"><a class="header" href="#basis"><code>basis</code></a></h3>
@@ -285,7 +285,7 @@ is requesting), set <code>basis</code> and <code>requester</code> accordingly. T
 common case is <code>basisCommunityPolicy</code> (a community has a standing
 policy of requesting verifications of every published lens) or
 <code>basisDerivedFromRecord</code> (a researcher infers a request from a
-prior recommendation that named required verifications).</p>
+prior recommendation that listed required verifications).</p>
 <h2 id="example"><a class="header" href="#example">Example</a></h2>
 <pre><code class="language-json">{
   "$type": "dev.idiolect.bounty",
@@ -330,7 +330,7 @@ prior recommendation that named required verifications).</p>
 </pre>
 <p>A community publishing recommendations with <code>requiredVerifications</code>
 that nobody has published is asking for verification work. A
-bounty is the canonical way to request that work. A claimer that
+bounty is how you request that work. A claimer that
 matches the eligibility predicate publishes the verification, the
 requester points the bounty at it, and the external rail handles
 the payment.</p>

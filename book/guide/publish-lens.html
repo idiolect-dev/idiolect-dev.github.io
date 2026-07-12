@@ -190,8 +190,8 @@ and target schemas.</li>
 <li>The two schemas themselves, each a <code>dev.panproto.schema.schema</code>
 record (or a <code>getSchema</code> xrpc response from a panproto vcs).</li>
 </ol>
-<p>The lens record is what consumers resolve by at-uri. The schemas
-are what the runtime instantiates against.</p>
+<p>Consumers resolve the lens record by at-uri. The runtime
+instantiates against the two schemas.</p>
 <h2 id="build-the-lens"><a class="header" href="#build-the-lens">Build the lens</a></h2>
 <p>The shortest path is to derive it from a schema diff:</p>
 <pre><code class="language-bash">schema lens generate old.json new.json --protocol atproto &gt; chain.json
@@ -232,7 +232,7 @@ produces (<code>isomorphism</code>, <code>injection</code>, <code>projection</co
 <li><code>laws_verified</code> is a soft assertion that the chain passed
 panproto's coercion-law and existence checks. A true value here
 is meaningless without a corresponding <code>dev.idiolect.verification</code>
-record from a publisher you trust; treat it as a pre-publish
+record from a publisher you trust. Treat it as a pre-publish
 smoke signal.</li>
 </ul>
 <h2 id="publish"><a class="header" href="#publish">Publish</a></h2>
@@ -259,7 +259,7 @@ let resp = publisher.create(&amp;lens).await?;
 <p><code>pkcs8_pem</code> is converted from the session's
 <code>dpop_private_key_jwk</code> via an external JWK-to-PKCS8 helper.
 Driving the OAuth dance and persisting the session is the
-caller's job; see <a href="./oauth.html">Configure OAuth sessions</a>. The
+caller's job. See <a href="./oauth.html">Configure OAuth sessions</a>. The
 PDS rejects the record if the chain blob does not parse, the
 schema at-uris do not resolve, or the canonical bytes do not
 match the declared <code>object_hash</code>.</p>
@@ -286,7 +286,7 @@ let lens = resolver.resolve(&amp;lens_uri).await?;
 and rejects the record on mismatch. <code>CachingResolver</code> keeps the
 result in a TTL'd cache so repeated <code>apply_lens</code> calls do not
 re-fetch.</p>
-<p><code>Arc&lt;dyn Resolver&gt;</code> is supported (since v0.8.0); the resolver
+<p><code>Arc&lt;dyn Resolver&gt;</code> is supported (since v0.8.0). The resolver
 futures are <code>Send</code>, so handlers in async HTTP frameworks can hold
 the resolver behind a trait object and call <code>apply_lens</code> from
 inside an <code>#[async_trait]</code> impl.</p>

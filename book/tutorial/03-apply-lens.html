@@ -198,7 +198,7 @@ discarded). <code>put</code> reconstructs <code>A</code> from a (possibly modifi
 and the complement. The two directions obey the GetPut and PutGet
 laws covered in <a href="../concepts/lens-laws.html">Lens semantics and laws</a>.</p>
 <h2 id="wire-it-up"><a class="header" href="#wire-it-up">Wire it up</a></h2>
-<p><code>idiolect-lens</code> is <code>publish = false</code>; depend on it via git (or a
+<p><code>idiolect-lens</code> is <code>publish = false</code>. Depend on it via git (or a
 path, when working inside the workspace):</p>
 <pre><code class="language-toml"># in Cargo.toml
 idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.10.0", features = ["pds-reqwest"] }
@@ -256,7 +256,7 @@ single-field "post:body" record with a string <code>text</code> child.</li>
 shape with the kind relabelled to <code>text</code>.</li>
 <li><code>dev.panproto.schema.lens/tutorial-rename-sort-string-to-text</code>
 — a single-step <code>rename_sort</code> chain. The optic class is
-<code>Iso</code>; round-trip is byte-equal.</li>
+<code>Iso</code>, and round-trip is byte-equal.</li>
 </ul>
 <p><code>apply_lens</code> is one async call. It does five things in order:</p>
 <ol>

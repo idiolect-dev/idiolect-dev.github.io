@@ -185,11 +185,11 @@
 <p>A stance taken on a <a href="./deliberationStatement.html"><code>deliberationStatement</code></a>.
 Stance is an open-enum slug resolved against a community-published
 vote-stance vocabulary. The Acorn-style three-way default
-(<code>agree</code> / <code>pass</code> / <code>disagree</code>) is canonical; richer vocabularies
+(<code>agree</code> / <code>pass</code> / <code>disagree</code>) is canonical. Richer vocabularies
 (conditional-agree, abstain-with-reason, ranked preference) are
 expressible by referencing a different vocab. Optional <code>weight</code>
-and <code>rationale</code> capture additional signal that observers can fold;
-consumers that don't need them ignore them.</p>
+and <code>rationale</code> carry additional signal that observers can fold.
+Consumers that don't need them ignore them.</p>
 <blockquote>
 <p><strong>Source:</strong> <a href="https://github.com/idiolect-dev/idiolect/blob/main/lexicons/dev/idiolect/deliberationVote.json"><code>lexicons/dev/idiolect/deliberationVote.json</code></a>
 · <strong>Rust:</strong> <a href="https://docs.rs/idiolect-records/latest/idiolect_records/struct.DeliberationVote.html"><code>idiolect_records::DeliberationVote</code></a>
@@ -214,8 +214,8 @@ was voted on. Observers folding the tally read the CID to confirm
 they are aggregating votes against the same statement revision.</p>
 <p>If a statement is edited and a participant wants to vote on the
 new revision, that is a separate vote record with a different
-<code>subject</code> CID. The substrate does not collapse votes across
-revisions; observers do, when their fold method specifies it.</p>
+<code>subject</code> CID. idiolect does not collapse votes across
+revisions. Observers do, when their fold method specifies it.</p>
 <h3 id="stance"><a class="header" href="#stance"><code>stance</code></a></h3>
 <p>The default vocabulary seeds three slugs:</p>
 <div class="table-wrapper"><table><thead><tr><th>Slug</th><th>Meaning</th></tr></thead><tbody>
@@ -243,11 +243,11 @@ precision. Convention follows <code>pub.chive.graph.edge#weight</code>.</p>
 <p>Consumers that aggregate votes uniformly ignore <code>weight</code>. Ranked
 or weighted aggregations consume it. A community that wants
 quadratic voting publishes a <code>vote-weights</code> companion vocabulary
-and uses <code>weight</code> to encode the scheme; observers running a
+and uses <code>weight</code> to encode the scheme. Observers running a
 quadratic-vote fold read both the stance and the weight.</p>
 <h3 id="rationale"><a class="header" href="#rationale"><code>rationale</code></a></h3>
-<p>Optional narrative. Tally folds do not consume <code>rationale</code>;
-consumer surfaces (e.g. a deliberation viewer) display it
+<p>Optional narrative. Tally folds do not consume <code>rationale</code>.
+Consumer surfaces (e.g. a deliberation viewer) display it
 alongside the vote. The 500-grapheme cap matches the
 deliberation-statement length: brevity is conventional.</p>
 <h3 id="anonymous-votes"><a class="header" href="#anonymous-votes">Anonymous votes</a></h3>
@@ -274,7 +274,7 @@ signature is the authoritative provenance signal.</p>
 the vote stream for a deliberation, folds by <code>(statement, stance)</code>
 (plus optional weight aggregation), and publishes a
 <a href="./deliberationOutcome.html"><code>deliberationOutcome</code></a> record. Multiple
-observers may publish concurrent outcomes; consumers that want
+observers may publish concurrent outcomes. Consumers that want
 consensus require quorum across trusted observers.</p>
 <h2 id="concept-references"><a class="header" href="#concept-references">Concept references</a></h2>
 <ul>

@@ -185,12 +185,12 @@
 <p>Every artifact in idiolect is an ATProto record. A record is:</p>
 <ul>
 <li>a JSON object,</li>
-<li>with a <code>$type</code> field naming a lexicon,</li>
+<li>with a <code>$type</code> field identifying its lexicon,</li>
 <li>stored at a <code>(did, collection, rkey)</code> triple,</li>
 <li>content-addressed by its CID,</li>
 <li>signed by the publishing repo's signing key.</li>
 </ul>
-<p>The substrate is documented in the
+<p>ATProto's record model is documented in the
 <a href="https://atproto.com/specs/repository">ATProto spec</a>.
 This chapter covers the properties idiolect relies on.</p>
 <h2 id="properties-idiolect-relies-on"><a class="header" href="#properties-idiolect-relies-on">Properties idiolect relies on</a></h2>
@@ -230,13 +230,13 @@ mutable pointer.</p>
 <code>correction.encounter</code>, <code>verification.lens</code>) and at-uri for
 queries that should follow updates (<code>recommendation.lensPath</code>,
 <code>dialect.entries[].vocab</code>). The choice in each lexicon is
-deliberate; see the per-lexicon reference for the rationale.</p>
+deliberate. See the per-lexicon reference for the rationale.</p>
 <h3 id="4-records-survive-pds-migration"><a class="header" href="#4-records-survive-pds-migration">4. Records survive PDS migration</a></h3>
 <p>ATProto's identity layer (PLC plus did:web) lets a repo move
 between PDSes without changing its <code>did</code>. A record fetched by
 at-uri after a PDS migration goes through one extra DID-resolve
 hop and arrives at the new PDS. idiolect's runtime path goes
-through <code>idiolect-identity</code> for every fetch; PDS migration is
+through <code>idiolect-identity</code> for every fetch. PDS migration is
 transparent.</p>
 <h2 id="properties-idiolect-adds-on-top"><a class="header" href="#properties-idiolect-adds-on-top">Properties idiolect adds on top</a></h2>
 <h3 id="5-lexicon-validation-at-the-boundary"><a class="header" href="#5-lexicon-validation-at-the-boundary">5. Lexicon validation at the boundary</a></h3>
@@ -261,19 +261,19 @@ extend the same field without a centralized governance step. See
 <p>Runtime state that should not federate (firehose cursors, OAuth
 tokens) uses the same panproto schema apparatus, but under a
 sibling <code>dev.idiolect.internal.*</code> namespace. Conformant firehose
-consumers skip the prefix; the data still travels through the
+consumers skip the prefix. The data still travels through the
 same runtime as a public record, just out of band.</p>
 <h2 id="what-atproto-does-not-give-you"><a class="header" href="#what-atproto-does-not-give-you">What ATProto does not give you</a></h2>
 <ul>
 <li><strong>A schema language.</strong> ATProto Lexicon is a constrained type
-language; it does not cover lens algebra, schema diffs, or
+language. It does not cover lens algebra, schema diffs, or
 optic classification. Those live in panproto, which idiolect
 embeds.</li>
 <li><strong>A migration story.</strong> Lexicon revision is wire-compatible by
 policy, not by tooling. The lexicon-evolution policy fills the
-gap; see <a href="./lexicon-evolution.html">Lexicon evolution policy</a>.</li>
+gap. See <a href="./lexicon-evolution.html">Lexicon evolution policy</a>.</li>
 <li><strong>A vocabulary registry.</strong> Open-enum slugs need a published
-knowledge graph to resolve; ATProto does not ship one. The
+knowledge graph to resolve, and ATProto does not ship one. The
 <code>dev.idiolect.vocab</code> record is where the resolution lives.</li>
 </ul>
 

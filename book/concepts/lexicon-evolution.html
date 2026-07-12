@@ -187,7 +187,7 @@ classified, verified, published lens. Hand-authored lenses are an
 escape hatch that requires governance sign-off. The same policy
 applies to vendored externals (Blacksky, layers-pub, ...).</p>
 <p>The policy is the lexicon-level half of the project's stability
-story; the schema-level half is the
+story. The schema-level half is the
 <a href="../reference/stability.html">stability and versioning</a> note. The
 policy below is enforced by <code>scripts/lexicon-evolve.sh</code> and the
 release CI workflow.</p>
@@ -199,7 +199,7 @@ release CI workflow.</p>
     COERCE --&gt; ROUNDTRIP[4. Roundtrip verify]
     ROUNDTRIP --&gt; PUBLISH[5. Publish lens]
 </pre>
-<p>Each stage maps onto a panproto primitive; nothing is bespoke.</p>
+<p>Each stage maps onto a panproto primitive. Nothing is bespoke.</p>
 <h3 id="stage-0--diff"><a class="header" href="#stage-0--diff">Stage 0 — Diff</a></h3>
 <pre><code class="language-bash">schema diff --src lexicons/&lt;nsid&gt;.&lt;old&gt;.json --tgt lexicons/&lt;nsid&gt;.&lt;new&gt;.json
 </code></pre>
@@ -236,18 +236,18 @@ and must populate <code>deprecations</code> with the lens at-uri as
 <p>For any <code>CoerceType</code> step crossing primitive kinds:</p>
 <pre><code class="language-bash">schema theory check-coercion-laws theory.ncl --json
 </code></pre>
-<p>Sample-based; exit code is non-zero on any falsifying sample. The
+<p>Sample-based. Exit code is non-zero on any falsifying sample. The
 chain declares each <code>CoerceType</code> with an honest <code>CoercionClass</code>.
 Dishonest declarations corrupt the asymmetric-lens put law
-silently; this gate catches them.</p>
+silently. This gate catches them.</p>
 <h3 id="stage-4--roundtrip-verification"><a class="header" href="#stage-4--roundtrip-verification">Stage 4 — Roundtrip verification</a></h3>
 <pre><code class="language-bash">schema lens verify &lt;corpus&gt;/ --protocol atproto --schema &lt;new&gt;.json --chain chain.json
 </code></pre>
 <p>Checks GetPut and PutGet over the corpus. The corpus is the live
 indexer's catalog snapshot at the time of revision: actual
 records published across the network for that NSID. CI fails on
-any record that violates either law. Verification is grounded in
-real data, not synthetic test cases.</p>
+any record that violates either law. Verification runs on real
+data rather than synthetic test cases.</p>
 <h3 id="stage-5--publish"><a class="header" href="#stage-5--publish">Stage 5 — Publish</a></h3>
 <pre><code class="language-bash">schema lens inspect chain.json --json | idiolect-cli publish-lens \
   --collection dev.panproto.schema.lens
@@ -260,7 +260,7 @@ DID. The lens at-uri is added to:</p>
 <code>dev.idiolect.dialect#preferredLenses</code>.</li>
 <li>The previous lexicon's <code>deprecations</code> block as <code>replacement</code>.</li>
 </ul>
-<p>Codegen re-runs on revision bump; downstream consumers pulling
+<p>Codegen re-runs on revision bump. Downstream consumers pulling
 the dialect record see the lens automatically.</p>
 <h2 id="vocab-edits-go-through-the-same-pipeline"><a class="header" href="#vocab-edits-go-through-the-same-pipeline">Vocab edits go through the same pipeline</a></h2>
 <p>Vocab edits are <em>record</em> edits, not <em>schema</em> edits, but the same
@@ -274,10 +274,10 @@ six stages apply via dependent optics:</p>
 </div>
 <h2 id="why-this-is-modular"><a class="header" href="#why-this-is-modular">Why this is modular</a></h2>
 <ul>
-<li><strong>Modular.</strong> Each elementary protolens is a stand-alone, well-typed combinator. The pipeline composes them; no bespoke migration code per revision.</li>
+<li><strong>Modular.</strong> Each elementary protolens is a stand-alone, well-typed combinator. The pipeline composes them, with no bespoke migration code per revision.</li>
 <li><strong>Abstract.</strong> Protolenses are quantified over schemas, not specific to a revision pair. <code>RenameField("oldName", "newName")</code> is a schema-parametric morphism; it applies to the lexicon and to every record across the network without per-record code.</li>
 <li><strong>Composable.</strong> Chain auto-simplification, ScopedTransform sub-chains, Nickel record merge for fragments, symmetric lenses for forward / backward pairing, lift across protocols via theory morphisms.</li>
-<li><strong>Verifiable.</strong> Optic classification is mechanical. Coercion-law checks are sample-based. Corpus regression uses real records. Trust comes from the substrate, not from review prose.</li>
+<li><strong>Verifiable.</strong> Optic classification is mechanical. Coercion-law checks are sample-based. Corpus regression uses real records. Trust rests on those mechanical checks rather than on review prose.</li>
 <li><strong>Decentralized.</strong> Communities author their own protolens chains for their own lexicons. The policy applies to anyone adopting idiolect's framework.</li>
 </ul>
 <h2 id="vendored-externals"><a class="header" href="#vendored-externals">Vendored externals</a></h2>
@@ -285,8 +285,8 @@ six stages apply via dependent optics:</p>
 schemas idiolect does not own. When they revise, the same six
 stages run against their old / new pair. The output is a
 <em>symmetric</em> lens (per panproto's <code>symmetricLens</code>): syncing A → B
-and B → A keeps both sides consistent up to complement. This is
-the right shape for a bridge crate (e.g. the planned
+and B → A keeps both sides consistent up to complement. That is
+what a bridge crate needs (e.g. the planned
 <code>idiolect-acorn</code>): when the upstream changes, the bridge auto-
 updates and downstream idiolect records remain syncable.</p>
 <h2 id="tooling"><a class="header" href="#tooling">Tooling</a></h2>
@@ -300,8 +300,8 @@ edit.</li>
 <li><code>migrations/&lt;nsid&gt;/&lt;old&gt;-&lt;new&gt;/{diff.json, chain.ncl, hints.json, classification.json, verification.json}</code> is the per-revision
 audit trail.</li>
 </ul>
-<p>The policy is what makes lexicon evolution reviewable. The tooling
-is what makes the policy cheap to follow.</p>
+<p>The policy makes lexicon evolution reviewable. The tooling makes
+the policy cheap to follow.</p>
 
                     </main>
 

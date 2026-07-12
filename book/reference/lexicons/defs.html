@@ -200,7 +200,7 @@ not here.</p>
 </blockquote>
 <h2 id="reference-shapes"><a class="header" href="#reference-shapes">Reference shapes</a></h2>
 <h3 id="schemaref"><a class="header" href="#schemaref"><code>schemaRef</code></a></h3>
-<p>Reference to a schema. Either an at-uri or a content hash; at
+<p>Reference to a schema. Either an at-uri or a content hash. At
 least one must be present.</p>
 <div class="table-wrapper"><table><thead><tr><th>Subfield</th><th>Type</th><th>Notes</th></tr></thead><tbody>
 <tr><td><code>uri</code></td><td>at-uri</td><td>AT-URI pointing to a schema record.</td></tr>
@@ -252,7 +252,7 @@ defs tree is self-contained.</p>
 <tr><td><code>private</code></td><td>Should not be published at all.</td></tr>
 </tbody></table>
 </div>
-<p>The substrate does not enforce these today; they are policy
+<p>idiolect does not enforce these today. They are policy
 hints.</p>
 <h2 id="content-theory-types"><a class="header" href="#content-theory-types">Content-theory types</a></h2>
 <h3 id="use"><a class="header" href="#use"><code>use</code></a></h3>
@@ -379,7 +379,7 @@ record carries one of these as its <code>property</code> field.</p>
 <tr><td><code>basisDerivedFromRecord</code></td><td>Grounded in another ATProto record. Carries <code>source</code> (<code>strongRecordRef</code>) and optional <code>inferenceRule</code>.</td></tr>
 </tbody></table>
 </div>
-<p><code>basisSelfAsserted</code> has no fields; the variant tag itself is the
+<p><code>basisSelfAsserted</code> has no fields. The variant tag itself is the
 content. <code>basisDerivedFromRecord.inferenceRule</code> is the canonical
 hook for declaring how this record derives from another
 (<code>classifier:purpose-v1</code>, <code>lens:v1-to-v2</code>, <code>aggregation:byte-mean</code>,

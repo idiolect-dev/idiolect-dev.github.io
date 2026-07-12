@@ -319,7 +319,7 @@ cargo install --path crates/idiolect-cli
 <code>idiolect-identity</code>, <code>idiolect-lens</code>, plus their atproto transport
 features) and drops an <code>idiolect</code> binary into <code>~/.cargo/bin</code>. The
 build takes two to four minutes on a recent laptop. There is no
-runtime dependency on the cloned tree after install; you can <code>cd</code>
+runtime dependency on the cloned tree after install. You can <code>cd</code>
 anywhere.</p>
 <p>Confirm it works:</p>
 <pre><code class="language-bash">idiolect version
@@ -496,7 +496,7 @@ fn describe&lt;R: Record&gt;() -&gt; String {
 <p><code>R::kind()</code> returns the short kind name (<code>"encounter"</code>,
 <code>"recommendation"</code>, ...) and <code>R::NSID</code> is the fully-qualified
 NSID constant. <code>Record</code> does not carry instance-level methods on
-the record body itself; the at-uri at which a record lives is
+the record body itself. The at-uri at which a record lives is
 external (a <code>(did, collection, rkey)</code> triple from the firehose
 or PDS response).</p>
 <p>The same trait is what the indexer (chapter on
@@ -522,7 +522,7 @@ discarded). <code>put</code> reconstructs <code>A</code> from a (possibly modifi
 and the complement. The two directions obey the GetPut and PutGet
 laws covered in <a href="tutorial/../concepts/lens-laws.html">Lens semantics and laws</a>.</p>
 <h2 id="wire-it-up"><a class="header" href="#wire-it-up">Wire it up</a></h2>
-<p><code>idiolect-lens</code> is <code>publish = false</code>; depend on it via git (or a
+<p><code>idiolect-lens</code> is <code>publish = false</code>. Depend on it via git (or a
 path, when working inside the workspace):</p>
 <pre><code class="language-toml"># in Cargo.toml
 idiolect-lens   = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.10.0", features = ["pds-reqwest"] }
@@ -580,7 +580,7 @@ single-field "post:body" record with a string <code>text</code> child.</li>
 shape with the kind relabelled to <code>text</code>.</li>
 <li><code>dev.panproto.schema.lens/tutorial-rename-sort-string-to-text</code>
 — a single-step <code>rename_sort</code> chain. The optic class is
-<code>Iso</code>; round-trip is byte-equal.</li>
+<code>Iso</code>, and round-trip is byte-equal.</li>
 </ul>
 <p><code>apply_lens</code> is one async call. It does five things in order:</p>
 <ol>
@@ -720,15 +720,15 @@ byte-for-byte. A single counterexample would have produced
 <code>result = Falsified</code>.</p>
 <h2 id="falsified-is-a-record-not-an-error"><a class="header" href="#falsified-is-a-record-not-an-error">Falsified is a record, not an error</a></h2>
 <p>A <em>falsified</em> property returns
-<code>Ok(Verification { result: Falsified, ... })</code>, not an error. The
-substrate's view: a falsified verification is the signal the
-community is paying the runner to produce. Treat it like a
-finding, sign and publish it. Consumers reading the falsified
-record decide whether to continue invoking the lens.</p>
+<code>Ok(Verification { result: Falsified, ... })</code>, not an error. A
+falsified verification is a normal result the runner exists to
+report. Treat it like a finding: sign it and publish it.
+Consumers reading the falsified record decide whether to continue
+invoking the lens.</p>
 <p><code>VerifyError</code> is reserved for input-shape, transport, or
 irrecoverable-state failures (a corpus the runner could not load,
 a schema the loader could not resolve). Those are operator
-problems; the lens's actual behaviour is captured in the
+problems. The lens's actual behaviour is captured in the
 returned record.</p>
 <h2 id="publish-the-result"><a class="header" href="#publish-the-result">Publish the result</a></h2>
 <p>The <code>verification</code> value the runner returned is a typed
@@ -770,10 +770,10 @@ endorses a lens path under specific applicability conditions.</p>
 <h1 id="publish-a-recommendation"><a class="header" href="#publish-a-recommendation">Publish a recommendation</a></h1>
 <p>A <code>dev.idiolect.recommendation</code> is a community-published opinion
 that a particular lens path is appropriate under specific
-applicability conditions. It is the unit consumers query before
-choosing a translation: a lens that nobody recommends is just
-code; a lens that a community recommends under conditions a
-consumer satisfies is a routing decision.</p>
+applicability conditions. Consumers query recommendations before
+choosing a translation. A lens nobody recommends is just code. A
+lens a community recommends, under conditions the consumer meets,
+is a routing decision.</p>
 <p>The shape is:</p>
 <pre><code class="language-text">issuingCommunity : at-uri        # the community publishing
 conditions       : [Condition]   # postfix applicability tree
@@ -981,7 +981,7 @@ POSTs <code>com.atproto.repo.createRecord</code> under the stored session.</p>
 next-iteration CLI wraps <code>atrium-oauth</code>'s browser-handoff dance
 and persists the resulting DPoP-bound session through the same
 <code>OAuthTokenStore</code>. The publish path is unchanged.</p>
-<p>That is the full loop. Where to go next:</p>
+<p>That completes the loop. Where to go next:</p>
 <ul>
 <li><a href="tutorial/../guide/orchestrator.html">Run the orchestrator HTTP API</a>
 shows how the consumer side of that flow is served.</li>
@@ -1001,7 +1001,7 @@ comfortable working without it) and have the runtime installed.</p>
 <tr><td><a href="guide/./observer.html">Run the observer daemon</a></td><td>You want to fold encounter-family records into observation records.</td></tr>
 <tr><td><a href="guide/./verify.html">Author a verification runner</a></td><td>You want to add a new property kind to the verifier.</td></tr>
 <tr><td><a href="guide/./publish-lens.html">Publish and resolve a lens</a></td><td>You have a panproto lens and want it on the network.</td></tr>
-<tr><td><a href="guide/./migrate.html">Migrate records across a revision</a></td><td>A schema you depend on changed; you want to lift records across the change.</td></tr>
+<tr><td><a href="guide/./migrate.html">Migrate records across a revision</a></td><td>A schema you depend on changed, and you want to lift records across the change.</td></tr>
 <tr><td><a href="guide/./oauth.html">Configure OAuth sessions</a></td><td>You want a session store the publishing path can use.</td></tr>
 <tr><td><a href="guide/./codegen.html">Run codegen</a></td><td>You edited a lexicon or a spec and need the generated tree refreshed.</td></tr>
 <tr><td><a href="guide/./vocabulary.html">Author a community vocabulary</a></td><td>You want to extend an open enum or publish a typed knowledge graph.</td></tr>
@@ -1018,7 +1018,7 @@ impls: <code>JetstreamEventStream</code> (Jetstream websocket feed) and
 <code>tapped</code>).</li>
 <li><code>RecordHandler&lt;F: RecordFamily = IdiolectFamily&gt;</code>: handles one
 decoded <code>IndexerEvent&lt;F&gt;</code>. The family parameter narrows the
-handler to the records the indexer should not skip; everything
+handler to the records the indexer should not skip. Everything
 outside the family is dropped before decode.</li>
 <li><code>CursorStore</code>: persists the last-acknowledged sequence number
 per subscription so a restart resumes where the previous run
@@ -1088,7 +1088,7 @@ family.</p>
 <p><code>drive_indexer</code> calls
 <code>CursorStore::commit(subscription_id, seq)</code> after the handler
 returns <code>Ok</code>. A handler that wants at-least-once semantics
-should make its work idempotent before returning; a handler
+should make its work idempotent before returning. A handler
 that wants exactly-once semantics needs to coordinate the commit
 with its own storage transaction.</p>
 <p>Errors propagate as <code>IndexerError</code>. The variants distinguish
@@ -1108,7 +1108,7 @@ subscriber:</p>
 <span class="boring">}</span></code></pre></pre>
 <p>You will see one log line per accepted commit, one per skipped
 commit (debug level), and one per cursor commit. The
-orchestrator exposes a Prometheus surface; see
+orchestrator exposes a Prometheus surface. See
 <a href="guide/./orchestrator.html">Run the orchestrator HTTP API</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="run-the-orchestrator-http-api"><a class="header" href="#run-the-orchestrator-http-api">Run the orchestrator HTTP API</a></h1>
@@ -1146,7 +1146,7 @@ the indexer's tapped firehose, and the SQLite cursor store. Run:</p>
 </code></pre>
 <p>The exact CLI surface is documented by the daemon's <code>--help</code>.
 The catalog is populated by the indexer that ships with the
-daemon; the orchestrator reads from the same SQLite file.</p>
+daemon. The orchestrator reads from the same SQLite file.</p>
 <h2 id="query-it"><a class="header" href="#query-it">Query it</a></h2>
 <pre><code class="language-bash">curl -s http://localhost:8787/v1/stats | jq
 curl -s 'http://localhost:8787/v1/bounties/open' | jq
@@ -1176,18 +1176,18 @@ over.</li>
 query-string parser, response shape, and CLI subcommand.</li>
 </ol>
 <p>The hand-written part is the panproto-expr predicate inside the
-spec entry; the generated tree handles routing, parameter
+spec entry. The generated tree handles routing, parameter
 parsing, and response encoding.</p>
 <h2 id="observability-1"><a class="header" href="#observability-1">Observability</a></h2>
 <p>The orchestrator exposes <code>/metrics</code> in Prometheus exposition
-format. Plus structured <code>tracing</code> logs. The exact metric names
+format, plus structured <code>tracing</code> logs. The exact metric names
 and label sets are defined in
-<code>crates/idiolect-orchestrator/src/http.rs</code>; see the source for
+<code>crates/idiolect-orchestrator/src/http.rs</code>. See the source for
 the live list.</p>
 <h2 id="deployment"><a class="header" href="#deployment">Deployment</a></h2>
 <p>A pre-built container image ships at
 <code>ghcr.io/idiolect-dev/orchestrator:&lt;version&gt;</code> per release. The
-image is signed with sigstore keyless; verification policy is
+image is signed with sigstore keyless. Verification policy is
 in
 <a href="https://github.com/idiolect-dev/idiolect/blob/main/docs/ci-cd.md"><code>docs/ci-cd.md</code></a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
@@ -1302,9 +1302,9 @@ record can decide whether to trust it.</p>
 <span class="boring">}</span></code></pre></pre>
 <p>A <em>falsified</em> property returns
 <code>Ok(Verification { result: Falsified, ... })</code>, not an error.
-Falsification is the signal the community is paying the runner
-to produce; <code>VerifyError</code> is reserved for input-shape, transport,
-or irrecoverable-state failures.</p>
+A falsified result is a finding the runner is meant to report,
+not an error. <code>VerifyError</code> is reserved for input-shape,
+transport, or irrecoverable-state failures.</p>
 <h2 id="shipped-runners"><a class="header" href="#shipped-runners">Shipped runners</a></h2>
 <p>Four kinds ship in <code>crates/idiolect-verify/src/</code>:</p>
 <div class="table-wrapper"><table><thead><tr><th>Kind</th><th>Runner</th></tr></thead><tbody>
@@ -1316,15 +1316,15 @@ or irrecoverable-state failures.</p>
 </div>
 <p>The lexicon's <code>verification.kind</code> field is open-enum and lists
 additional kinds (<code>formal-proof</code>, <code>conformance-test</code>,
-<code>convergence-preserving</code>); those kinds are recognised but not
+<code>convergence-preserving</code>). Those kinds are recognised but not
 shipped as runners. Communities that need them author their own.</p>
 <h2 id="add-a-runner-kind"><a class="header" href="#add-a-runner-kind">Add a runner kind</a></h2>
 <p>The project's spec-driven layout means adding a kind is two
 edits:</p>
 <ol>
 <li>Add an entry to <code>verify-spec/runners.json</code> declaring the kind
-and its description. Run <code>cargo run -p idiolect-codegen</code>;
-the generated kind taxonomy
+and its description. Run <code>cargo run -p idiolect-codegen</code>.
+The generated kind taxonomy
 (<code>crates/idiolect-verify/src/generated.rs</code>) picks up the
 new kind.</li>
 <li>Implement <code>VerificationRunner</code> for a struct in a new module
@@ -1332,7 +1332,7 @@ under <code>crates/idiolect-verify/src/</code>. Re-export it from
 <code>lib.rs</code>.</li>
 </ol>
 <p>The runner's <code>kind()</code> returns the new <code>VerificationKind</code>
-variant; the <code>run</code> method does the work and returns a
+variant. The <code>run</code> method does the work and returns a
 <code>Verification</code> record. Use <code>build_verification</code> (in
 <code>runner.rs</code>) to package the result with the structured
 <code>property</code> field.</p>
@@ -1366,10 +1366,10 @@ idiolect verify static-check    --lens AT_URI
 idiolect verify coercion-law    --lens AT_URI  --vcs-url URL  --standard STD
 </code></pre>
 <p>Corpus files may be JSON arrays or JSON Lines. The
-<code>property-test</code> generator cycles through the corpus by index;
-<code>--budget</code> controls case count. The CLI prints the typed
+<code>property-test</code> generator cycles through the corpus by index,
+and <code>--budget</code> controls case count. The CLI prints the typed
 <code>Verification</code> record as JSON and exits non-zero on <code>Falsified</code>
-or <code>Inconclusive</code>. Publishing the result is a separate step;
+or <code>Inconclusive</code>. Publishing the result is a separate step:
 pipe to <code>idiolect publish verification --record -</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="publish-and-resolve-a-lens"><a class="header" href="#publish-and-resolve-a-lens">Publish and resolve a lens</a></h1>
@@ -1381,8 +1381,8 @@ and target schemas.</li>
 <li>The two schemas themselves, each a <code>dev.panproto.schema.schema</code>
 record (or a <code>getSchema</code> xrpc response from a panproto vcs).</li>
 </ol>
-<p>The lens record is what consumers resolve by at-uri. The schemas
-are what the runtime instantiates against.</p>
+<p>Consumers resolve the lens record by at-uri. The runtime
+instantiates against the two schemas.</p>
 <h2 id="build-the-lens"><a class="header" href="#build-the-lens">Build the lens</a></h2>
 <p>The shortest path is to derive it from a schema diff:</p>
 <pre><code class="language-bash">schema lens generate old.json new.json --protocol atproto &gt; chain.json
@@ -1423,7 +1423,7 @@ produces (<code>isomorphism</code>, <code>injection</code>, <code>projection</co
 <li><code>laws_verified</code> is a soft assertion that the chain passed
 panproto's coercion-law and existence checks. A true value here
 is meaningless without a corresponding <code>dev.idiolect.verification</code>
-record from a publisher you trust; treat it as a pre-publish
+record from a publisher you trust. Treat it as a pre-publish
 smoke signal.</li>
 </ul>
 <h2 id="publish"><a class="header" href="#publish">Publish</a></h2>
@@ -1450,7 +1450,7 @@ let resp = publisher.create(&amp;lens).await?;
 <p><code>pkcs8_pem</code> is converted from the session's
 <code>dpop_private_key_jwk</code> via an external JWK-to-PKCS8 helper.
 Driving the OAuth dance and persisting the session is the
-caller's job; see <a href="guide/./oauth.html">Configure OAuth sessions</a>. The
+caller's job. See <a href="guide/./oauth.html">Configure OAuth sessions</a>. The
 PDS rejects the record if the chain blob does not parse, the
 schema at-uris do not resolve, or the canonical bytes do not
 match the declared <code>object_hash</code>.</p>
@@ -1477,7 +1477,7 @@ let lens = resolver.resolve(&amp;lens_uri).await?;
 and rejects the record on mismatch. <code>CachingResolver</code> keeps the
 result in a TTL'd cache so repeated <code>apply_lens</code> calls do not
 re-fetch.</p>
-<p><code>Arc&lt;dyn Resolver&gt;</code> is supported (since v0.8.0); the resolver
+<p><code>Arc&lt;dyn Resolver&gt;</code> is supported (since v0.8.0). The resolver
 futures are <code>Send</code>, so handlers in async HTTP frameworks can hold
 the resolver behind a trait object and call <code>apply_lens</code> from
 inside an <code>#[async_trait]</code> impl.</p>
@@ -1503,7 +1503,9 @@ what <a href="guide/../reference/crates/idiolect-migrate.html"><code>idiolect-mi
 is for.</p>
 <p>The crate is a thin typed façade over <code>panproto-check</code> (for diff
 classification) and <code>idiolect-lens</code> (for record translation). It
-ships as a library only; there is no <code>idiolect-migrate</code> binary.</p>
+is primarily a library, and also ships an optional
+<code>idiolect-migrate</code> binary behind the <code>cli</code> feature for streaming
+batch migration (see <a href="guide/migrate.html#batch-migration">Batch migration</a>).</p>
 <p>The runtime path:</p>
 <pre class="mermaid">flowchart LR
     OLD[record at v1] --&gt; APPLY[apply_lens forward]
@@ -1595,8 +1597,8 @@ covers that case. The authoring loop is:</p>
 <li>Publish the chain plus a verification record signed by a
 reviewer.</li>
 </ol>
-<p>Each step is mechanical and gated; the policy is what makes
-migrations reviewable.</p>
+<p>Each step is mechanical and gated. The policy makes migrations
+reviewable.</p>
 <h2 id="batch-migration"><a class="header" href="#batch-migration">Batch migration</a></h2>
 <p>The crate ships an <code>idiolect-migrate</code> binary (behind the <code>cli</code>
 feature) that walks a directory of JSON records and writes a
@@ -1615,13 +1617,13 @@ every file succeeded, 1 if any failed).</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="configure-oauth-sessions"><a class="header" href="#configure-oauth-sessions">Configure OAuth sessions</a></h1>
 <p><a href="guide/../reference/crates/idiolect-oauth.html"><code>idiolect-oauth</code></a>
-provides the token-store trait and three shipped implementations.
-The crate does <em>not</em> implement the OAuth dance itself: that
-lives in <code>atrium-oauth-client</code>. The crate also does <em>not</em> ship a
-<code>refresh_if_needed</code> helper or a CLI login command; consumers
-drive the dance and the refresh decision in their own code,
-using <code>OAuthSession</code>'s helpers (<code>is_expired</code>, <code>needs_refresh</code>,
-<code>refresh_expired</code>) for timing.</p>
+provides the token-store trait and three shipped implementations,
+plus a <code>refresh_if_needed</code> helper and a <code>Refresher</code> trait for
+session refresh. The crate does <em>not</em> implement the OAuth dance
+itself: that lives in <code>atrium-oauth-client</code>. Consumers drive the
+dance in their own code, then either call <code>refresh_if_needed</code> or
+read <code>OAuthSession</code>'s helpers (<code>is_expired</code>, <code>needs_refresh</code>,
+<code>refresh_expired</code>) to drive the refresh decision themselves.</p>
 <h2 id="when-you-need-it"><a class="header" href="#when-you-need-it">When you need it</a></h2>
 <p>Anything that publishes records (encounter, recommendation,
 verification, observation, lens, dialect, vocab, ...) needs an
@@ -1662,19 +1664,19 @@ let recovered = store.load(&amp;session.did).await?;
 let store = SqliteOAuthTokenStore::open("sessions.sqlite").await?;
 <span class="boring">}</span></code></pre></pre>
 <h2 id="drive-the-oauth-dance"><a class="header" href="#drive-the-oauth-dance">Drive the OAuth dance</a></h2>
-<p>The dance itself is <code>atrium-oauth-client</code>'s job; the crate
+<p>The dance itself is <code>atrium-oauth-client</code>'s job. The crate
 returns an authenticated session you store via
 <code>OAuthTokenStore::save</code>. The session shape (<code>OAuthSession</code>) is
 documented in the crate's source: it carries the DID, PDS URL,
 access JWT, refresh JWT, DPoP private key (JWK-serialized),
 DPoP nonce, and expiry timestamps as public fields.</p>
-<p>For session-staleness decisions, read <code>OAuthSession::is_expired</code>
-and <code>OAuthSession::needs_refresh(now, threshold)</code> in your own
-refresh path; the crate does not ship a <code>refresh_if_needed</code>
-helper, and the application decides how to drive the refresh
-endpoint.</p>
+<p>For session-staleness decisions, either call <code>refresh_if_needed</code>
+(documented below) or read <code>OAuthSession::is_expired</code> and
+<code>OAuthSession::needs_refresh(now, threshold)</code> in your own refresh
+path. Either way, the application supplies the <code>Refresher</code> that
+drives the refresh endpoint.</p>
 <h2 id="dpop"><a class="header" href="#dpop">DPoP</a></h2>
-<p>The session's DPoP keypair is what makes the access token bound.
+<p>The session's DPoP keypair is what binds the access token.
 The signer (the <code>P256DpopProver</code> in
 <a href="guide/../reference/crates/idiolect-lens.html"><code>idiolect-lens</code></a> under
 the <code>dpop-p256</code> feature) consumes the keypair from the session
@@ -1759,8 +1761,8 @@ non-zero on any drift. CI runs <code>--check</code> on every PR.</p>
 <tr><td>Verifier kind taxonomy</td><td><code>verify-spec/runners.json</code></td><td><code>crates/idiolect-verify/src/generated.rs</code></td></tr>
 </tbody></table>
 </div>
-<p>The three spec files are single JSON documents (not directories);
-each declares an array of entries that codegen reads.</p>
+<p>The three spec files are single JSON documents (not directories).
+Each declares an array of entries that codegen reads.</p>
 <h2 id="the-drift-gate"><a class="header" href="#the-drift-gate">The drift gate</a></h2>
 <p><code>--check</code> is the drift gate. CI runs it on every PR. A red gate
 means somebody edited a lexicon (or a spec) without rerunning
@@ -1789,7 +1791,7 @@ for an orchestrator query, the <code>ObservationMethod</code> impl for
 an observer method, the <code>VerificationRunner</code> impl for a
 verifier runner).</li>
 </ol>
-<p>The dispatcher routes to the new entry by its kind; the
+<p>The dispatcher routes to the new entry by its kind. The
 generated tree handles parsing and shape.</p>
 <h2 id="library-api"><a class="header" href="#library-api">Library API</a></h2>
 <p>For consumers outside the workspace, the emitter is callable as
@@ -1805,9 +1807,9 @@ use idiolect_codegen::emit::family::{FamilyConfig, idiolect_family};
 return a <code>Vec&lt;EmittedFile&gt;</code>. Loading the lexicons from disk is
 the caller's job.</p>
 <p><code>FamilyConfig::new(marker_name, id, nsid_prefix)</code> constructs a
-config from any string-like inputs; the shipped default for
+config from any string-like inputs. The shipped default for
 <code>dev.idiolect.*</code> is <code>idiolect_family()</code>.</p>
-<p>The crate is <code>publish = false</code> and not on crates.io; downstream
+<p>The crate is <code>publish = false</code> and not on crates.io. Downstream
 consumers depend on it via a path or git reference rather than
 a registry version.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
@@ -1864,7 +1866,7 @@ declared as metadata:</p>
 <code>asymmetric</code>, <code>transitive</code>, <code>reflexive</code>, <code>irreflexive</code>,
 <code>functional</code>, <code>inverseFunctional</code>, plus <code>inverseOf</code> and a per-
 relation <code>world</code> override. The runtime walks the asserted edges
-and validates them against these properties; contradictions
+and validates them against these properties. Contradictions
 (<code>symmetric+asymmetric</code>, <code>reflexive+irreflexive</code>) produce a
 <code>PropertyContradiction</code> violation at publish time.</p>
 <h2 id="add-edges"><a class="header" href="#add-edges">Add edges</a></h2>
@@ -1908,7 +1910,7 @@ Collection.</p>
 consistency walker. Violations are listed with the offending edge
 or property.</p>
 <p>For programmatic validation, construct a <code>Vocab</code> value and call
-<code>VocabGraph::from_vocab(&amp;vocab).validate()</code>; violations are
+<code>VocabGraph::from_vocab(&amp;vocab).validate()</code>. Violations are
 returned as a <code>Vec&lt;VocabViolation&gt;</code> listing each offending edge
 or property.</p>
 <h2 id="publish-1"><a class="header" href="#publish-1">Publish</a></h2>
@@ -1937,9 +1939,9 @@ let resp = publisher.create(&amp;vocab).await?;
 <span class="boring">}</span></code></pre></pre>
 <p><code>pkcs8_pem</code> is converted from the session's
 <code>dpop_private_key_jwk</code> via an external JWK-to-PKCS8 helper. The
-PDS validates the record against the lexicon before commit;
-malformed values surface as commit errors. Driving the OAuth
-dance and persisting the session is the caller's job; see
+PDS validates the record against the lexicon before commit.
+Malformed values surface as commit errors. Driving the OAuth
+dance and persisting the session is the caller's job. See
 <a href="guide/./oauth.html">Configure OAuth sessions</a>.</p>
 <h2 id="use-the-published-vocab"><a class="header" href="#use-the-published-vocab">Use the published vocab</a></h2>
 <p>Once the vocab is on the network, any open-enum field whose
@@ -2019,11 +2021,11 @@ dialect record (via <code>idiolect_lens::PdsResolver</code>'s
 <code>Resolver::resolve</code> or any other resolver) and walk the typed
 fields directly. A small wrapper layer is the right shape if a
 consumer wants a <code>dialect.preferred_lens_for(nsid)</code> style
-accessor; the substrate ships only the record.</p>
+accessor. The runtime ships only the record.</p>
 <h2 id="multiple-dialects"><a class="header" href="#multiple-dialects">Multiple dialects</a></h2>
 <p>Two communities can publish disjoint, overlapping, or
-contradictory dialects. The substrate treats them as opinions;
-nothing in the protocol prefers one over another. Consumers
+contradictory dialects. The protocol treats them all as opinions
+and prefers none. Consumers
 pick a resolution policy in their own code:</p>
 <ul>
 <li><em>first-match</em> — pick the first dialect listed in the
@@ -2033,7 +2035,7 @@ dialects endorse the same lens path.</li>
 <li><em>merge</em> — union the entries; on collision, fall back to a
 configured tie-breaker.</li>
 </ul>
-<p>The substrate does not ship trait or implementation for any of
+<p>The runtime ships no trait or implementation for any of
 these: dialect resolution is a consumer decision, and the right
 shape varies by deployment.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
@@ -2043,7 +2045,7 @@ The chapters are self-contained but assume basic familiarity with
 ATProto records and panproto's lens vocabulary.</p>
 <div class="table-wrapper"><table><thead><tr><th>Chapter</th><th>What it explains</th></tr></thead><tbody>
 <tr><td><a href="concepts/./idiolect-dialect-language.html">Idiolect, dialect, language</a></td><td>The frame the project is named after; what each layer is responsible for.</td></tr>
-<tr><td><a href="concepts/./lexicon-family.html">The dev.idiolect.* lexicon family</a></td><td>The shipped lexicons, what each one names, and how they compose.</td></tr>
+<tr><td><a href="concepts/./lexicon-family.html">The dev.idiolect.* lexicon family</a></td><td>The shipped lexicons, what each one covers, and how they compose.</td></tr>
 <tr><td><a href="concepts/./atproto-records.html">Records as content-addressed signed data</a></td><td>Why ATProto's record model is the substrate; what the runtime gets for free.</td></tr>
 <tr><td><a href="concepts/./lens-laws.html">Lens semantics and laws</a></td><td>The <code>get</code> / <code>put</code> / complement model, GetPut, PutGet, optic classification.</td></tr>
 <tr><td><a href="concepts/./open-enums.html">Open enums and vocabularies</a></td><td>Why every enum field is open; how <code>*Vocab</code> siblings extend slugs.</td></tr>
@@ -2065,7 +2067,7 @@ canonical. It carries a list of preferred NSIDs, preferred
 lenses, endorsed vocabularies, and deprecations.</li>
 <li>A <strong>language</strong> is the federated substrate over which idiolects
 and dialects meet. There is no central registry, no single
-authority, and no global schema; the substrate is ATProto plus
+authority, and no global schema. The substrate is ATProto plus
 the shipped lexicons.</li>
 </ul>
 <p>The three layers correspond to three things in the runtime:</p>
@@ -2078,9 +2080,9 @@ the shipped lexicons.</li>
 <h2 id="why-this-frame"><a class="header" href="#why-this-frame">Why this frame</a></h2>
 <p>A large protocol benefits from a model where parties can disagree
 gracefully. Two communities can run incompatible schemas and the
-substrate accommodates them; a third community can publish a lens
-between the two and the network can route translations. The frame
-does not promise a single canonical schema; it ships the
+substrate accommodates them. A third community can publish a lens
+between the two, and the network can route translations. The frame
+does not promise a single canonical schema. It ships the
 machinery for reasoning about plural canonicities.</p>
 <p>The properties this gets you:</p>
 <ul>
@@ -2103,7 +2105,7 @@ records. It admits:</p>
 <li><strong>Silent fragmentation.</strong> Two communities ship near-identical
 schemas under different NSIDs. Consumers see two records where
 there should be one. The signal is the lens-recommendation
-density between the two; if no community publishes a lens
+density between the two. If no community publishes a lens
 between them, the fragmentation is permanent.</li>
 <li><strong>Adversarial publishing.</strong> A bad actor publishes a vocab that
 shadows a canonical slug with a different meaning. The
@@ -2111,7 +2113,7 @@ containment is at the consumer's policy: prefer vocabs from
 recognised communities, treat unknown vocabs as unknown.</li>
 <li><strong>Dialect drift.</strong> A community changes its dialect record
 without coordinating with downstream consumers. Old records keep
-validating; new lens choices route differently. The signal is
+validating. New lens choices route differently. The signal is
 the deprecation list and the lexicon-evolution gate.</li>
 </ul>
 <p>The runtime ships primitives for each of these (recommendation,
@@ -2172,7 +2174,7 @@ namespace. The record kinds are organized by what they describe.</p>
 <p>The arrows are by-reference relationships; the records themselves
 are independent.</p>
 <h2 id="lexicon-by-lexicon"><a class="header" href="#lexicon-by-lexicon">Lexicon-by-lexicon</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>Lexicon</th><th>What it names</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>Lexicon</th><th>What it describes</th></tr></thead><tbody>
 <tr><td><code>dev.idiolect.encounter</code></td><td>One invocation of a lens. Carries the lens, the source schema, the action / material / purpose / actor (<code>use</code>), and the outcome.</td></tr>
 <tr><td><code>dev.idiolect.observation</code></td><td>Aggregate over encounters folded by an observer. Per-outcome counts plus optional weighted aggregates over a window.</td></tr>
 <tr><td><code>dev.idiolect.correction</code></td><td>A claim that a specific encounter's outcome was wrong, plus the corrected output.</td></tr>
@@ -2200,8 +2202,8 @@ are independent.</p>
 triple. One record per invocation, with corrections and folds
 on top.</li>
 <li><strong>What should happen?</strong> The recommendation / belief / dialect /
-verification quad. Communities express opinions; opinions cite
-evidence; consumers route translations through them.</li>
+verification quad. Communities express opinions, those opinions
+cite evidence, and consumers route translations through them.</li>
 <li><strong>What does this mean?</strong> The vocab + open-enum convention.
 Slugs are open-enum strings resolved through community-published
 knowledge graphs.</li>
@@ -2211,28 +2213,29 @@ settled-belief shape.</li>
 </ol>
 <p>A new record kind that fits into one of those four columns is a
 candidate for the family. A record kind that does not fit is
-likely a downstream extension; the <a href="concepts/../guide/dialect.html">Bundle records into a
+likely a downstream extension. The <a href="concepts/../guide/dialect.html">Bundle records into a
 dialect</a> guide covers how to ship one.</p>
 <h2 id="composition-with-downstream-lexicons"><a class="header" href="#composition-with-downstream-lexicons">Composition with downstream lexicons</a></h2>
-<p>idiolect's shape is meant to be the substrate, not the ceiling. A
+<p>The idiolect family is meant as a base for downstream extension,
+not a fixed set. A
 downstream community publishes its own NSID family and uses
 <code>OrFamily&lt;IdiolectFamily, MyFamily&gt;</code> at the indexer boundary so its
 records flow alongside idiolect's. Lenses bridge the two. A
 dialect record from the downstream community lists both
 families' canonical NSIDs.</p>
-<p>The shipped example of this pattern is the planned <code>idiolect-acorn</code>
-bridge; the design is in <code>notes/</code>.</p>
+<p>The worked example of this pattern is the planned <code>idiolect-acorn</code>
+bridge. The design is in <code>notes/</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="records-as-content-addressed-signed-data"><a class="header" href="#records-as-content-addressed-signed-data">Records as content-addressed signed data</a></h1>
 <p>Every artifact in idiolect is an ATProto record. A record is:</p>
 <ul>
 <li>a JSON object,</li>
-<li>with a <code>$type</code> field naming a lexicon,</li>
+<li>with a <code>$type</code> field identifying its lexicon,</li>
 <li>stored at a <code>(did, collection, rkey)</code> triple,</li>
 <li>content-addressed by its CID,</li>
 <li>signed by the publishing repo's signing key.</li>
 </ul>
-<p>The substrate is documented in the
+<p>ATProto's record model is documented in the
 <a href="https://atproto.com/specs/repository">ATProto spec</a>.
 This chapter covers the properties idiolect relies on.</p>
 <h2 id="properties-idiolect-relies-on"><a class="header" href="#properties-idiolect-relies-on">Properties idiolect relies on</a></h2>
@@ -2272,13 +2275,13 @@ mutable pointer.</p>
 <code>correction.encounter</code>, <code>verification.lens</code>) and at-uri for
 queries that should follow updates (<code>recommendation.lensPath</code>,
 <code>dialect.entries[].vocab</code>). The choice in each lexicon is
-deliberate; see the per-lexicon reference for the rationale.</p>
+deliberate. See the per-lexicon reference for the rationale.</p>
 <h3 id="4-records-survive-pds-migration"><a class="header" href="#4-records-survive-pds-migration">4. Records survive PDS migration</a></h3>
 <p>ATProto's identity layer (PLC plus did:web) lets a repo move
 between PDSes without changing its <code>did</code>. A record fetched by
 at-uri after a PDS migration goes through one extra DID-resolve
 hop and arrives at the new PDS. idiolect's runtime path goes
-through <code>idiolect-identity</code> for every fetch; PDS migration is
+through <code>idiolect-identity</code> for every fetch. PDS migration is
 transparent.</p>
 <h2 id="properties-idiolect-adds-on-top"><a class="header" href="#properties-idiolect-adds-on-top">Properties idiolect adds on top</a></h2>
 <h3 id="5-lexicon-validation-at-the-boundary"><a class="header" href="#5-lexicon-validation-at-the-boundary">5. Lexicon validation at the boundary</a></h3>
@@ -2303,19 +2306,19 @@ extend the same field without a centralized governance step. See
 <p>Runtime state that should not federate (firehose cursors, OAuth
 tokens) uses the same panproto schema apparatus, but under a
 sibling <code>dev.idiolect.internal.*</code> namespace. Conformant firehose
-consumers skip the prefix; the data still travels through the
+consumers skip the prefix. The data still travels through the
 same runtime as a public record, just out of band.</p>
 <h2 id="what-atproto-does-not-give-you"><a class="header" href="#what-atproto-does-not-give-you">What ATProto does not give you</a></h2>
 <ul>
 <li><strong>A schema language.</strong> ATProto Lexicon is a constrained type
-language; it does not cover lens algebra, schema diffs, or
+language. It does not cover lens algebra, schema diffs, or
 optic classification. Those live in panproto, which idiolect
 embeds.</li>
 <li><strong>A migration story.</strong> Lexicon revision is wire-compatible by
 policy, not by tooling. The lexicon-evolution policy fills the
-gap; see <a href="concepts/./lexicon-evolution.html">Lexicon evolution policy</a>.</li>
+gap. See <a href="concepts/./lexicon-evolution.html">Lexicon evolution policy</a>.</li>
 <li><strong>A vocabulary registry.</strong> Open-enum slugs need a published
-knowledge graph to resolve; ATProto does not ship one. The
+knowledge graph to resolve, and ATProto does not ship one. The
 <code>dev.idiolect.vocab</code> record is where the resolution lives.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
@@ -2358,13 +2361,13 @@ based on what the chain promises:</p>
 <tr><td><strong>General</strong></td><td>None of the above.</td><td>Manual lens authoring, full coercion-law check, plus verification.</td></tr>
 </tbody></table>
 </div>
-<p>The class is not a quality judgment; it is a routing decision.
+<p>The class drives routing rather than passing judgment on quality.
 Some legitimate migrations are projections (a field genuinely went
 away). The policy makes the consequences visible.</p>
 <h2 id="composition"><a class="header" href="#composition">Composition</a></h2>
 <p>Chain composition is associative:</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord">ℓ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord">ℓ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord">ℓ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord">ℓ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord">ℓ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord">ℓ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
-<p>Identity is the no-op lens; it is a left and right identity for
+<p>Identity is the no-op lens, a left and right identity for
 composition. panproto's protolens runtime auto-simplifies adjacent
 steps where it can (<code>RenameVertex(a,b) ; RenameVertex(b,c) → RenameVertex(a,c)</code>).</p>
 <h2 id="symmetric-lenses"><a class="header" href="#symmetric-lenses">Symmetric lenses</a></h2>
@@ -2401,7 +2404,7 @@ work. The shipped runner kinds:</p>
 <li><code>static-check</code> runs the panproto-level coercion-law and
 existence checks against the chain itself.</li>
 </ul>
-<p>A lens with no published verifications is a claim; a lens with
+<p>A lens with no published verifications is a claim. A lens with
 multiple published verifications from trusted signers, run on
 recent corpora, is closer to an asserted fact. See
 <a href="concepts/../guide/verify.html">Author a verification runner</a> for the
@@ -2410,7 +2413,7 @@ authoring path.</p>
 <h1 id="open-enums-and-vocabularies"><a class="header" href="#open-enums-and-vocabularies">Open enums and vocabularies</a></h1>
 <p>Closed enums are the wrong default for a federated lexicon.
 Adding a value should not require coordinating with every
-consumer; refusing to accept a new value should not be the
+consumer. Refusing to accept a new value should not be the
 default.</p>
 <p>idiolect's policy is: every enum-shaped field is open, and the
 extension story is mechanical.</p>
@@ -2495,7 +2498,7 @@ contract, not the data:</p>
 <li><code>vocab.world</code> (<code>open</code> / <code>closed-with-default</code> / <code>hierarchy-closed</code>)
 controls the runtime's open-enum policy itself.</li>
 <li><code>lensClass</code> (<code>isomorphism</code> / <code>injection</code> / <code>projection</code> /
-<code>affine</code> / <code>general</code>) is a panproto contract; extending it
+<code>affine</code> / <code>general</code>) is a panproto contract. Extending it
 changes what the runtime promises.</li>
 <li><code>recordHosting</code> (<code>member-hosted</code> / <code>community-hosted</code> / <code>hybrid</code>)
 controls a federation policy.</li>
@@ -2505,7 +2508,7 @@ controls a federation policy.</li>
 <p>Converting a closed enum to an open enum is wire-compatible:
 existing records continue to validate, and the codegen-emitted
 helpers degrade to "if <code>Other</code>, ignore" in consumers that have
-not regenerated. Going the other way is breaking; the shipped
+not regenerated. Going the other way is breaking, and the shipped
 lexicons do not do that.</p>
 <h2 id="codegen-identifier-collisions"><a class="header" href="#codegen-identifier-collisions">Codegen identifier collisions</a></h2>
 <p>When two distinct slugs would pascal-case to the same Rust
@@ -2574,7 +2577,7 @@ OWL Lite (<code>symmetric</code>, <code>transitive</code>, <code>functional</cod
 </tbody></table>
 </div>
 <p>Contradictions (<code>symmetric+asymmetric</code>, <code>reflexive+irreflexive</code>)
-are caught at validation time; functional / inverse-functional
+are caught at validation time. Functional and inverse-functional
 violations are caught at edge-walk time. The <code>VocabGraph::validate</code>
 walker emits one
 <a href="concepts/../reference/crates/idiolect-records.html"><code>VocabViolation</code></a> per
@@ -2596,7 +2599,7 @@ inconsistency.</p>
 </tbody></table>
 </div>
 <p>The annotations do not affect runtime resolution (the slug is the
-key); they are surface-area for human authors and downstream
+key). They are surface area for human authors and downstream
 display tooling.</p>
 <h2 id="runtime-queries"><a class="header" href="#runtime-queries">Runtime queries</a></h2>
 <p><code>VocabGraph</code> is a normalised read-only view over a single vocab.
@@ -2649,12 +2652,12 @@ form an undirected bridge. A consumer holding both records and a
 );
 <span class="boring">}</span></code></pre></pre>
 <p>If the bridge exists, the consumer gets the equivalent slug in
-the target vocab. If it does not, <code>None</code>. This is the engine for
+the target vocab. If it does not, <code>None</code>. This is what backs
 <a href="concepts/./open-enums.html">Open enums</a>' <code>translate_to</code> helper.</p>
 <h2 id="versioning"><a class="header" href="#versioning">Versioning</a></h2>
 <p>A vocab edit is a record edit (a new <code>dev.idiolect.vocab</code> record)
 under a new rkey, with the old vocab listed as <code>supersedes</code>. The
-new record is a separate at-uri; consumers depending on the old
+new record is a separate at-uri. Consumers depending on the old
 slug set continue to resolve through the old vocab until they
 update their references.</p>
 <p>The lexicon-evolution policy classifies vocab edits the same way
@@ -2672,9 +2675,9 @@ available through the orchestrator's <code>mapEnum</code> cache.</li>
 <h1 id="deliberation"><a class="header" href="#deliberation">Deliberation</a></h1>
 <p>The deliberation lexicons (<code>deliberation</code>,
 <code>deliberationStatement</code>, <code>deliberationVote</code>,
-<code>deliberationOutcome</code>) name a process. The <code>belief</code> /
-<code>recommendation</code> lexicons name results. They are deliberately
-distinct.</p>
+<code>deliberationOutcome</code>) describe a process as it happens. The
+<code>belief</code> and <code>recommendation</code> lexicons describe its results. The
+two are kept separate on purpose.</p>
 <h2 id="what-each-lexicon-is-for"><a class="header" href="#what-each-lexicon-is-for">What each lexicon is for</a></h2>
 <pre class="mermaid">flowchart LR
     DEL[deliberation] --&gt;|topic, status| DST[deliberationStatement]
@@ -2712,7 +2715,7 @@ consumers see what the community considered, who voted, what the
 tally was, and which statements were adopted, before reading the
 resulting belief or recommendation. A consumer that only ever
 sees the belief is in the same position as a consumer of any
-asserted truth; a consumer that wants context can follow the
+asserted truth. A consumer that wants context can follow the
 deliberation.</p>
 <h2 id="maps-to-acorns-assembly-records"><a class="header" href="#maps-to-acorns-assembly-records">Maps to Acorn's assembly records</a></h2>
 <p>Bluesky's Acorn project publishes the same shape under
@@ -2720,10 +2723,10 @@ deliberation.</p>
 The four idiolect lexicons are shaped so a future bridge to
 Acorn's records can be lossless. Stance, classification, and
 status are open-enum slugs resolved through community-published
-vocabularies; Acorn's <code>-1 | 0 | 1</code> stances become vocab nodes.</p>
+vocabularies. Acorn's <code>-1 | 0 | 1</code> stances become vocab nodes.</p>
 <p>The bridge crate is downstream work and is not shipped. The
-lexicons are; they were designed against the assembly records as
-a forcing function.</p>
+lexicons are. They were designed against the assembly records so
+a future bridge can be lossless.</p>
 <h2 id="how-the-tally-is-produced"><a class="header" href="#how-the-tally-is-produced">How the tally is produced</a></h2>
 <p>A <code>deliberationOutcome</code> is observer-published, not voter-published.
 The fold (in <code>idiolect-observer</code>) walks every <code>deliberationVote</code>
@@ -2731,7 +2734,7 @@ that points at a statement in the deliberation, tallies stances
 per statement, and emits one outcome record per (deliberation,
 window) tuple.</p>
 <p>Multiple observers can publish concurrent outcomes for the same
-deliberation; consumers can require quorum across observers
+deliberation. Consumers can require quorum across observers
 before adopting an outcome. This is the same shape as the
 <code>observation</code> fold over encounters.</p>
 <h2 id="open-enum-extension"><a class="header" href="#open-enum-extension">Open-enum extension</a></h2>
@@ -2752,23 +2755,23 @@ referencing the community's vocab through the corresponding
 <code>*Vocab</code> field resolve through the extended slug set.</p>
 <h2 id="what-this-is-not"><a class="header" href="#what-this-is-not">What this is not</a></h2>
 <p>The deliberation lexicons do not implement Polis-style clustering,
-quadratic voting, or any specific decision procedure. They name
-the artifacts of a deliberation; the procedure that produces the
-artifacts (and the procedure that adopts an outcome) is the
-community's choice.</p>
+quadratic voting, or any specific decision procedure. They
+describe the artifacts of a deliberation. The procedure that
+produces those artifacts (and the procedure that adopts an
+outcome) is the community's choice.</p>
 <p>A community that wants quadratic voting publishes a
 <code>vote-weights</code> vocabulary and uses the optional <code>weight</code> field on
 <code>deliberationVote</code> to carry its scheme. A community that wants
 delegation publishes a <code>delegations</code> mapping (out-of-band or in
 its own lexicon) and lets observers fold votes along the
-delegation chain. The substrate carries the votes; the procedure
-carries the meaning.</p>
+delegation chain. The lexicons store the votes. The community's
+chosen procedure decides what they mean.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="observer-protocol"><a class="header" href="#observer-protocol">Observer protocol</a></h1>
-<p>Aggregate state in idiolect is records, not endpoints. An
-observer is a process that reads encounter-family records from
-the firehose, folds them along a key, and publishes the fold as
-a record.</p>
+<p>In idiolect, aggregate state lives in records rather than in a
+served endpoint. An observer is a process that reads
+encounter-family records from the firehose, folds them along a
+key, and publishes the fold as a record.</p>
 <h2 id="what-an-observer-is"><a class="header" href="#what-an-observer-is">What an observer is</a></h2>
 <pre class="mermaid">flowchart LR
     PDS[(PDS firehose)] --&gt;|encounters| OBS[Observer process]
@@ -2798,8 +2801,8 @@ the counter's history is whatever the endpoint says it is.</li>
 <li>Be re-folded by an independent party. A consumer that distrusts
 the operator cannot re-derive the count from the underlying
 data.</li>
-<li>Disagree with itself across observers. There is one operator,
-one number.</li>
+<li>Disagree with itself across observers. A single operator
+produces a single number.</li>
 </ul>
 <p>A signed record can be:</p>
 <ul>
@@ -2810,7 +2813,7 @@ reading an observation can ask the indexer for the encounters
 in scope and recompute the fold independently.</li>
 <li>Compared across observers. Two observers running the same fold
 on overlapping data will produce records with comparable
-counts; consumers can require quorum before treating an
+counts. Consumers can require quorum before treating an
 observation as authoritative.</li>
 </ul>
 <p>The cost is an extra serialization per fold and an extra commit
@@ -2849,7 +2852,7 @@ from random sampling has to commit the seed in the record.</li>
 <code>dev.idiolect.deliberationOutcome</code> records is a plausible
 addition but is not in the shipped set at v0.8.0.</p>
 <p>The spec is a single JSON file (<code>observer-spec/methods.json</code>),
-not a directory of files; codegen emits the descriptor table.
+not a directory of files. Codegen emits the descriptor table.
 See <a href="concepts/../guide/observer.html">Run the observer daemon</a> for the
 operator-facing path.</p>
 <h2 id="coordination-among-observers"><a class="header" href="#coordination-among-observers">Coordination among observers</a></h2>
@@ -2866,7 +2869,7 @@ that did not.</li>
 </ul>
 <p>Consumers that want consensus require <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> trusted observers
 to publish records that agree within a tolerance. This is a
-consumer policy; the substrate ships the records.</p>
+consumer policy. The runtime only provides the records.</p>
 <h2 id="why-folds-are-the-right-primitive"><a class="header" href="#why-folds-are-the-right-primitive">Why folds are the right primitive</a></h2>
 <p>A simple primitive — the observer publishes an aggregate signed
 by its DID — supports a lot of structure:</p>
@@ -2878,8 +2881,8 @@ authoritative when it does not want to fold itself).</li>
 <li>Fork detection (two observers' aggregates over the same window
 diverging is a signal that one of them is missing data).</li>
 </ul>
-<p>None of those need protocol changes. They are policies on top of
-records.</p>
+<p>None of them require protocol changes, since they are all
+policies layered on top of records.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="lexicon-evolution-policy"><a class="header" href="#lexicon-evolution-policy">Lexicon evolution policy</a></h1>
 <p>Every lexicon revision in idiolect ships with an auto-derived,
@@ -2887,7 +2890,7 @@ classified, verified, published lens. Hand-authored lenses are an
 escape hatch that requires governance sign-off. The same policy
 applies to vendored externals (Blacksky, layers-pub, ...).</p>
 <p>The policy is the lexicon-level half of the project's stability
-story; the schema-level half is the
+story. The schema-level half is the
 <a href="concepts/../reference/stability.html">stability and versioning</a> note. The
 policy below is enforced by <code>scripts/lexicon-evolve.sh</code> and the
 release CI workflow.</p>
@@ -2899,7 +2902,7 @@ release CI workflow.</p>
     COERCE --&gt; ROUNDTRIP[4. Roundtrip verify]
     ROUNDTRIP --&gt; PUBLISH[5. Publish lens]
 </pre>
-<p>Each stage maps onto a panproto primitive; nothing is bespoke.</p>
+<p>Each stage maps onto a panproto primitive. Nothing is bespoke.</p>
 <h3 id="stage-0--diff"><a class="header" href="#stage-0--diff">Stage 0 — Diff</a></h3>
 <pre><code class="language-bash">schema diff --src lexicons/&lt;nsid&gt;.&lt;old&gt;.json --tgt lexicons/&lt;nsid&gt;.&lt;new&gt;.json
 </code></pre>
@@ -2936,18 +2939,18 @@ and must populate <code>deprecations</code> with the lens at-uri as
 <p>For any <code>CoerceType</code> step crossing primitive kinds:</p>
 <pre><code class="language-bash">schema theory check-coercion-laws theory.ncl --json
 </code></pre>
-<p>Sample-based; exit code is non-zero on any falsifying sample. The
+<p>Sample-based. Exit code is non-zero on any falsifying sample. The
 chain declares each <code>CoerceType</code> with an honest <code>CoercionClass</code>.
 Dishonest declarations corrupt the asymmetric-lens put law
-silently; this gate catches them.</p>
+silently. This gate catches them.</p>
 <h3 id="stage-4--roundtrip-verification"><a class="header" href="#stage-4--roundtrip-verification">Stage 4 — Roundtrip verification</a></h3>
 <pre><code class="language-bash">schema lens verify &lt;corpus&gt;/ --protocol atproto --schema &lt;new&gt;.json --chain chain.json
 </code></pre>
 <p>Checks GetPut and PutGet over the corpus. The corpus is the live
 indexer's catalog snapshot at the time of revision: actual
 records published across the network for that NSID. CI fails on
-any record that violates either law. Verification is grounded in
-real data, not synthetic test cases.</p>
+any record that violates either law. Verification runs on real
+data rather than synthetic test cases.</p>
 <h3 id="stage-5--publish"><a class="header" href="#stage-5--publish">Stage 5 — Publish</a></h3>
 <pre><code class="language-bash">schema lens inspect chain.json --json | idiolect-cli publish-lens \
   --collection dev.panproto.schema.lens
@@ -2960,7 +2963,7 @@ DID. The lens at-uri is added to:</p>
 <code>dev.idiolect.dialect#preferredLenses</code>.</li>
 <li>The previous lexicon's <code>deprecations</code> block as <code>replacement</code>.</li>
 </ul>
-<p>Codegen re-runs on revision bump; downstream consumers pulling
+<p>Codegen re-runs on revision bump. Downstream consumers pulling
 the dialect record see the lens automatically.</p>
 <h2 id="vocab-edits-go-through-the-same-pipeline"><a class="header" href="#vocab-edits-go-through-the-same-pipeline">Vocab edits go through the same pipeline</a></h2>
 <p>Vocab edits are <em>record</em> edits, not <em>schema</em> edits, but the same
@@ -2974,10 +2977,10 @@ six stages apply via dependent optics:</p>
 </div>
 <h2 id="why-this-is-modular"><a class="header" href="#why-this-is-modular">Why this is modular</a></h2>
 <ul>
-<li><strong>Modular.</strong> Each elementary protolens is a stand-alone, well-typed combinator. The pipeline composes them; no bespoke migration code per revision.</li>
+<li><strong>Modular.</strong> Each elementary protolens is a stand-alone, well-typed combinator. The pipeline composes them, with no bespoke migration code per revision.</li>
 <li><strong>Abstract.</strong> Protolenses are quantified over schemas, not specific to a revision pair. <code>RenameField("oldName", "newName")</code> is a schema-parametric morphism; it applies to the lexicon and to every record across the network without per-record code.</li>
 <li><strong>Composable.</strong> Chain auto-simplification, ScopedTransform sub-chains, Nickel record merge for fragments, symmetric lenses for forward / backward pairing, lift across protocols via theory morphisms.</li>
-<li><strong>Verifiable.</strong> Optic classification is mechanical. Coercion-law checks are sample-based. Corpus regression uses real records. Trust comes from the substrate, not from review prose.</li>
+<li><strong>Verifiable.</strong> Optic classification is mechanical. Coercion-law checks are sample-based. Corpus regression uses real records. Trust rests on those mechanical checks rather than on review prose.</li>
 <li><strong>Decentralized.</strong> Communities author their own protolens chains for their own lexicons. The policy applies to anyone adopting idiolect's framework.</li>
 </ul>
 <h2 id="vendored-externals"><a class="header" href="#vendored-externals">Vendored externals</a></h2>
@@ -2985,8 +2988,8 @@ six stages apply via dependent optics:</p>
 schemas idiolect does not own. When they revise, the same six
 stages run against their old / new pair. The output is a
 <em>symmetric</em> lens (per panproto's <code>symmetricLens</code>): syncing A → B
-and B → A keeps both sides consistent up to complement. This is
-the right shape for a bridge crate (e.g. the planned
+and B → A keeps both sides consistent up to complement. That is
+what a bridge crate needs (e.g. the planned
 <code>idiolect-acorn</code>): when the upstream changes, the bridge auto-
 updates and downstream idiolect records remain syncable.</p>
 <h2 id="tooling"><a class="header" href="#tooling">Tooling</a></h2>
@@ -3000,8 +3003,8 @@ edit.</li>
 <li><code>migrations/&lt;nsid&gt;/&lt;old&gt;-&lt;new&gt;/{diff.json, chain.ncl, hints.json, classification.json, verification.json}</code> is the per-revision
 audit trail.</li>
 </ul>
-<p>The policy is what makes lexicon evolution reviewable. The tooling
-is what makes the policy cheap to follow.</p>
+<p>The policy makes lexicon evolution reviewable. The tooling makes
+the policy cheap to follow.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="reference"><a class="header" href="#reference">Reference</a></h1>
 <p>Per-symbol detail. Use the navigation to jump to a specific crate,
@@ -3022,7 +3025,7 @@ the
 per-symbol reference is the rendered rustdoc on docs.rs (linked at
 the top of every crate page). For lexicons, the authoritative
 shape is the JSON document under <code>lexicons/dev/idiolect/</code>. When
-this book and either source disagree, the source wins; please
+this book and either source disagree, the source wins. Please
 file an issue.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="crates"><a class="header" href="#crates">Crates</a></h1>
@@ -3060,11 +3063,11 @@ this book and docs.rs disagree, docs.rs is right.</p>
 · <strong>Crate:</strong> <a href="https://crates.io/crates/idiolect-records">crates.io/idiolect-records</a></p>
 <p>This page is an editorial overview. The per-symbol surface
 (every public type, trait, function, and feature flag) is the
-docs.rs link above; that is the authoritative reference.</p>
+docs.rs link above. That is the authoritative reference.</p>
 </blockquote>
 <p>Serde record types mirroring the <code>dev.idiolect.*</code> lexicons. The
 contents of <code>crates/idiolect-records/src/generated/</code> are written
-by <a href="reference/crates/./idiolect-codegen.html"><code>idiolect-codegen</code></a>; do not edit by
+by <a href="reference/crates/./idiolect-codegen.html"><code>idiolect-codegen</code></a>. Do not edit by
 hand.</p>
 <pre><code class="language-toml">[dependencies]
 idiolect-records = "0.8"
@@ -3088,11 +3091,11 @@ family.</p>
 <code>PanprotoProtolensChain</code>, <code>PanprotoComplement</code>,
 <code>PanprotoLensAttestation</code>, <code>PanprotoProtocol</code>, plus
 <code>PanprotoCommit</code>, <code>PanprotoRefUpdate</code>, <code>PanprotoRepo</code>) are
-re-exported at the crate root as their own structs; they are
+re-exported at the crate root as their own structs. They are
 not variants of <code>AnyRecord</code> (which is scoped to
 <code>IdiolectFamily</code>'s NSIDs).</p>
 <h3 id="family"><a class="header" href="#family">Family</a></h3>
-<p><code>RecordFamily</code> is the trait every family implements; the crate
+<p><code>RecordFamily</code> is the trait every family implements. The crate
 ships <code>IdiolectFamily</code> for <code>dev.idiolect.*</code> and the
 <code>OrFamily&lt;F1, F2&gt;</code> composer that recognises every NSID either
 side claims. <code>detect_or_family_overlap</code> audits a probe set at
@@ -3109,7 +3112,7 @@ right-side family.</p>
 <tr><td><code>Language</code></td><td>BCP 47</td></tr>
 </tbody></table>
 </div>
-<p>Each wraps a string with a parser; the parser fires at
+<p>Each wraps a string with a parser. The parser fires at
 deserialize time. <code>Display</code> / <code>as_str</code> / <code>Deref&lt;Target=str&gt;</code> are
 uniform.</p>
 <h3 id="vocab-graph-helpers"><a class="header" href="#vocab-graph-helpers">Vocab graph helpers</a></h3>
@@ -3132,7 +3135,7 @@ shipped fixtures cover: <code>adapter</code>, <code>belief</code>, <code>bounty<
 <code>panproto_schema</code>, <code>panproto_commit</code>, ...). Use them in tests so
 you do not have to hand-roll JSON.</p>
 <p>The four deliberation lexicons do not currently ship example
-fixtures; consumers building deliberation tests construct
+fixtures. Consumers building deliberation tests construct
 records directly via the typed structs.</p>
 <h2 id="feature-flags"><a class="header" href="#feature-flags">Feature flags</a></h2>
 <p>None. The crate is feature-flag-free and has no transport
@@ -3155,7 +3158,7 @@ page. The authoritative reference is the source above.</p>
 <p>Lexicon-driven Rust + TypeScript emitter. Reads
 <code>lexicons/dev/idiolect/*.json</code> and the three spec files
 (<code>orchestrator-spec/queries.json</code>, <code>observer-spec/methods.json</code>,
-<code>verify-spec/runners.json</code>); writes the generated modules under
+<code>verify-spec/runners.json</code>). Writes the generated modules under
 each downstream crate.</p>
 <p>The crate is shipped both as a library (callable from a
 downstream emitter) and as a binary (<code>cargo run -p idiolect-codegen</code>).</p>
@@ -3181,7 +3184,7 @@ use idiolect_codegen::Example;
 <code>emit_typescript(docs, examples, family)</code> take pre-loaded
 <code>LexiconDoc</code> and <code>Example</code> slices plus a <code>FamilyConfig</code>, and
 return <code>Vec&lt;EmittedFile&gt;</code>. Loading the lexicons from disk is the
-caller's job; the workspace binary does this through the
+caller's job. The workspace binary does this through the
 <code>idiolect_codegen::lexicon</code> parser.</p>
 <p><code>FamilyConfig</code> carries three <code>Cow&lt;'static, str&gt;</code> fields: the
 marker name, the family ID, and the NSID prefix. The shipped
@@ -3211,7 +3214,7 @@ taxonomy (<code>crates/idiolect-observer/src/generated.rs</code>).</li>
 taxonomy (<code>crates/idiolect-verify/src/generated.rs</code>).</li>
 </ul>
 <p>Each spec file is a single JSON document with a top-level
-<code>queries</code> / <code>methods</code> / <code>runners</code> array; codegen produces the
+<code>queries</code> / <code>methods</code> / <code>runners</code> array. Codegen produces the
 dispatch tables and typed enums. The hand-written predicates
 live alongside the generated tree.</p>
 <h2 id="drift-gate-semantics"><a class="header" href="#drift-gate-semantics">Drift gate semantics</a></h2>
@@ -3229,7 +3232,7 @@ rejects non-conforming input.</li>
 On collision (<code>foo-bar</code> and <code>foo_bar</code>), the second occurrence
 gets a numeric suffix (<code>FooBar2</code>).</li>
 <li>The emitter walks each record's path until each member's
-prefix is unique within the colliding group; the alias is
+prefix is unique within the colliding group. The alias is
 the unique-prefix concatenation (e.g. <code>ChangelogEntry</code>,
 <code>ResourceEntry</code>).</li>
 </ol>
@@ -3254,7 +3257,7 @@ idiolect-lens = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.
 <h2 id="public-surface"><a class="header" href="#public-surface">Public surface</a></h2>
 <h3 id="resolvers"><a class="header" href="#resolvers">Resolvers</a></h3>
 <p><code>Resolver</code> is the trait every resolver implements. It is
-object-safe (<code>Arc&lt;dyn Resolver&gt;</code>) since v0.8.0; the resolve
+object-safe (<code>Arc&lt;dyn Resolver&gt;</code>) since v0.8.0. The resolve
 future is <code>Send</code>.</p>
 <p>Shipped implementations:</p>
 <div class="table-wrapper"><table><thead><tr><th>Type</th><th>Backing store</th></tr></thead><tbody>
@@ -3278,7 +3281,7 @@ variants for incremental translation.</li>
 lenses sharing a middle schema.</li>
 </ul>
 <p>Each takes a resolver, a schema loader, a <code>Protocol</code>, and a
-typed input struct; each returns a typed output struct. The
+typed input struct. Each returns a typed output struct. The
 composed future is <code>Send</code> so callers can spawn it under
 <code>tokio::spawn</code> or hold it inside an <code>#[async_trait]</code> impl.</p>
 <h3 id="pds-clients"><a class="header" href="#pds-clients">PDS clients</a></h3>
@@ -3302,7 +3305,7 @@ the record, splices the <code>$type</code> field, and forwards to the
 <p><code>LensError</code> collapses backend-specific errors into a small set
 of variants (<code>NotFound</code>, <code>Transport</code>, decode failures, translate
 failures). Backend-specific errors collapse to one of these at
-the resolver layer; callers do not pattern-match on transport
+the resolver layer. Callers do not pattern-match on transport
 types.</p>
 <h2 id="composition-pattern"><a class="header" href="#composition-pattern">Composition pattern</a></h2>
 <p>The recommended runtime stack:</p>
@@ -3332,7 +3335,7 @@ mock for tests) without changing the surface.</p>
 · <strong>Crate:</strong> <a href="https://crates.io/crates/idiolect-identity">crates.io/idiolect-identity</a></p>
 <p>This page is an editorial overview. The per-symbol surface
 (every public type, trait, function, and feature flag) is the
-docs.rs link above; that is the authoritative reference.</p>
+docs.rs link above. That is the authoritative reference.</p>
 </blockquote>
 <p>DID resolution. Maps a <code>did</code> to a structured <code>DidDocument</code>
 carrying the also-known-as set, service entries, verification
@@ -3341,7 +3344,7 @@ methods, and any additional fields the source document carries.</p>
 idiolect-identity = { version = "0.8", features = ["resolver-reqwest"] }
 </code></pre>
 <h2 id="public-surface-1"><a class="header" href="#public-surface-1">Public surface</a></h2>
-<p><code>IdentityResolver</code> is the trait every resolver implements; the
+<p><code>IdentityResolver</code> is the trait every resolver implements. The
 crate ships three implementations.</p>
 <div class="table-wrapper"><table><thead><tr><th>Type</th><th>Feature</th><th>Backing</th></tr></thead><tbody>
 <tr><td><code>InMemoryIdentityResolver</code></td><td>(always)</td><td><code>HashMap&lt;Did, DidDocument&gt;</code>. Tests and fixtures.</td></tr>
@@ -3351,7 +3354,7 @@ crate ships three implementations.</p>
 </div>
 <p><code>DidDocument</code> carries the resolved data. The shipped accessors
 include <code>handle()</code>, <code>pds_url()</code>, and the underlying
-<code>also_known_as</code> field; see docs.rs for the full surface.</p>
+<code>also_known_as</code> field. See docs.rs for the full surface.</p>
 <h2 id="errors-2"><a class="header" href="#errors-2">Errors</a></h2>
 <p><code>IdentityError</code> is the single error type the crate exposes.
 Variants distinguish transport failures, parse failures, and
@@ -3364,7 +3367,7 @@ unsupported DID methods.</p>
 <h2 id="caching"><a class="header" href="#caching">Caching</a></h2>
 <p>The shipped <code>CachingIdentityResolver</code> wraps any inner resolver
 with a TTL'd cache. Default TTL and overrides are documented on
-docs.rs. Cache hits skip the HTTP request entirely; cache misses
+docs.rs. Cache hits skip the HTTP request entirely. Cache misses
 fall through to the inner resolver. Errors are not cached.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="idiolect-indexer"><a class="header" href="#idiolect-indexer">idiolect-indexer</a></h1>
@@ -3374,10 +3377,10 @@ fall through to the inner resolver. Errors are not cached.</p>
 · <strong>Crate:</strong> <a href="https://crates.io/crates/idiolect-indexer">crates.io/idiolect-indexer</a></p>
 <p>This page is an editorial overview. The per-symbol surface
 (every public type, trait, function, and feature flag) is the
-docs.rs link above; that is the authoritative reference.</p>
+docs.rs link above. That is the authoritative reference.</p>
 </blockquote>
 <p>Firehose consumer factored into three trait surfaces. The crate
-owns the loop; you bring the stream, the handler, and the cursor
+owns the loop. You bring the stream, the handler, and the cursor
 store.</p>
 <pre><code class="language-toml">[dependencies]
 idiolect-indexer = { version = "0.8",
@@ -3457,7 +3460,7 @@ boundaries. Variants:</p>
 </div>
 <h2 id="cursor-commit-semantics"><a class="header" href="#cursor-commit-semantics">Cursor commit semantics</a></h2>
 <p><code>drive_indexer</code> commits the cursor only after the handler
-returns <code>Ok</code>. A failing handler does not commit; the loop
+returns <code>Ok</code>. A failing handler does not commit. The loop
 either retries on the next event (default) or surfaces the
 error. For exactly-once semantics, the handler coordinates the
 cursor commit with its own storage transaction.</p>
@@ -3470,21 +3473,26 @@ authoritative reference is the source above plus the rustdoc
 built locally with <code>cargo doc -p idiolect-oauth --open</code>.</p>
 </blockquote>
 <p>ATProto OAuth session storage. The crate carries the token-store
-trait and shipped implementations; the OAuth dance itself lives
-in <code>atrium-oauth-client</code> and the DPoP signer lives in
+trait and shipped implementations. The OAuth dance itself lives
+in <code>atrium-oauth-client</code>, and the DPoP signer lives in
 <code>idiolect-lens</code> under the <code>dpop-p256</code> feature.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
 idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0", features = ["store-filesystem"] }
 </code></pre>
 <h2 id="public-surface-3"><a class="header" href="#public-surface-3">Public surface</a></h2>
-<p><code>OAuthTokenStore</code> is the trait every store implements; the
+<p><code>OAuthTokenStore</code> is the trait every store implements. The
 typical surface is <code>get</code> / <code>put</code> / <code>delete</code> keyed by DID.
 <code>OAuthSession</code> carries the access token, refresh token, expiry,
 and DPoP key. The session has helpers (<code>is_expired</code>,
 <code>time_until_expiry</code>, <code>needs_refresh(now, threshold)</code>,
 <code>refresh_expired</code>) for callers that want to drive their own
 refresh policy.</p>
+<p>For the common case, the crate also ships <code>refresh_if_needed</code>
+and a <code>Refresher</code> trait: <code>refresh_if_needed(store, refresher, did)</code> loads the session, decides whether to refresh (wall clock
+plus a <code>DEFAULT_REFRESH_THRESHOLD_SECS</code> buffer), drives the
+caller-supplied <code>Refresher</code> if so, persists the result, and
+returns the live session.</p>
 <h2 id="shipped-stores"><a class="header" href="#shipped-stores">Shipped stores</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Store</th><th>Feature</th><th>Backing</th></tr></thead><tbody>
 <tr><td><code>InMemoryOAuthTokenStore</code></td><td>(always)</td><td><code>HashMap</code>-backed; for tests.</td></tr>
@@ -3495,7 +3503,7 @@ refresh policy.</p>
 <p>All three implement <code>OAuthTokenStore</code>. Anything that takes
 <code>Arc&lt;dyn OAuthTokenStore&gt;</code> accepts any of them.</p>
 <h2 id="errors-3"><a class="header" href="#errors-3">Errors</a></h2>
-<p><code>StoreError</code> covers store-side failures; <code>SessionError</code> covers
+<p><code>StoreError</code> covers store-side failures. <code>SessionError</code> covers
 session-shape failures. Callers that want a flattened error type
 build their own at the application boundary.</p>
 <h2 id="feature-flags-3"><a class="header" href="#feature-flags-3">Feature flags</a></h2>
@@ -3507,7 +3515,7 @@ build their own at the application boundary.</p>
 <h2 id="dpop-keys"><a class="header" href="#dpop-keys">DPoP keys</a></h2>
 <p>The session carries a DPoP keypair. Persistence is the store's
 responsibility; both shipped stores persist it alongside the
-session. A custom store must do the same; the OAuth RFC
+session. A custom store must do the same. The OAuth RFC
 requires DPoP keys to survive across requests.</p>
 <p>The signer behind the DPoP-bound HTTP layer is <code>P256DpopProver</code>
 in <code>idiolect-lens</code> under the <code>dpop-p256</code> feature. The lens
@@ -3522,7 +3530,7 @@ authoritative reference is the source above plus the rustdoc
 built locally with <code>cargo doc -p idiolect-observer --open</code>.</p>
 </blockquote>
 <p>Fold encounter-family records into observation records. Driven
-by the declarative spec at <code>observer-spec/methods.json</code>; codegen
+by the declarative spec at <code>observer-spec/methods.json</code>. Codegen
 emits the method-descriptor table.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
@@ -3553,12 +3561,12 @@ pub async fn drive_observer&lt;S, C, M, P&gt;(
 <p><code>ObservationMethod</code> is the stateful aggregator. It folds decoded
 events into internal state and snapshots that state on flush.
 <code>ObserverHandler</code> wires the method onto the indexer's
-<code>RecordHandler</code> boundary; <code>drive_observer</code> runs the indexer loop
+<code>RecordHandler</code> boundary. <code>drive_observer</code> runs the indexer loop
 and triggers periodic flushes that publish observations through
 the configured publisher.</p>
 <h2 id="shipped-methods"><a class="header" href="#shipped-methods">Shipped methods</a></h2>
 <p>The spec at <code>observer-spec/methods.json</code> declares eight bundled
-methods; the typed structs ship in <code>crates/idiolect-observer/src/methods/</code>:</p>
+methods. The typed structs ship in <code>crates/idiolect-observer/src/methods/</code>:</p>
 <div class="table-wrapper"><table><thead><tr><th>Spec name</th><th>Module</th><th>Folds</th></tr></thead><tbody>
 <tr><td><code>correction-rate</code></td><td><code>correction_rate</code></td><td>Per-lens correction counts grouped by reason.</td></tr>
 <tr><td><code>encounter-throughput</code></td><td><code>encounter_throughput</code></td><td>Encounter traffic by kind and downstream result.</td></tr>
@@ -3589,7 +3597,7 @@ implementations:</p>
 </tbody></table>
 </div>
 <h2 id="errors-4"><a class="header" href="#errors-4">Errors</a></h2>
-<p><code>ObserverError</code> is a flattened error type; <code>ObserverResult&lt;T&gt;</code>
+<p><code>ObserverError</code> is a flattened error type. <code>ObserverResult&lt;T&gt;</code>
 is its alias.</p>
 <h2 id="feature-flags-4"><a class="header" href="#feature-flags-4">Feature flags</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Feature</th><th>Adds</th></tr></thead><tbody>
@@ -3600,7 +3608,7 @@ is its alias.</p>
 <h2 id="adding-a-method"><a class="header" href="#adding-a-method">Adding a method</a></h2>
 <p>Edit <code>observer-spec/methods.json</code>, add the method's entry, run
 <code>cargo run -p idiolect-codegen</code>. The generated descriptor table
-picks up the new method; you write the
+picks up the new method. You write the
 <code>ObservationMethod</code> (or <code>InstanceMethod</code>) impl in
 <code>crates/idiolect-observer/src/methods/&lt;module&gt;.rs</code> and add it to
 the <code>default_methods()</code> constructor.</p>
@@ -3613,7 +3621,7 @@ authoritative reference is the source above plus the rustdoc
 built locally with <code>cargo doc -p idiolect-orchestrator --features daemon --open</code>.</p>
 </blockquote>
 <p>Read-only HTTP query API over a record catalog. Driven by
-<code>orchestrator-spec/queries.json</code>; codegen emits the routes plus
+<code>orchestrator-spec/queries.json</code>. Codegen emits the routes plus
 the matching CLI dispatcher.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
@@ -3661,11 +3669,11 @@ generated query handlers.</li>
 <tr><td><code>GET /v1/vocabularies/by-name?...</code></td><td>Vocabularies by name.</td></tr>
 </tbody></table>
 </div>
-<p>The full path-and-flag table for each endpoint is generated; see
+<p>The full path-and-flag table for each endpoint is generated. See
 <a href="https://github.com/idiolect-dev/idiolect/blob/main/orchestrator-spec/queries.json"><code>orchestrator-spec/queries.json</code></a>
 for the authoritative list.</p>
 <h2 id="errors-5"><a class="header" href="#errors-5">Errors</a></h2>
-<p><code>OrchestratorError</code> flattens catalog and HTTP errors;
+<p><code>OrchestratorError</code> flattens catalog and HTTP errors.
 <code>OrchestratorResult&lt;T&gt;</code> is its alias.</p>
 <h2 id="feature-flags-5"><a class="header" href="#feature-flags-5">Feature flags</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Feature</th><th>Adds</th></tr></thead><tbody>
@@ -3676,8 +3684,8 @@ for the authoritative list.</p>
 </div>
 <h2 id="observability-2"><a class="header" href="#observability-2">Observability</a></h2>
 <p><code>/metrics</code> exposes Prometheus counters and histograms for the
-catalog and per-endpoint latency. Structured <code>tracing</code> logs at
-<code>info</code> level for accepted requests; <code>debug</code> for query
+catalog and per-endpoint latency. Structured <code>tracing</code> logs run
+at <code>info</code> level for accepted requests and <code>debug</code> for query
 internals. The exact metric names are defined in
 <code>crates/idiolect-orchestrator/src/http.rs</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
@@ -3689,7 +3697,7 @@ authoritative reference is the source above plus the rustdoc
 built locally with <code>cargo doc -p idiolect-verify --open</code>.</p>
 </blockquote>
 <p>Verification runners with declarative dispatch. Driven by
-<code>verify-spec/runners.json</code>; codegen emits the kind taxonomy.</p>
+<code>verify-spec/runners.json</code>. Codegen emits the kind taxonomy.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
 idiolect-verify = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.8.0" }
@@ -3723,12 +3731,12 @@ kinds:</p>
 </div>
 <p>The lexicon's <code>verification.kind</code> field is open-enum and lists
 additional kinds (<code>formal-proof</code>, <code>conformance-test</code>,
-<code>convergence-preserving</code>); those kinds are <em>recognised</em> but not
+<code>convergence-preserving</code>). Those kinds are <em>recognised</em> but not
 shipped as runners. Communities that need them author their own
 runner against the trait.</p>
 <h2 id="errors-6"><a class="header" href="#errors-6">Errors</a></h2>
 <p><code>VerifyError</code> covers input-shape, transport, and
-irrecoverable-state failures; <code>VerifyResult&lt;T&gt;</code> is its alias.</p>
+irrecoverable-state failures. <code>VerifyResult&lt;T&gt;</code> is its alias.</p>
 <h2 id="result-records"><a class="header" href="#result-records">Result records</a></h2>
 <p>A passing run produces a <code>Verification</code> record with
 <code>result: "holds"</code>. A falsifying run produces one with
@@ -3798,8 +3806,17 @@ is a different shape than the runtime API
 heavier dep than the lens runtime itself. Keeping it
 separate keeps the runtime crate's compile-time small.</li>
 </ol>
+<h2 id="the-idiolect-migrate-binary"><a class="header" href="#the-idiolect-migrate-binary">The <code>idiolect-migrate</code> binary</a></h2>
+<p>Behind the <code>cli</code> feature the crate also ships an
+<code>idiolect-migrate</code> binary (<code>src/bin/idiolect_migrate.rs</code>) that
+streams a directory of JSON records through a lens at-uri against
+a live PDS. The library is the default; the binary is opt-in:</p>
+<pre><code class="language-bash">cargo install --path crates/idiolect-migrate --features cli
+</code></pre>
+<p>See <a href="reference/crates/../../guide/migrate.html">Migrate records across a revision</a>
+for the batch-migration flow.</p>
 <h2 id="scope"><a class="header" href="#scope">Scope</a></h2>
-<p>The crate owns no runtime state. It is a thin façade; the
+<p>The crate is a thin façade with no runtime state. The
 runtime cost of a migration equals the cost of one <code>apply_lens</code>
 per record.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
@@ -3816,7 +3833,7 @@ operations.</p>
 <pre><code class="language-bash">cargo install --path crates/idiolect-cli
 </code></pre>
 <p>The CLI hardcodes the <code>idiolect-lens</code> features it needs
-(<code>pds-reqwest</code>, <code>pds-resolve</code>); there are no CLI-level features
+(<code>pds-reqwest</code>, <code>pds-resolve</code>). There are no CLI-level features
 to set.</p>
 <h2 id="subcommand-surface"><a class="header" href="#subcommand-surface">Subcommand surface</a></h2>
 <pre><code class="language-text">idiolect resolve &lt;did&gt;
@@ -3841,7 +3858,7 @@ installed broadly.</li>
 <code>orchestrator-spec/queries.json</code> into
 <code>crates/idiolect-cli/src/generated.rs</code>. Adding a query (per the
 <a href="reference/crates/../../guide/orchestrator.html">orchestrator guide</a>) regenerates
-the dispatcher; the new subcommand becomes available
+the dispatcher. The new subcommand becomes available
 automatically.</p>
 <p>The hand-written subcommands (<code>resolve</code>, <code>fetch</code>,
 <code>encounter record</code>, <code>version</code>, <code>help</code>) live in <code>main.rs</code> and
@@ -3888,14 +3905,14 @@ authoritative shape for every lexicon is the JSON document under
 <a href="https://docs.rs/idiolect-records/latest/idiolect_records/">docs.rs/idiolect-records</a>
 are derived from that JSON and are the authoritative typed
 surface. When this book and either source disagree, the source
-wins; please file an issue.</p>
+wins. Please file an issue.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="devidiolectadapter"><a class="header" href="#devidiolectadapter">dev.idiolect.adapter</a></h1>
 <p>A subprocess or HTTP-endpoint wrapper for a framework's tooling,
 authored by incentive-aligned parties. Adapters are how idiolect
 glues existing frameworks (Hasura, Prisma, Datomic, FHIR, Coq,
-Meilisearch, ...) without forking them. The substrate publishes
-the adapter declaration; the orchestrator runs the adapter under
+Meilisearch, ...) without forking them. The adapter declaration
+is a published record. The orchestrator runs the adapter under
 the declared isolation policy.</p>
 <blockquote>
 <p><strong>Source:</strong> <a href="https://github.com/idiolect-dev/idiolect/blob/main/lexicons/dev/idiolect/adapter.json"><code>lexicons/dev/idiolect/adapter.json</code></a>
@@ -3940,12 +3957,12 @@ the declared isolation policy.</p>
 "this framework, at this version range, can be invoked via this
 protocol under this isolation policy". The orchestrator running
 the adapter trusts the contract only as far as it trusts the
-publisher's signature; verification records can pin specific
+publisher's signature. Verification records can pin specific
 conformance claims.</p>
 <p>The alternative (each orchestrator hand-coding adapter wrappers
 per framework) does not scale. The adapter record is the
 declarative replacement: a community with framework expertise
-publishes the wrapper once; orchestrators pick it up from the
+publishes the wrapper once, and orchestrators pick it up from the
 network.</p>
 <h3 id="invocationprotocolkind"><a class="header" href="#invocationprotocolkind"><code>invocationProtocol.kind</code></a></h3>
 <p>The transport over which the orchestrator drives the adapter:</p>
@@ -3988,8 +4005,9 @@ adapter declaring <code>process</code>.</p>
 </tbody></table>
 </div>
 <p>The orchestrator's enforcement is best-effort and depends on the
-underlying isolation runtime; e.g. <code>wasm-sandbox</code> makes
-<code>egress-allowlist</code> cheap and exact, <code>process</code> makes it harder.</p>
+underlying isolation runtime. For example, <code>wasm-sandbox</code> makes
+<code>egress-allowlist</code> cheap and exact, while <code>process</code> makes it
+harder.</p>
 <h3 id="resourcelimits"><a class="header" href="#resourcelimits"><code>resourceLimits</code></a></h3>
 <p>Hard ceilings. The orchestrator kills the adapter if it exceeds
 any of:</p>
@@ -4042,8 +4060,8 @@ a <code>conformance-test</code> verification (see
 applicable. Belief records are how third parties represent what
 <em>they</em> think about <em>another</em> record without flattening provenance:
 the <code>subject</code> strong-ref pins the exact referenced record, the
-<code>holder</code> names the party whose attitude is represented, and the
-<code>basis</code> names what grounds it.</p>
+<code>holder</code> identifies the party whose attitude is represented, and
+the <code>basis</code> records what grounds it.</p>
 <blockquote>
 <p><strong>Source:</strong> <a href="https://github.com/idiolect-dev/idiolect/blob/main/lexicons/dev/idiolect/belief.json"><code>lexicons/dev/idiolect/belief.json</code></a>
 · <strong>Rust:</strong> <a href="https://docs.rs/idiolect-records/latest/idiolect_records/struct.Belief.html"><code>idiolect_records::Belief</code></a>
@@ -4070,13 +4088,13 @@ exact recommendation revision the holder believed in, even if the
 recommendation has been edited since.</p>
 <h3 id="holder-versus-the-repo-owner"><a class="header" href="#holder-versus-the-repo-owner"><code>holder</code> versus the repo owner</a></h3>
 <p>The simplest case: the repo owner is the holder. The record
-expresses the publisher's own belief; <code>holder</code> is omitted.</p>
+expresses the publisher's own belief, and <code>holder</code> is omitted.</p>
 <p>The richer case: the repo owner is publishing a belief on behalf
 of, or about, another party. A labeler that publishes
 <code>{ subject: &lt;some encounter&gt;, holder: did:plc:other-party }</code>
 is asserting that <em>the other party</em> believes the encounter is
 applicable. The labeler's signature attests that the labeler
-made the attribution; the holder field carries who the attitude
+made the attribution. The holder field carries who the attitude
 is attributed to.</p>
 <h3 id="basis-carries-the-grounds"><a class="header" href="#basis-carries-the-grounds"><code>basis</code> carries the grounds</a></h3>
 <p>When the holder is not the repo owner, the consumer needs to know
@@ -4085,7 +4103,7 @@ on what grounds the attribution rests. The four <code>basis</code> variants:</p>
 <tr><td><code>basisSelfAsserted</code></td><td>The holder asserted directly with no external grounding claimed. The default when <code>basis</code> is omitted.</td></tr>
 <tr><td><code>basisCommunityPolicy</code></td><td>Grounded in a community's published policy.</td></tr>
 <tr><td><code>basisExternalSignal</code></td><td>Grounded in something outside ATProto (a license, an external standard, a statement on another network).</td></tr>
-<tr><td><code>basisDerivedFromRecord</code></td><td>Grounded in another ATProto record (with an inference rule naming the derivation).</td></tr>
+<tr><td><code>basisDerivedFromRecord</code></td><td>Grounded in another ATProto record (with an inference rule identifying the derivation).</td></tr>
 </tbody></table>
 </div>
 <p>See <a href="reference/lexicons/./defs.html"><code>defs#basis</code></a> for the field shapes.</p>
@@ -4101,7 +4119,7 @@ at the encounter / recommendation, <code>holder</code> set to the third
 party's DID, and <code>basis</code> carrying the structured grounds.</li>
 </ol>
 <p>Consumers reading the belief see all three. The labeler's
-signature on the belief is what makes the attribution accountable.</p>
+signature on the belief makes the attribution accountable.</p>
 <h2 id="example-1"><a class="header" href="#example-1">Example</a></h2>
 <pre><code class="language-json">{
   "$type": "dev.idiolect.belief",
@@ -4144,7 +4162,7 @@ a different labeler is just another record, signed and visible.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="devidiolectbounty"><a class="header" href="#devidiolectbounty">dev.idiolect.bounty</a></h1>
 <p>A declaration that a translation, verification, or adapter is
-wanted, with terms. The substrate does not intermediate fulfillment:
+wanted, with terms. idiolect does not intermediate fulfillment:
 payment, review, and acceptance happen on external rails referenced
 in the record. The record is the <em>request</em> primitive.</p>
 <blockquote>
@@ -4158,7 +4176,7 @@ in the record. The record is the <em>request</em> primitive.</p>
 <tr><td><code>requester</code></td><td>did</td><td>yes</td><td>Who is requesting.</td></tr>
 <tr><td><code>wants</code></td><td>union</td><td>yes</td><td>Exactly one of <code>wantLens</code> / <code>wantVerification</code> / <code>wantAdapter</code>.</td></tr>
 <tr><td><code>constraints</code></td><td>array (≤64)</td><td>no</td><td>Structured constraints the deliverable must satisfy.</td></tr>
-<tr><td><code>reward</code></td><td>object</td><td>no</td><td><code>{ summary?, externalRef? }</code>. The substrate does not transact.</td></tr>
+<tr><td><code>reward</code></td><td>object</td><td>no</td><td><code>{ summary?, externalRef? }</code>. idiolect does not transact.</td></tr>
 <tr><td><code>eligibility</code></td><td>array (≤128)</td><td>no</td><td>Postfix eligibility tree.</td></tr>
 <tr><td><code>fulfillment</code></td><td>at-uri</td><td>no</td><td>Once fulfilled, points to the deliverable record.</td></tr>
 <tr><td><code>status</code></td><td>open enum</td><td>no</td><td><code>open</code> / <code>claimed</code> / <code>fulfilled</code> / <code>withdrawn</code>.</td></tr>
@@ -4224,11 +4242,11 @@ Empty array means no eligibility restriction.</p>
 <h2 id="field-details-2"><a class="header" href="#field-details-2">Field details</a></h2>
 <h3 id="reward"><a class="header" href="#reward"><code>reward</code></a></h3>
 <p><code>reward</code> is intentionally underspecified. <code>summary</code> is narrative
-prose; <code>externalRef</code> is a URL pointing at the rail that handles
+prose. <code>externalRef</code> is a URL pointing at the rail that handles
 the actual reward (a grant portal, a payment platform, an
-attestation service). The substrate does not validate that the
+attestation service). idiolect does not validate that the
 external rail exists, that it is solvent, or that the reward will
-be paid; that is the consumer's diligence.</p>
+be paid. That is the consumer's diligence.</p>
 <p>The pattern: a bounty with <code>externalRef</code> pointing at a known
 grant portal is more credible than a bounty with only a narrative
 summary. Consumers route their effort accordingly.</p>
@@ -4236,7 +4254,7 @@ summary. Consumers route their effort accordingly.</p>
 <p>Once a deliverable exists, the bounty publisher edits the bounty
 record (a put, not a new record) to set <code>fulfillment</code> to the
 deliverable's at-uri and <code>status</code> to <code>fulfilled</code>. Consumers
-querying open bounties filter on <code>status: open</code>; consumers
+querying open bounties filter on <code>status: open</code>. Consumers
 auditing the fulfilled set filter on <code>status: fulfilled</code> and
 follow <code>fulfillment</code>.</p>
 <h3 id="basis"><a class="header" href="#basis"><code>basis</code></a></h3>
@@ -4246,7 +4264,7 @@ is requesting), set <code>basis</code> and <code>requester</code> accordingly. T
 common case is <code>basisCommunityPolicy</code> (a community has a standing
 policy of requesting verifications of every published lens) or
 <code>basisDerivedFromRecord</code> (a researcher infers a request from a
-prior recommendation that named required verifications).</p>
+prior recommendation that listed required verifications).</p>
 <h2 id="example-2"><a class="header" href="#example-2">Example</a></h2>
 <pre><code class="language-json">{
   "$type": "dev.idiolect.bounty",
@@ -4291,7 +4309,7 @@ prior recommendation that named required verifications).</p>
 </pre>
 <p>A community publishing recommendations with <code>requiredVerifications</code>
 that nobody has published is asking for verification work. A
-bounty is the canonical way to request that work. A claimer that
+bounty is how you request that work. A claimer that
 matches the eligibility predicate publishes the verification, the
 requester points the bounty at it, and the external rail handles
 the payment.</p>
@@ -4362,9 +4380,9 @@ that maintains the roll. Appropriate for larger communities
 shouldn't bloat the community record itself.</li>
 </ul>
 <p>A community may use both for the transition period while moving
-from inline to external; consumers union the two sets.</p>
+from inline to external. Consumers union the two sets.</p>
 <h3 id="roleassignments-versus-the-default-role"><a class="header" href="#roleassignments-versus-the-default-role"><code>roleAssignments</code> versus the default role</a></h3>
-<p>The default role (named on the role vocabulary's top node) applies
+<p>The default role (declared on the role vocabulary's top node) applies
 to every member who does not have an explicit <code>roleAssignment</code>.
 Only members whose role <em>differs</em> from the default need an entry.
 A 500-member community with five moderators carries five
@@ -4384,10 +4402,10 @@ surface. A community that publishes <code>community-hosted</code> plus an
 <code>appviewEndpoint</code> is telling consumers to route XRPC reads
 through the AppView instead of crawling member PDSes.</p>
 <h3 id="endorsedcommunities"><a class="header" href="#endorsedcommunities"><code>endorsedCommunities</code></a></h3>
-<p>A community names other communities it recognises as legitimate
+<p>A community lists other communities it recognises as legitimate
 interlocutors. The endorsement is <em>not</em> transitive: A endorsing B
-and B endorsing C does not imply A endorsing C. The substrate
-records the assertion; consumers decide what to do with it. Common
+and B endorsing C does not imply A endorsing C. The record only
+states the assertion. Consumers decide what to do with it. Common
 patterns: a quorum policy that requires endorsements from <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span>
 trusted communities; a denylist that excludes communities not
 endorsed by any trusted party.</p>
@@ -4544,7 +4562,7 @@ not here.</p>
 </blockquote>
 <h2 id="reference-shapes"><a class="header" href="#reference-shapes">Reference shapes</a></h2>
 <h3 id="schemaref"><a class="header" href="#schemaref"><code>schemaRef</code></a></h3>
-<p>Reference to a schema. Either an at-uri or a content hash; at
+<p>Reference to a schema. Either an at-uri or a content hash. At
 least one must be present.</p>
 <div class="table-wrapper"><table><thead><tr><th>Subfield</th><th>Type</th><th>Notes</th></tr></thead><tbody>
 <tr><td><code>uri</code></td><td>at-uri</td><td>AT-URI pointing to a schema record.</td></tr>
@@ -4596,7 +4614,7 @@ defs tree is self-contained.</p>
 <tr><td><code>private</code></td><td>Should not be published at all.</td></tr>
 </tbody></table>
 </div>
-<p>The substrate does not enforce these today; they are policy
+<p>idiolect does not enforce these today. They are policy
 hints.</p>
 <h2 id="content-theory-types"><a class="header" href="#content-theory-types">Content-theory types</a></h2>
 <h3 id="use"><a class="header" href="#use"><code>use</code></a></h3>
@@ -4723,7 +4741,7 @@ record carries one of these as its <code>property</code> field.</p>
 <tr><td><code>basisDerivedFromRecord</code></td><td>Grounded in another ATProto record. Carries <code>source</code> (<code>strongRecordRef</code>) and optional <code>inferenceRule</code>.</td></tr>
 </tbody></table>
 </div>
-<p><code>basisSelfAsserted</code> has no fields; the variant tag itself is the
+<p><code>basisSelfAsserted</code> has no fields. The variant tag itself is the
 content. <code>basisDerivedFromRecord.inferenceRule</code> is the canonical
 hook for declaring how this record derives from another
 (<code>classifier:purpose-v1</code>, <code>lens:v1-to-v2</code>, <code>aggregation:byte-mean</code>,
@@ -4748,8 +4766,8 @@ observer-aggregated tally.</p>
 <em>unsettled</em> moment. They are distinct from
 <a href="reference/lexicons/./belief.html"><code>belief</code></a> (settled doxastic) and
 <a href="reference/lexicons/./recommendation.html"><code>recommendation</code></a> (settled normative). A
-deliberation that closes can name an outcome record so consumers
-can read the conclusion without re-folding the votes.</p>
+deliberation that closes can point at an outcome record so
+consumers can read the conclusion without re-folding the votes.</p>
 <blockquote>
 <p><strong>Source:</strong> <a href="https://github.com/idiolect-dev/idiolect/blob/main/lexicons/dev/idiolect/deliberation.json"><code>lexicons/dev/idiolect/deliberation.json</code></a>
 · <strong>Rust:</strong> <a href="https://docs.rs/idiolect-records/latest/idiolect_records/struct.Deliberation.html"><code>idiolect_records::Deliberation</code></a>
@@ -4777,9 +4795,9 @@ can read the conclusion without re-folding the votes.</p>
 participation rights are resolved through that community's record.
 A deliberation can be cross-referenced from other communities, but
 exactly one owns it.</p>
-<p>The substrate does not enforce membership. <code>authRequired</code> is a
+<p>idiolect does not enforce membership. <code>authRequired</code> is a
 declared policy: when <code>true</code>, only authenticated members'
-statements and votes count toward the outcome; when <code>false</code>, the
+statements and votes count toward the outcome. When <code>false</code>, the
 deliberation accepts drive-by statements (which observers may
 weight differently when folding the tally).</p>
 <h3 id="classification"><a class="header" href="#classification"><code>classification</code></a></h3>
@@ -4796,8 +4814,8 @@ classifications vocabulary (<code>negotiation</code>, <code>process-vote</code>,
 <code>classificationVocab</code> when set, otherwise the canonical idiolect
 default.</p>
 <p>The classification is <em>optional</em>. A community that does not want
-to commit to a classification omits the field; the deliberation
-record is still valid, observers and consumers just have less
+to commit to a classification omits the field. The deliberation
+record is still valid, and observers and consumers just have less
 metadata to fold on.</p>
 <h3 id="status-lifecycle"><a class="header" href="#status-lifecycle"><code>status</code> lifecycle</a></h3>
 <div class="table-wrapper"><table><thead><tr><th>Slug</th><th>What it means</th></tr></thead><tbody>
@@ -4810,15 +4828,15 @@ metadata to fold on.</p>
 </div>
 <p>Open-enum: a community that wants finer-grained statuses
 (<code>closed-pending-revision</code>, <code>escalated</code>, ...) extends via
-<code>statusVocab</code>. The lifecycle is a <em>declaration</em>; the substrate
-records the value the publisher set.</p>
+<code>statusVocab</code>. The lifecycle is a <em>declaration</em>. The record
+carries the value the publisher set.</p>
 <h3 id="outcome"><a class="header" href="#outcome"><code>outcome</code></a></h3>
 <p>A pointer to a <code>dev.idiolect.deliberationOutcome</code> record. Set
 after closure when an outcome record exists. Consumers reading
 a closed deliberation can fetch the outcome without re-folding
 the entire vote stream.</p>
 <p>Multiple outcome records per deliberation are allowed (different
-observers, different cut-offs); the deliberation's <code>outcome</code>
+observers, different cut-offs). The deliberation's <code>outcome</code>
 field points at the <em>canonical</em> one. Consumers who want a
 different observer's tally query the orchestrator directly.</p>
 <h3 id="closedat-versus-createdat"><a class="header" href="#closedat-versus-createdat"><code>closedAt</code> versus <code>createdAt</code></a></h3>
@@ -4869,7 +4887,7 @@ outcome pointer.</p>
 <h1 id="devidiolectdeliberationstatement"><a class="header" href="#devidiolectdeliberationstatement">dev.idiolect.deliberationStatement</a></h1>
 <p>A participant utterance submitted to a
 <a href="reference/lexicons/./deliberation.html"><code>deliberation</code></a>. Statements are the units
-votes attach to; the deliberation itself is not voted on
+votes attach to. The deliberation itself is not voted on
 directly. Classification is an open-enum slug resolved against a
 community vocabulary, so communities that draw the line between
 <code>claim</code> and <code>proposal</code> differently can extend or remap without
@@ -4899,11 +4917,11 @@ follows the pointer gets the exact deliberation revision the
 participant was responding to.</p>
 <p>This matters when deliberations are edited mid-process (e.g. the
 publisher clarifies the topic). Statements published before the
-edit pin the pre-edit revision; statements published after pin
+edit pin the pre-edit revision. Statements published after pin
 the post-edit revision. Folds and consumers can distinguish.</p>
 <h3 id="text"><a class="header" href="#text"><code>text</code></a></h3>
 <p>The statement itself. The 400-grapheme cap is conventional, not
-arbitrary: brevity is what makes statements voteable. Long-form
+arbitrary: brevity keeps statements voteable. Long-form
 context belongs on the deliberation record's <code>description</code> or
 in a community-published companion document linked from the
 description.</p>
@@ -4919,7 +4937,7 @@ description.</p>
 <p>Classifications are <em>argumentative roles</em>, not topics. A
 community that draws different distinctions (<code>amendment</code>,
 <code>process-objection</code>, <code>tangent</code>, ...) extends via
-<code>classificationVocab</code>. The classification is optional; a
+<code>classificationVocab</code>. The classification is optional. A
 deliberation that wants to stay agnostic on argumentative roles
 omits it.</p>
 <h3 id="anonymous"><a class="header" href="#anonymous"><code>anonymous</code></a></h3>
@@ -4929,7 +4947,7 @@ designated service DID rather than the participant's personal
 repo, so the repo signature does not reveal identity. Consumers
 that need provenance match on the repo DID (the service DID),
 not on this record's content.</p>
-<p>The flag is a <em>declaration</em>: the substrate does not enforce
+<p>The flag is a <em>declaration</em>: idiolect does not enforce
 anonymity beyond what the publishing rail provides. A community
 that wants strong anonymity uses an anonymizing service DID with
 its own access controls.</p>
@@ -4956,11 +4974,11 @@ its own access controls.</p>
 <p>A stance taken on a <a href="reference/lexicons/./deliberationStatement.html"><code>deliberationStatement</code></a>.
 Stance is an open-enum slug resolved against a community-published
 vote-stance vocabulary. The Acorn-style three-way default
-(<code>agree</code> / <code>pass</code> / <code>disagree</code>) is canonical; richer vocabularies
+(<code>agree</code> / <code>pass</code> / <code>disagree</code>) is canonical. Richer vocabularies
 (conditional-agree, abstain-with-reason, ranked preference) are
 expressible by referencing a different vocab. Optional <code>weight</code>
-and <code>rationale</code> capture additional signal that observers can fold;
-consumers that don't need them ignore them.</p>
+and <code>rationale</code> carry additional signal that observers can fold.
+Consumers that don't need them ignore them.</p>
 <blockquote>
 <p><strong>Source:</strong> <a href="https://github.com/idiolect-dev/idiolect/blob/main/lexicons/dev/idiolect/deliberationVote.json"><code>lexicons/dev/idiolect/deliberationVote.json</code></a>
 · <strong>Rust:</strong> <a href="https://docs.rs/idiolect-records/latest/idiolect_records/struct.DeliberationVote.html"><code>idiolect_records::DeliberationVote</code></a>
@@ -4985,8 +5003,8 @@ was voted on. Observers folding the tally read the CID to confirm
 they are aggregating votes against the same statement revision.</p>
 <p>If a statement is edited and a participant wants to vote on the
 new revision, that is a separate vote record with a different
-<code>subject</code> CID. The substrate does not collapse votes across
-revisions; observers do, when their fold method specifies it.</p>
+<code>subject</code> CID. idiolect does not collapse votes across
+revisions. Observers do, when their fold method specifies it.</p>
 <h3 id="stance"><a class="header" href="#stance"><code>stance</code></a></h3>
 <p>The default vocabulary seeds three slugs:</p>
 <div class="table-wrapper"><table><thead><tr><th>Slug</th><th>Meaning</th></tr></thead><tbody>
@@ -5014,11 +5032,11 @@ precision. Convention follows <code>pub.chive.graph.edge#weight</code>.</p>
 <p>Consumers that aggregate votes uniformly ignore <code>weight</code>. Ranked
 or weighted aggregations consume it. A community that wants
 quadratic voting publishes a <code>vote-weights</code> companion vocabulary
-and uses <code>weight</code> to encode the scheme; observers running a
+and uses <code>weight</code> to encode the scheme. Observers running a
 quadratic-vote fold read both the stance and the weight.</p>
 <h3 id="rationale"><a class="header" href="#rationale"><code>rationale</code></a></h3>
-<p>Optional narrative. Tally folds do not consume <code>rationale</code>;
-consumer surfaces (e.g. a deliberation viewer) display it
+<p>Optional narrative. Tally folds do not consume <code>rationale</code>.
+Consumer surfaces (e.g. a deliberation viewer) display it
 alongside the vote. The 500-grapheme cap matches the
 deliberation-statement length: brevity is conventional.</p>
 <h3 id="anonymous-votes"><a class="header" href="#anonymous-votes">Anonymous votes</a></h3>
@@ -5045,7 +5063,7 @@ signature is the authoritative provenance signal.</p>
 the vote stream for a deliberation, folds by <code>(statement, stance)</code>
 (plus optional weight aggregation), and publishes a
 <a href="reference/lexicons/./deliberationOutcome.html"><code>deliberationOutcome</code></a> record. Multiple
-observers may publish concurrent outcomes; consumers that want
+observers may publish concurrent outcomes. Consumers that want
 consensus require quorum across trusted observers.</p>
 <h2 id="concept-references-8"><a class="header" href="#concept-references-8">Concept references</a></h2>
 <ul>
@@ -5094,13 +5112,13 @@ Polis-style opinion map without further computation.</p>
 </div>
 <h2 id="field-details-8"><a class="header" href="#field-details-8">Field details</a></h2>
 <h3 id="why-outcomes-are-observer-published"><a class="header" href="#why-outcomes-are-observer-published">Why outcomes are observer-published</a></h3>
-<p>The deliberation owns the topic; participants own the statements
+<p>The deliberation owns the topic. Participants own the statements
 and votes. The aggregate is <em>opinion</em>: it depends on the
 observer's fold method, the cut-off time, and which encounter
 kinds it weights. Two observers can produce different but
 defensible outcomes for the same deliberation.</p>
-<p>The substrate's answer: outcomes are records, signed by the
-observer, comparable across observers. A consumer that distrusts
+<p>The answer is that outcomes are records, signed by the observer
+and comparable across observers. A consumer that distrusts
 one observer's fold can:</p>
 <ul>
 <li>Fetch all outcomes for the deliberation.</li>
@@ -5133,7 +5151,7 @@ fetch the exact statement revision being tallied).</li>
 <code>weight</code>.</li>
 </ul>
 <p>The 4096-entry cap matches the maximum statement count per
-deliberation in practice; communities expecting more should
+deliberation in practice. Communities expecting more should
 publish multiple outcome records partitioned by statement
 window.</p>
 <h3 id="adopted"><a class="header" href="#adopted"><code>adopted</code></a></h3>
@@ -5154,7 +5172,7 @@ adoption (rejected, tabled, or closed without resolution).</p>
 Two outcomes for the same deliberation produced by different
 tools (or different versions of the same tool) are not directly
 comparable: the algorithm differs. Consumers compare outcomes
-across tools at their own risk; the substrate records the tool
+across tools at their own risk. The record carries the tool
 identity so the comparison is at least informed.</p>
 <h2 id="example-8"><a class="header" href="#example-8">Example</a></h2>
 <pre><code class="language-json">{
@@ -5248,10 +5266,10 @@ translations through <code>preferredLenses</code>, validates incoming records
 against the schemas in <code>idiolects</code>, and treats the deprecation
 list as a redirect table.</p>
 <p>The dialect record is data, not configuration. Adding an entry is
-a record edit; deprecating one is another record edit on the same
+a record edit. Deprecating one is another record edit on the same
 dialect with a <code>Deprecation</code> entry. Two dialects from different
 communities can list the same NSID with different preferred
-lenses; consumers pick a dialect (or a quorum of dialects) and
+lenses. Consumers pick a dialect (or a quorum of dialects) and
 follow it.</p>
 <h3 id="previousversion-and-the-version-chain"><a class="header" href="#previousversion-and-the-version-chain"><code>previousVersion</code> and the version chain</a></h3>
 <p>A dialect revision points at its predecessor via <code>previousVersion</code>.
@@ -5261,12 +5279,12 @@ at the right time, and audit the change history without trusting
 the orchestrator's catalog.</p>
 <p>The chain is not enforced: a community can publish a dialect with
 no <code>previousVersion</code> (a fresh start) or skip versions (publishing
-v3 with <code>previousVersion = v1</code>). The substrate records what was
-done; consumers decide whether to trust it.</p>
+v3 with <code>previousVersion = v1</code>). The record captures what was
+done. Consumers decide whether to trust it.</p>
 <h3 id="deprecations"><a class="header" href="#deprecations"><code>deprecations</code></a></h3>
 <p>Each entry records an idiolect or lens that was once part of the
 dialect and is now superseded. The <code>ref</code> field points at the
-deprecated artifact; <code>replacement</code> optionally points at the
+deprecated artifact. <code>replacement</code> optionally points at the
 successor. Consumers reading a record at the deprecated <code>ref</code> can
 follow <code>replacement</code> to the new one, with the <code>reason</code> field
 explaining why.</p>
@@ -5300,8 +5318,8 @@ automatically when a non-Iso lens revision ships. See
 </code></pre>
 <h2 id="multiple-dialects-1"><a class="header" href="#multiple-dialects-1">Multiple dialects</a></h2>
 <p>Two communities can publish disjoint, overlapping, or
-contradictory dialects. The substrate treats them as opinions;
-nothing in the protocol prefers one over another. Consumers pick
+contradictory dialects. The protocol treats them all as opinions
+and prefers none. Consumers pick
 a resolution policy:</p>
 <ul>
 <li><code>first-match</code> — pick the first dialect listed in the consumer's
@@ -5325,7 +5343,7 @@ configured tie-breaker.</li>
 <em>emergent-channel</em> primitive: they record that a translation
 occurred, with enough context for aggregators (observations) and
 correctors to reason about it. Narrative commentary lives in
-<code>annotations</code>; the structured payload in <code>use</code> covers the
+<code>annotations</code>. The structured payload in <code>use</code> covers the
 action / material / purpose / actor of the invocation.</p>
 <blockquote>
 <p><strong>Source:</strong> <a href="https://github.com/idiolect-dev/idiolect/blob/main/lexicons/dev/idiolect/encounter.json"><code>lexicons/dev/idiolect/encounter.json</code></a>
@@ -5380,8 +5398,8 @@ decisions from the same encounter, which is the right answer.</p>
 <p>Observers declare in their method which kinds they weight and
 how. An observation aggregating <code>invocation-log</code> plus <code>curated</code>
 encounters is meaningfully different from one aggregating only
-<code>adversarial</code> ones; the kind plus the observer's method together
-is what makes the observation interpretable.</p>
+<code>adversarial</code> ones. The kind and the observer's method together
+determine how the observation should be read.</p>
 <h3 id="downstreamresult"><a class="header" href="#downstreamresult"><code>downstreamResult</code></a></h3>
 <p>The invoking party's at-record-time assessment of the outcome:</p>
 <div class="table-wrapper"><table><thead><tr><th>Slug</th><th>Meaning</th></tr></thead><tbody>
@@ -5398,17 +5416,17 @@ encounter's <code>downstreamResult</code> to confirm the link.</p>
 <h3 id="holder-and-basis"><a class="header" href="#holder-and-basis"><code>holder</code> and <code>basis</code></a></h3>
 <p>Most encounters are first-party: the repo owner is the party that
 invoked the lens. Some are third-party: a labeler records that
-<em>another</em> party invoked a lens. <code>holder</code> names the party the
-record is attributed to; <code>basis</code> carries structured grounds for
+<em>another</em> party invoked a lens. <code>holder</code> identifies the party the
+record is attributed to. <code>basis</code> carries structured grounds for
 the attribution (a community policy, an external signal, an
 inference from another record). See <a href="reference/lexicons/./defs.html"><code>defs#basis</code></a> for
 the variants.</p>
 <h3 id="visibility-1"><a class="header" href="#visibility-1"><code>visibility</code></a></h3>
-<p>The five values are policy hints, not access control. The
-substrate does not enforce them today. Records marked
+<p>The five values are policy hints, not access control. idiolect
+does not enforce them today. Records marked
 <code>community-scoped</code> should not be served to parties outside the
-named community once the substrate supports scope enforcement;
-records marked <code>private</code> should not be published at all.</p>
+named community once scope enforcement lands. Records marked
+<code>private</code> should not be published at all.</p>
 <h2 id="example-10"><a class="header" href="#example-10">Example</a></h2>
 <pre><code class="language-json">{
   "$type": "dev.idiolect.encounter",
@@ -5436,8 +5454,8 @@ records marked <code>private</code> should not be published at all.</p>
     ENC -.referenced by.-&gt; RET[retrospection]
     OBSREC -.cited by.-&gt; BEL[belief]
 </pre>
-<p>An encounter is the unit; observations and corrections reference
-it. A <code>dev.idiolect.belief</code> may cite either the encounter
+<p>An encounter is the base record. Observations and corrections
+reference it. A <code>dev.idiolect.belief</code> may cite either the encounter
 directly (for narrow claims) or an observation that aggregated
 it (for broad claims). A <code>dev.idiolect.retrospection</code> references
 an encounter to record a delayed finding about it.</p>
@@ -5502,15 +5520,14 @@ consumers choose whom to trust.</p>
 kind, <a href="reference/lexicons/./deliberationOutcome.html"><code>deliberationOutcome</code></a>, rather
 than as an observation output.</p>
 <p>A consumer reading an observation must know the method to
-interpret the output. The <code>method.name</code> plus <code>version</code> plus
-optional <code>codeRef</code> together is what makes the output
-interpretable.</p>
+interpret the output. The <code>method.name</code>, <code>version</code>, and optional
+<code>codeRef</code> together tell a consumer how to interpret the output.</p>
 <h3 id="scopeencounterkinds"><a class="header" href="#scopeencounterkinds"><code>scope.encounterKinds</code></a></h3>
 <p>The observer must disclose which encounter kinds it includes or
 the observation is uninterpretable. An observation that includes
 <code>adversarial</code> encounters at the same weight as <code>invocation-log</code>
 encounters is meaningfully different from one that excludes
-adversarial samples; consumers reading the observation rely on
+adversarial samples. Consumers reading the observation rely on
 this disclosure to decide whether the result fits their use case.</p>
 <h3 id="version-versus-occurredat"><a class="header" href="#version-versus-occurredat"><code>version</code> versus <code>occurredAt</code></a></h3>
 <p><code>version</code> is the method's version. Two observations with the same
@@ -5571,8 +5588,8 @@ says it is).</li>
 <li>Disagree with itself across observers.</li>
 </ul>
 <p>A signed observation can. Two observers running the same fold on
-overlapping data will produce records with comparable counts;
-consumers can require quorum among trusted observers before
+overlapping data will produce records with comparable counts.
+Consumers can require quorum among trusted observers before
 treating an observation as authoritative.</p>
 <h2 id="concept-references-11"><a class="header" href="#concept-references-11">Concept references</a></h2>
 <ul>
@@ -5638,7 +5655,7 @@ keeps the validator simple.</p>
 <h2 id="field-details-12"><a class="header" href="#field-details-12">Field details</a></h2>
 <h3 id="lenspath"><a class="header" href="#lenspath"><code>lensPath</code></a></h3>
 <p>The recommendation endorses a <em>path</em> of lenses, not just a single
-lens. A <code>lensPath</code> of length 1 is the single-lens case; longer
+lens. A <code>lensPath</code> of length 1 is the single-lens case. Longer
 paths are a community's recommendation for a chained translation
 (e.g. v1 → middle-form → v3 instead of a direct v1 → v3 lens
 when the direct lens has worse properties).</p>
@@ -5649,7 +5666,7 @@ the next. See <a href="reference/lexicons/../../concepts/lens-laws.html">Concept
 <p>A list of specific lens properties (<code>lensProperty</code> from
 <a href="reference/lexicons/./defs.html"><code>defs</code></a>). Each entry specifies what the recommendation
 <em>assumes</em> is in place: a particular roundtrip domain, a specific
-formal theorem, a conformance to a named standard.</p>
+formal theorem, a conformance to a specific standard.</p>
 <p>A consumer verifies the recommendation by:</p>
 <ol>
 <li>Querying the verifier registry for verification records on each
@@ -5659,9 +5676,9 @@ accepted record (signed by a trusted verifier, with <code>result: "holds"</code>
 <li>Adopting the recommendation only when all required
 verifications check out.</li>
 </ol>
-<p>This is what makes a recommendation more than an opinion: the
-required-verifications list pins exactly what the community is
-relying on, and consumers can audit it.</p>
+<p>The required-verifications list pins exactly what the community
+is relying on, so a recommendation is auditable rather than a
+bare opinion.</p>
 <h3 id="caveats"><a class="header" href="#caveats"><code>caveats</code></a></h3>
 <p>A structured failure-mode list. Each <code>caveat</code> has:</p>
 <div class="table-wrapper"><table><thead><tr><th>Subfield</th><th>Type</th><th>Notes</th></tr></thead><tbody>
@@ -5770,7 +5787,7 @@ paths that should have converged.</li>
 </ul>
 <p>The encounter / correction / observation triple cannot capture
 these without distorting their semantics. A retrospection record
-is the right shape: it points at the original encounter, names a
+handles this: it points at the original encounter, records a
 delayed finding, and carries the evidence.</p>
 <h2 id="the-four-finding-kinds"><a class="header" href="#the-four-finding-kinds">The four finding kinds</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Slug</th><th>Evidence shape</th><th>What it captures</th></tr></thead><tbody>
@@ -5795,11 +5812,11 @@ meaningful.</p>
 <h3 id="confidence"><a class="header" href="#confidence"><code>confidence</code></a></h3>
 <p>Optional, in <code>[0, 1]</code>. A finding the detecting party is sure of
 omits it. A finding hedged on uncertain evidence sets a value
-below 1. Aggregators may weight findings by confidence; consumers
+below 1. Aggregators may weight findings by confidence. Consumers
 treating findings as ground truth filter for high confidence.</p>
 <h3 id="disputedattribution"><a class="header" href="#disputedattribution"><code>disputedAttribution</code></a></h3>
 <p>A hint the detecting party expects the causal attribution to be
-contested. The substrate does not enforce contestation; a
+contested. idiolect does not enforce contestation. A
 contesting party publishes its own retrospection with
 disagreement, or a <code>dev.idiolect.belief</code> over the finding. The
 flag exists so consumers can flag the finding as
@@ -5809,7 +5826,7 @@ flag exists so consumers can flag the finding as
 Most retrospections are first-party: the repo owner is the
 detecting party. Some are third-party: a researcher republishing
 a finding from a trusted source. <code>holder</code> is not a field here
-(unlike encounter / belief / correction); <code>detectingParty</code> plus
+(unlike encounter / belief / correction). <code>detectingParty</code> plus
 the repo signer carry the relevant attribution.</p>
 <h2 id="example-13"><a class="header" href="#example-13">Example</a></h2>
 <pre><code class="language-json">{
@@ -5901,8 +5918,8 @@ is meaningfully different from one that covers <code>domain: "the training corpu
 </div>
 <p>Falsified verifications are first-class records and are how the
 community learns a lens is wrong. A consumer that ignores a
-falsified verification is making a routing decision; the substrate
-records the falsification and lets consumers decide.</p>
+falsified verification is making a routing decision. The record
+captures the falsification and lets consumers decide.</p>
 <h3 id="tool-1"><a class="header" href="#tool-1"><code>tool</code></a></h3>
 <p>The <code>tool</code> field records the tool's name, version, and optional
 commit. Consumers reading a verification can decide whether to
@@ -5960,8 +5977,7 @@ for verification records on each lens, accepts the records signed
 by trusted verifiers with <code>result: "holds"</code>, and confirms each
 required verification is covered. A recommendation with required
 verifications that nobody has published is a community asking for
-work to be done; a <code>dev.idiolect.bounty</code> is the canonical way to
-ask for it.</p>
+work to be done. A <code>dev.idiolect.bounty</code> is how you ask for it.</p>
 <h2 id="concept-references-14"><a class="header" href="#concept-references-14">Concept references</a></h2>
 <ul>
 <li><a href="reference/lexicons/../../concepts/lens-laws.html">Concepts: Lens semantics and laws</a></li>
@@ -5984,8 +6000,8 @@ where every node is first-class and edges carry a relation slug.</li>
 <p>Authors choose either. Consumers normalize the legacy tree to the
 graph form at access time by lifting each <code>actionEntry</code> to a
 node and each <code>parents</code> entry to a <code>subsumed_by</code> edge. New
-vocabularies should prefer the graph shape; the tree stays valid
-for backward compatibility and remains the right shape for pure
+vocabularies should prefer the graph shape. The tree stays valid
+for backward compatibility and remains a good fit for pure
 subsumption hierarchies.</p>
 <p>The graph shape is modelled after <code>pub.chive.graph.{node,edge}</code>,
 so cross-vocabulary translation, SKOS-style
@@ -6012,7 +6028,7 @@ alignment (Wikidata, ROR, ORCID, ...) are first-class.</p>
 </tbody></table>
 </div>
 <h2 id="the-world-discipline"><a class="header" href="#the-world-discipline">The <code>world</code> discipline</a></h2>
-<p>A closed-enum field naming how undeclared identifiers are treated:</p>
+<p>A closed-enum field controlling how undeclared identifiers are treated:</p>
 <div class="table-wrapper"><table><thead><tr><th>Slug</th><th>Behavior</th></tr></thead><tbody>
 <tr><td><code>closed-with-default</code></td><td>Every undeclared id is subsumed by <code>top</code> and nothing else. The natural default for hierarchical taxonomies.</td></tr>
 <tr><td><code>open</code></td><td>Undeclared ids are incomparable to every declared id. Right when the vocab is one community's view of an open-ended space.</td></tr>
@@ -6127,7 +6143,7 @@ nodes across the vocabs even when the slugs differ.</p>
 </div>
 <p>A vocab record with both <code>actions</code> and <code>nodes</code>/<code>edges</code> populated
 is interpreted as the union after lifting. This is the
-transition shape; new vocabularies should prefer pure graph
+transition shape. New vocabularies should prefer pure graph
 form.</p>
 <h2 id="example-graph-form"><a class="header" href="#example-graph-form">Example (graph form)</a></h2>
 <pre><code class="language-json">{
@@ -6193,7 +6209,7 @@ as JSON.</p>
 <h2 id="orchestrator-subcommand"><a class="header" href="#orchestrator-subcommand"><code>orchestrator &lt;subcommand&gt;</code></a></h2>
 <p>The orchestrator dispatcher accepts a flat path-and-flags shape
 generated from <code>orchestrator-spec/queries.json</code>. Each query
-maps onto a subcommand and a flag set; the CLI translates the
+maps onto a subcommand and a flag set. The CLI translates the
 invocation into an HTTP path and calls the orchestrator at
 <code>--url</code> (default <code>http://localhost:8787</code>).</p>
 <p>The current subcommands (run <code>idiolect help orchestrator</code> for
@@ -6207,7 +6223,7 @@ the live list):</p>
 </tbody></table>
 </div>
 <p>Adding a query to the spec extends both the HTTP and the CLI
-surface; see <a href="reference/../guide/codegen.html">Run codegen</a>. The CLI's
+surface. See <a href="reference/../guide/codegen.html">Run codegen</a>. The CLI's
 top-level <code>--url</code> flag overrides the default orchestrator base.</p>
 <h2 id="oauth"><a class="header" href="#oauth"><code>oauth</code></a></h2>
 <p>Authenticated PDS sessions for <code>idiolect publish</code> and downstream
@@ -6224,7 +6240,7 @@ as a flag or via <code>ATPROTO_APP_PASSWORD</code> / <code>ATPROTO_PASSWORD</cod
 env vars to avoid leaking into shell history.</p>
 <p><code>list</code> enumerates every stored session as a JSON array of
 <code>{did, handle, pds_url}</code> triples.</p>
-<p><code>logout</code> deletes the session file for <code>--did</code>; a missing file is
+<p><code>logout</code> deletes the session file for <code>--did</code>. A missing file is
 not an error.</p>
 <h2 id="publish-kind"><a class="header" href="#publish-kind"><code>publish &lt;kind&gt;</code></a></h2>
 <pre><code class="language-text">idiolect publish &lt;kind&gt; --record &lt;path&gt; [--rkey RKEY] [--did DID]
@@ -6244,7 +6260,7 @@ idiolect verify property-test   --lens AT_URI  --corpus PATH    [--budget N]    
 idiolect verify static-check    --lens AT_URI                   [--pds-url URL] [--verifier-did DID]
 idiolect verify coercion-law    --lens AT_URI  --vcs-url URL    --standard STD  [--version V] [--violation-threshold N] [--verifier-did DID]
 </code></pre>
-<p>Runs the shipped <code>VerificationRunner</code> for the named kind against
+<p>Runs the shipped <code>VerificationRunner</code> for the given kind against
 the live PDS, prints the typed <code>Verification</code> record as JSON,
 and exits non-zero on <code>Falsified</code> / <code>Inconclusive</code> so CI surfaces
 failures.</p>
@@ -6270,7 +6286,7 @@ Errors go to stderr:</p>
 mode (<code>com.atproto.server.createSession</code> plus
 <code>Authorization: Bearer &lt;token&gt;</code>). The full OAuth + DPoP flow
 via <code>atrium-oauth</code> (browser handoff, PKCE, DPoP-bound tokens)
-is the next-iteration login UX; the library <code>OAuthSession</code>
+is the next-iteration login UX. The library <code>OAuthSession</code>
 shape and <code>OAuthTokenStore</code> trait are already in place to
 receive whatever the dance returns.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
@@ -6325,12 +6341,12 @@ emitted Rust types in
 shape per endpoint.</p>
 <h2 id="error-shape"><a class="header" href="#error-shape">Error shape</a></h2>
 <p>A request that fails parameter validation returns 400 with a
-JSON body naming the offending field. Internal failures return
-500 with a brief message.</p>
+JSON body identifying the offending field. Internal failures
+return 500 with a brief message.</p>
 <h2 id="versioning-1"><a class="header" href="#versioning-1">Versioning</a></h2>
 <p>The <code>v1</code> and <code>/xrpc/</code> prefixes are the route contract. New
 endpoints are additive. Pre-1.0 the project may rename or
-restructure endpoints between minor versions; see
+restructure endpoints between minor versions. See
 <a href="reference/./stability.html">Stability and versioning</a>. At 1.0 the prefixes
 become stable and breaking changes ship under <code>v2</code> (or, for the
 xrpc surface, under new method names that deprecate the old).</p>
@@ -6350,8 +6366,8 @@ before bumping.</p>
 versions. The most recent example is the <code>Resolver</code> /
 <code>SchemaLoader</code> Send bound in v0.8.0.</li>
 <li><strong>Lexicon shapes</strong> can change. Wire-compatible changes go through
-the <a href="reference/../concepts/lexicon-evolution.html">lexicon-evolution policy</a>;
-breaking changes ship with a derived migration lens.</li>
+the <a href="reference/../concepts/lexicon-evolution.html">lexicon-evolution policy</a>.
+Breaking changes ship with a derived migration lens.</li>
 <li><strong>CLI subcommands</strong> can rename or reshape. The output JSON shape
 is more stable than the flag surface.</li>
 <li><strong>HTTP routes</strong> can change under the <code>v1</code> prefix between minor
@@ -6360,7 +6376,7 @@ versions. After 1.0 they will not.</li>
 <h2 id="what-does-not-change"><a class="header" href="#what-does-not-change">What does not change</a></h2>
 <ul>
 <li>The <code>dev.idiolect.*</code> namespace stays as is. NSID renames are
-possible but extraordinarily unusual; one would ship with a
+possible but extraordinarily unusual. One would ship with a
 deprecation note in <code>dev.idiolect.dialect#deprecations</code>.</li>
 <li>Records that pass validation continue to pass validation. A
 record valid against v0.7's lexicon is also valid against v0.8's
@@ -6376,14 +6392,14 @@ are the single source of truth, the codegen drift gate is on.</li>
 ship in major versions only.</li>
 <li>The lexicon-evolution <code>check-compat</code> gate flips from advisory to
 a hard fail.</li>
-<li>The HTTP API's <code>v1</code> prefix becomes a stability commitment; new
+<li>The HTTP API's <code>v1</code> prefix becomes a stability commitment. New
 endpoints are additive.</li>
 <li>Trait signatures in <code>idiolect-records</code>, <code>idiolect-lens</code>,
 <code>idiolect-indexer</code>, and <code>idiolect-orchestrator</code> become
 semver-stable.</li>
 </ul>
 <p>The 1.0 release date is not committed. The pre-1.0 series
-deliberately churns to find the right shape; 1.0 ships when the
+deliberately churns to find the right shape. 1.0 ships when the
 shape stops moving.</p>
 <h2 id="reading-the-changelog"><a class="header" href="#reading-the-changelog">Reading the changelog</a></h2>
 <p>The project follows
@@ -6410,7 +6426,7 @@ release section has six fixed buckets:</p>
 <tr><td><code>idiolect-observer</code> container</td><td><code>ghcr.io/idiolect-dev/observer</code></td><td>image SHA</td></tr>
 </tbody></table>
 </div>
-<p>The container images are sigstore-signed; verification policy is
+<p>The container images are sigstore-signed. Verification policy is
 in
 <a href="https://github.com/idiolect-dev/idiolect/blob/main/docs/ci-cd.md"><code>docs/ci-cd.md</code></a>.</p>
 

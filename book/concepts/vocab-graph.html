@@ -239,7 +239,7 @@ OWL Lite (<code>symmetric</code>, <code>transitive</code>, <code>functional</cod
 </tbody></table>
 </div>
 <p>Contradictions (<code>symmetric+asymmetric</code>, <code>reflexive+irreflexive</code>)
-are caught at validation time; functional / inverse-functional
+are caught at validation time. Functional and inverse-functional
 violations are caught at edge-walk time. The <code>VocabGraph::validate</code>
 walker emits one
 <a href="../reference/crates/idiolect-records.html"><code>VocabViolation</code></a> per
@@ -261,7 +261,7 @@ inconsistency.</p>
 </tbody></table>
 </div>
 <p>The annotations do not affect runtime resolution (the slug is the
-key); they are surface-area for human authors and downstream
+key). They are surface area for human authors and downstream
 display tooling.</p>
 <h2 id="runtime-queries"><a class="header" href="#runtime-queries">Runtime queries</a></h2>
 <p><code>VocabGraph</code> is a normalised read-only view over a single vocab.
@@ -314,12 +314,12 @@ form an undirected bridge. A consumer holding both records and a
 );
 <span class="boring">}</span></code></pre></pre>
 <p>If the bridge exists, the consumer gets the equivalent slug in
-the target vocab. If it does not, <code>None</code>. This is the engine for
+the target vocab. If it does not, <code>None</code>. This is what backs
 <a href="./open-enums.html">Open enums</a>' <code>translate_to</code> helper.</p>
 <h2 id="versioning"><a class="header" href="#versioning">Versioning</a></h2>
 <p>A vocab edit is a record edit (a new <code>dev.idiolect.vocab</code> record)
 under a new rkey, with the old vocab listed as <code>supersedes</code>. The
-new record is a separate at-uri; consumers depending on the old
+new record is a separate at-uri. Consumers depending on the old
 slug set continue to resolve through the old vocab until they
 update their references.</p>
 <p>The lexicon-evolution policy classifies vocab edits the same way

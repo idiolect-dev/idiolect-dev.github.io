@@ -234,7 +234,7 @@ declared as metadata:</p>
 <code>asymmetric</code>, <code>transitive</code>, <code>reflexive</code>, <code>irreflexive</code>,
 <code>functional</code>, <code>inverseFunctional</code>, plus <code>inverseOf</code> and a per-
 relation <code>world</code> override. The runtime walks the asserted edges
-and validates them against these properties; contradictions
+and validates them against these properties. Contradictions
 (<code>symmetric+asymmetric</code>, <code>reflexive+irreflexive</code>) produce a
 <code>PropertyContradiction</code> violation at publish time.</p>
 <h2 id="add-edges"><a class="header" href="#add-edges">Add edges</a></h2>
@@ -278,7 +278,7 @@ Collection.</p>
 consistency walker. Violations are listed with the offending edge
 or property.</p>
 <p>For programmatic validation, construct a <code>Vocab</code> value and call
-<code>VocabGraph::from_vocab(&amp;vocab).validate()</code>; violations are
+<code>VocabGraph::from_vocab(&amp;vocab).validate()</code>. Violations are
 returned as a <code>Vec&lt;VocabViolation&gt;</code> listing each offending edge
 or property.</p>
 <h2 id="publish"><a class="header" href="#publish">Publish</a></h2>
@@ -307,9 +307,9 @@ let resp = publisher.create(&amp;vocab).await?;
 <span class="boring">}</span></code></pre></pre>
 <p><code>pkcs8_pem</code> is converted from the session's
 <code>dpop_private_key_jwk</code> via an external JWK-to-PKCS8 helper. The
-PDS validates the record against the lexicon before commit;
-malformed values surface as commit errors. Driving the OAuth
-dance and persisting the session is the caller's job; see
+PDS validates the record against the lexicon before commit.
+Malformed values surface as commit errors. Driving the OAuth
+dance and persisting the session is the caller's job. See
 <a href="./oauth.html">Configure OAuth sessions</a>.</p>
 <h2 id="use-the-published-vocab"><a class="header" href="#use-the-published-vocab">Use the published vocab</a></h2>
 <p>Once the vocab is on the network, any open-enum field whose

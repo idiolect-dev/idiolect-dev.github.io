@@ -183,13 +183,13 @@
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="configure-oauth-sessions"><a class="header" href="#configure-oauth-sessions">Configure OAuth sessions</a></h1>
 <p><a href="../reference/crates/idiolect-oauth.html"><code>idiolect-oauth</code></a>
-provides the token-store trait and three shipped implementations.
-The crate does <em>not</em> implement the OAuth dance itself: that
-lives in <code>atrium-oauth-client</code>. The crate also does <em>not</em> ship a
-<code>refresh_if_needed</code> helper or a CLI login command; consumers
-drive the dance and the refresh decision in their own code,
-using <code>OAuthSession</code>'s helpers (<code>is_expired</code>, <code>needs_refresh</code>,
-<code>refresh_expired</code>) for timing.</p>
+provides the token-store trait and three shipped implementations,
+plus a <code>refresh_if_needed</code> helper and a <code>Refresher</code> trait for
+session refresh. The crate does <em>not</em> implement the OAuth dance
+itself: that lives in <code>atrium-oauth-client</code>. Consumers drive the
+dance in their own code, then either call <code>refresh_if_needed</code> or
+read <code>OAuthSession</code>'s helpers (<code>is_expired</code>, <code>needs_refresh</code>,
+<code>refresh_expired</code>) to drive the refresh decision themselves.</p>
 <h2 id="when-you-need-it"><a class="header" href="#when-you-need-it">When you need it</a></h2>
 <p>Anything that publishes records (encounter, recommendation,
 verification, observation, lens, dialect, vocab, ...) needs an
@@ -230,19 +230,19 @@ let recovered = store.load(&amp;session.did).await?;
 let store = SqliteOAuthTokenStore::open("sessions.sqlite").await?;
 <span class="boring">}</span></code></pre></pre>
 <h2 id="drive-the-oauth-dance"><a class="header" href="#drive-the-oauth-dance">Drive the OAuth dance</a></h2>
-<p>The dance itself is <code>atrium-oauth-client</code>'s job; the crate
+<p>The dance itself is <code>atrium-oauth-client</code>'s job. The crate
 returns an authenticated session you store via
 <code>OAuthTokenStore::save</code>. The session shape (<code>OAuthSession</code>) is
 documented in the crate's source: it carries the DID, PDS URL,
 access JWT, refresh JWT, DPoP private key (JWK-serialized),
 DPoP nonce, and expiry timestamps as public fields.</p>
-<p>For session-staleness decisions, read <code>OAuthSession::is_expired</code>
-and <code>OAuthSession::needs_refresh(now, threshold)</code> in your own
-refresh path; the crate does not ship a <code>refresh_if_needed</code>
-helper, and the application decides how to drive the refresh
-endpoint.</p>
+<p>For session-staleness decisions, either call <code>refresh_if_needed</code>
+(documented below) or read <code>OAuthSession::is_expired</code> and
+<code>OAuthSession::needs_refresh(now, threshold)</code> in your own refresh
+path. Either way, the application supplies the <code>Refresher</code> that
+drives the refresh endpoint.</p>
 <h2 id="dpop"><a class="header" href="#dpop">DPoP</a></h2>
-<p>The session's DPoP keypair is what makes the access token bound.
+<p>The session's DPoP keypair is what binds the access token.
 The signer (the <code>P256DpopProver</code> in
 <a href="../reference/crates/idiolect-lens.html"><code>idiolect-lens</code></a> under
 the <code>dpop-p256</code> feature) consumes the keypair from the session
