@@ -203,7 +203,7 @@ the trait non-object-safe, so callers remain generic over
 <code>S: OAuthTokenStore</code> rather than using <code>Arc&lt;dyn OAuthTokenStore&gt;</code>.</p>
 <p><code>idiolect-oauth</code> is <code>publish = false</code>; depend via git.</p>
 <h2 id="filesystem-store"><a class="header" href="#filesystem-store">Filesystem store</a></h2>
-<pre><code class="language-toml">idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.0", features = ["store-filesystem"] }
+<pre><code class="language-toml">idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.1", features = ["store-filesystem"] }
 </code></pre>
 <pre><code class="language-text">use idiolect_oauth::{FilesystemOAuthTokenStore, OAuthTokenStore};
 
@@ -218,7 +218,7 @@ let recovered = store.load(&amp;session.did).await?; // Option&lt;OAuthSession&g
 </code></pre>
 <p>The directory contains one JSON file per session keyed by DID.</p>
 <h2 id="sqlite-store"><a class="header" href="#sqlite-store">SQLite store</a></h2>
-<pre><code class="language-toml">idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.0", features = ["store-sqlite"] }
+<pre><code class="language-toml">idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.1", features = ["store-sqlite"] }
 </code></pre>
 <pre><code class="language-text">use idiolect_oauth::{SqliteOAuthTokenStore, OAuthTokenStore};
 

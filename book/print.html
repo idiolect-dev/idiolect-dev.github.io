@@ -355,7 +355,7 @@ cargo install --locked --path crates/idiolect-cli
 from this checkout:</p>
 <pre><code class="language-bash">idiolect version
 </code></pre>
-<pre><code class="language-text">idiolect 0.12.0
+<pre><code class="language-text">idiolect 0.12.1
 </code></pre>
 <h2 id="resolve-the-project-account"><a class="header" href="#resolve-the-project-account">Resolve the project account</a></h2>
 <p>A <a href="tutorial/../glossary.html#did" title="Decentralized identifier">decentralized identifier (DID)</a>
@@ -427,8 +427,8 @@ record:</p>
 </code></pre>
 <h2 id="confirm-the-panproto-version"><a class="header" href="#confirm-the-panproto-version">Confirm the Panproto version</a></h2>
 <p>The runnable package pins the Panproto crates used here to 0.71.0:</p>
-<pre><code class="language-toml">panproto-lens   = { git = "https://github.com/panproto/panproto.git", tag = "v0.71.0" }
-panproto-schema = { git = "https://github.com/panproto/panproto.git", tag = "v0.71.0" }
+<pre><code class="language-toml">panproto-lens   = { git = "https://github.com/panproto/panproto.git", tag = "v0.72.0" }
+panproto-schema = { git = "https://github.com/panproto/panproto.git", tag = "v0.72.0" }
 </code></pre>
 <p>The idiolect workspace uses the same Panproto version.</p>
 <h2 id="run-get"><a class="header" href="#run-get">Run <code>get</code></a></h2>
@@ -476,7 +476,7 @@ text.</p>
 </code></pre>
 <pre><code class="language-text">result = Holds
 kind   = RoundtripTest
-tool   = idiolect-verify/roundtrip-test 0.12.0
+tool   = idiolect-verify/roundtrip-test 0.12.1
 </code></pre>
 <p>The executable gives the corpus to <code>RoundtripTestRunner</code> and runs it against
 the published lens:</p>
@@ -693,7 +693,7 @@ queries that same state.</p>
 <li><code>GET /metrics</code> — Prometheus exposition.</li>
 <li><code>GET /v1/stats</code> — record counts per kind.</li>
 <li>One pair of REST and XRPC endpoints per declarative query in
-<code>orchestrator-spec/queries.json</code>. The 0.12.0 surface includes:
+<code>orchestrator-spec/queries.json</code>. The 0.12.1 surface includes:
 bounties (open, want-lens, by-requester), adapters (by
 framework, by invocation protocol, with verification),
 recommendations (starting from a source schema), verifications
@@ -1049,7 +1049,7 @@ re-fetch.</p>
 service may hold <code>Arc&lt;dyn Resolver&gt;</code> and call <code>apply_lens</code> from a
 spawnable request future.</p>
 <h2 id="make-it-discoverable"><a class="header" href="#make-it-discoverable">Make it discoverable</a></h2>
-<p>The 0.12.0 orchestrator catalogs <code>dev.idiolect.*</code> records, not
+<p>The 0.12.1 orchestrator catalogs <code>dev.idiolect.*</code> records, not
 <code>dev.panproto.schema.lens</code> records. Consumers fetch a known lens URI
 directly. Publish idiolect records that point to the lens to make that
 URI discoverable:</p>
@@ -1206,7 +1206,7 @@ the trait non-object-safe, so callers remain generic over
 <code>S: OAuthTokenStore</code> rather than using <code>Arc&lt;dyn OAuthTokenStore&gt;</code>.</p>
 <p><code>idiolect-oauth</code> is <code>publish = false</code>; depend via git.</p>
 <h2 id="filesystem-store"><a class="header" href="#filesystem-store">Filesystem store</a></h2>
-<pre><code class="language-toml">idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.0", features = ["store-filesystem"] }
+<pre><code class="language-toml">idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.1", features = ["store-filesystem"] }
 </code></pre>
 <pre><code class="language-text">use idiolect_oauth::{FilesystemOAuthTokenStore, OAuthTokenStore};
 
@@ -1221,7 +1221,7 @@ let recovered = store.load(&amp;session.did).await?; // Option&lt;OAuthSession&g
 </code></pre>
 <p>The directory contains one JSON file per session keyed by DID.</p>
 <h2 id="sqlite-store"><a class="header" href="#sqlite-store">SQLite store</a></h2>
-<pre><code class="language-toml">idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.0", features = ["store-sqlite"] }
+<pre><code class="language-toml">idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.1", features = ["store-sqlite"] }
 </code></pre>
 <pre><code class="language-text">use idiolect_oauth::{SqliteOAuthTokenStore, OAuthTokenStore};
 
@@ -2536,7 +2536,7 @@ and HTTP contracts. Task procedures remain in the
 <tr><td><a href="reference/./stability.html">Stability and versioning</a></td><td>The pre-1.0 stability policy.</td></tr>
 </tbody></table>
 </div>
-<p>The reference covers idiolect 0.12.0 with panproto 0.71.0. For older
+<p>The reference covers idiolect 0.12.1 with panproto 0.71.0. For older
 releases, use the
 <a href="https://github.com/idiolect-dev/idiolect/releases">release archive</a>.</p>
 <h2 id="extension-and-api-path"><a class="header" href="#extension-and-api-path">Extension and API path</a></h2>
@@ -2559,7 +2559,7 @@ JSON under <code>lexicons/dev/idiolect/</code> defines record shape. If this boo
 disagrees with either source, use the source and file an issue.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="crates"><a class="header" href="#crates">Crates</a></h1>
-<p>The workspace ships eleven crates at version 0.12.0. The workspace
+<p>The workspace ships eleven crates at version 0.12.1. The workspace
 version keeps their release numbers aligned.</p>
 <div class="table-wrapper"><table><thead><tr><th>Crate</th><th>Purpose</th></tr></thead><tbody>
 <tr><td><a href="reference/crates/./idiolect-records.html">idiolect-records</a></td><td>Generated record types for the <code>dev.idiolect.*</code> lexicons; <code>Record</code> trait; family modules.</td></tr>
@@ -2602,7 +2602,7 @@ contents of <code>crates/idiolect-records/src/generated/</code> are written
 by <a href="reference/crates/./idiolect-codegen.html"><code>idiolect-codegen</code></a>. Do not edit by
 hand.</p>
 <pre><code class="language-toml">[dependencies]
-idiolect-records = "0.12.0"
+idiolect-records = "0.12.1"
 </code></pre>
 <p>The crate has no transport dependencies; it contains data types and their
 validation and dispatch helpers.</p>
@@ -2792,7 +2792,7 @@ panproto 0.71.0's lens runtime.</p>
 depend on it via a git or path reference rather than a
 registry version:</p>
 <pre><code class="language-toml">[dependencies]
-idiolect-lens = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.0", features = ["pds-reqwest"] }
+idiolect-lens = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.1", features = ["pds-reqwest"] }
 </code></pre>
 <h2 id="public-surface"><a class="header" href="#public-surface">Public surface</a></h2>
 <h3 id="resolvers"><a class="header" href="#resolvers">Resolvers</a></h3>
@@ -2885,7 +2885,7 @@ docs.rs link above. That is the authoritative reference.</p>
 carrying the also-known-as set, service entries, verification
 methods, and any additional fields the source document carries.</p>
 <pre><code class="language-toml">[dependencies]
-idiolect-identity = { version = "0.12.0", features = ["resolver-reqwest"] }
+idiolect-identity = { version = "0.12.1", features = ["resolver-reqwest"] }
 </code></pre>
 <h2 id="public-surface-1"><a class="header" href="#public-surface-1">Public surface</a></h2>
 <p><code>IdentityResolver</code> is the trait every resolver implements. The
@@ -2928,7 +2928,7 @@ into three trait surfaces. It
 owns the loop. You bring the stream, the handler, and the cursor
 store.</p>
 <pre><code class="language-toml">[dependencies]
-idiolect-indexer = { version = "0.12.0", features = ["firehose-jetstream", "cursor-filesystem", "reconnecting"] }
+idiolect-indexer = { version = "0.12.1", features = ["firehose-jetstream", "cursor-filesystem", "reconnecting"] }
 </code></pre>
 <h2 id="public-surface-2"><a class="header" href="#public-surface-2">Public surface</a></h2>
 <h3 id="trait-surface"><a class="header" href="#trait-surface">Trait surface</a></h3>
@@ -3021,7 +3021,7 @@ in <code>atrium-oauth-client</code>, and the DPoP signer lives in
 <code>idiolect-lens</code> under the <code>dpop-p256</code> feature.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
-idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.0", features = ["store-filesystem"] }
+idiolect-oauth = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.1", features = ["store-filesystem"] }
 </code></pre>
 <h2 id="public-surface-3"><a class="header" href="#public-surface-3">Public surface</a></h2>
 <p><code>OAuthTokenStore</code> is the trait every store implements. Its
@@ -3082,7 +3082,7 @@ records. The declarative spec at <code>observer-spec/methods.json</code> drives 
 surface, and code generation emits the method-descriptor table.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
-idiolect-observer = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.0", features = ["daemon"] }
+idiolect-observer = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.1", features = ["daemon"] }
 </code></pre>
 <h2 id="public-surface-4"><a class="header" href="#public-surface-4">Public surface</a></h2>
 <pre><code class="language-text">pub trait ObservationMethod: Send + Sync {
@@ -3174,7 +3174,7 @@ the surface, and code generation emits both the routes and the matching CLI
 dispatcher.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
-idiolect-orchestrator = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.0", features = ["daemon", "catalog-sqlite", "query-http"] }
+idiolect-orchestrator = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.1", features = ["daemon", "catalog-sqlite", "query-http"] }
 </code></pre>
 <h2 id="public-surface-5"><a class="header" href="#public-surface-5">Public surface</a></h2>
 <p>The crate exposes:</p>
@@ -3251,7 +3251,7 @@ declarative dispatch. <code>verify-spec/runners.json</code> drives the surface, 
 generation emits the kind taxonomy.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
-idiolect-verify = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.0" }
+idiolect-verify = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.1" }
 </code></pre>
 <h2 id="public-surface-6"><a class="header" href="#public-surface-6">Public surface</a></h2>
 <pre><code class="language-text">pub trait VerificationRunner: Send + Sync {
@@ -3315,7 +3315,7 @@ built locally with <code>cargo doc -p idiolect-migrate --open</code>.</p>
 <code>panproto-check</code> crate and <code>idiolect-lens</code>.</p>
 <p>Because the crate is <code>publish = false</code>, depend via git or path:</p>
 <pre><code class="language-toml">[dependencies]
-idiolect-migrate = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.0" }
+idiolect-migrate = { git = "https://github.com/idiolect-dev/idiolect", tag = "v0.12.1" }
 </code></pre>
 <h2 id="public-surface-7"><a class="header" href="#public-surface-7">Public surface</a></h2>
 <p>The crate exposes:</p>
@@ -5724,7 +5724,7 @@ form.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
 <h1 id="cli"><a class="header" href="#cli">CLI</a></h1>
 <p><code>idiolect</code> is the command-line tool. The surface below reflects
-idiolect 0.12.0.</p>
+idiolect 0.12.1.</p>
 <h2 id="top-level-subcommands"><a class="header" href="#top-level-subcommands">Top-level subcommands</a></h2>
 <pre><code class="language-text">idiolect resolve &lt;did&gt;
 idiolect fetch &lt;at-uri&gt;
@@ -5848,7 +5848,7 @@ health checks and metrics return text.</p>
 endpoints: a friendly REST path under <code>/v1/…</code> and an
 ATProto-style xrpc path under
 <code>/xrpc/dev.idiolect.query.&lt;queryName&gt;</code>. Both call the same
-handler. The snapshot below reflects idiolect 0.12.0.</p>
+handler. The snapshot below reflects idiolect 0.12.1.</p>
 <h2 id="liveness-and-metrics"><a class="header" href="#liveness-and-metrics">Liveness and metrics</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Path</th><th>Returns</th></tr></thead><tbody>
 <tr><td><code>GET /healthz</code></td><td>200 OK if the process is alive.</td></tr>
@@ -5968,7 +5968,7 @@ release section has six fixed buckets:</p>
 <div class="table-wrapper"><table><thead><tr><th>Component</th><th>Source of truth</th><th>Lock at</th></tr></thead><tbody>
 <tr><td><code>idiolect-records</code></td><td>crates.io</td><td>exact version</td></tr>
 <tr><td><code>@idiolect-dev/schema</code></td><td>npm</td><td>exact version</td></tr>
-<tr><td>panproto crates</td><td>Git tag</td><td><code>v0.71.0</code> for idiolect 0.12.0</td></tr>
+<tr><td>panproto crates</td><td>Git tag</td><td><code>v0.72.0</code> for idiolect 0.12.1</td></tr>
 <tr><td><code>idiolect</code> CLI</td><td>binary release on GitHub</td><td>release tag</td></tr>
 <tr><td><code>idiolect-orchestrator</code> container</td><td><code>ghcr.io/idiolect-dev/orchestrator</code></td><td>image SHA</td></tr>
 <tr><td><code>idiolect-observer</code> container</td><td><code>ghcr.io/idiolect-dev/observer</code></td><td>image SHA</td></tr>
